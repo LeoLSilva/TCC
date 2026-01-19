@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - con
+  - floor
   layers:
   - Default
   - TransparentFX
