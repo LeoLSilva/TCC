@@ -31,17 +31,12 @@ public class ConnectScript : MonoBehaviour
     {
         if (other.tag != "con") return;
         ConnectType t = other.GetComponent<ConnectScript>().GetConnectType();
-        Debug.Log("Tipo: " + _type.ToString() + "\nOutro Tipo: " + t);
         if (this._type != t)
         {
             _material.color = _green;
             _partScript.SetTarget(other.transform, this);
-        } else { _material.color = _red; }
-    }
-
-    public void SetColliderConfig(bool set)
-    {
-
+        }
+        else { _material.color = _red; }
     }
 
     private void OnTriggerExit(Collider other)

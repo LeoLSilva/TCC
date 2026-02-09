@@ -6,23 +6,33 @@ using UnityEngine;
 
 public class PartsScript : MonoBehaviour
 {
+    [SerializeField] private PieceStatus _status;
     [SerializeField] private Transform _backPos;
+    [SerializeField] private PartsScript _connectedPieceScript;
     [SerializeField] private Transform _target;
-    [SerializeField] private Transform _connectSon;
     [SerializeField] private Grabbable _grabble;
-    [SerializeField] private PartsManager _partsManager;
+    private Transform _connectSon;
+    private PartsManager _partsManager;
     private List<ConnectScript> _connectsScriptList = new List<ConnectScript>();
-    public float _timeAnimate = 0.25f;
-    private bool _isConnecting;
+    private float _timeAnimate = 0.25f;
+    private Rigidbody _rigid;
 
 
-
-
+    [Header("Somentes testes no inspetor")]
+    // teste editor
     public bool test = false;
+    private PieceStatus _lastStatus;
 
+    private void OnValidate()
+    {
+        if (_status == _lastStatus) return;
+        _lastStatus = _status;
+        SetStatus(_status);
+    }
 
     private void Start()
     {
+        _rigid = GetComponent<Rigidbody>();
         _partsManager = FindAnyObjectByType<PartsManager>();
         _grabble = this.GetComponent<Grabbable>();
         AddConectionsOnList();
@@ -67,7 +77,11 @@ public class PartsScript : MonoBehaviour
 
     public void SetTarget(Transform target, ConnectScript con)
     {
-        _target = target;
+        if (target != null)
+        {
+            _target = target;
+            _connectedPieceScript = _target.parent.GetComponent<PartsScript>();
+        }
         if (con == null) { _connectSon = null; }
         else
             _connectSon = _connectsScriptList[_connectsScriptList.IndexOf(con)].transform;
@@ -75,15 +89,15 @@ public class PartsScript : MonoBehaviour
 
     public void ConnectAnimation()
     {
-        if (_isConnecting) return;
+        if (_status == PieceStatus.conecting || _status == PieceStatus.conected) return;
         if (_target == null || _connectSon == null) return;
 
         ConnectPosition cp =
             _partsManager.CalculatingPosition(transform, _target, _connectSon);
 
         if (cp == null) return;
-
-        _isConnecting = true;
+        SetStatus(PieceStatus.conecting);
+        _connectedPieceScript.SetStatus(PieceStatus.conecting);
         StartCoroutine(AnimationMoveCoroutine(cp));
     }
 
@@ -108,16 +122,41 @@ public class PartsScript : MonoBehaviour
         }
 
         transform.SetPositionAndRotation(targetPos, targetRot);
-        _isConnecting = false;
+        _partsManager.SetConection(this, _connectedPieceScript);
     }
 
     private void OnTriggerStay(Collider col)
     {
-        Debug.Log("Stay "+ "- "+col.gameObject.tag);
         if (col.gameObject.tag.Equals("floor"))
         {
             this.transform.position = _backPos.position;
         }
+    }
+
+    public void SetStatus(PieceStatus st)
+    {
+        _status = st;
+        switch (_status)
+        {
+            case PieceStatus.none:
+                ChangeRigid(false);
+                break;
+            case PieceStatus.conecting:
+                ChangeRigid(true);
+                break;
+            case PieceStatus.conected:
+                ChangeRigid(true);
+                break;
+            case PieceStatus.root:
+                ChangeRigid(false);
+                break;
+        }
+    }
+
+    private void ChangeRigid(bool kine)
+    {
+        _rigid.isKinematic = kine;
+        _rigid.useGravity = !kine;
     }
 }
 
@@ -126,4 +165,12 @@ public enum ConnectType
     none,
     male,
     famale
+}
+
+public enum PieceStatus
+{
+    none,
+    conecting,
+    conected,
+    root
 }
