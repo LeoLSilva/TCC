@@ -1,3 +1,4 @@
+using Meta.XR.Simulator.Editor;
 using NUnit.Framework;
 using Oculus.Interaction;
 using System.Collections;
@@ -53,9 +54,10 @@ public class PartsScript : MonoBehaviour
         {
             Debug.Log("Selecionado");
         }
-        else if (obj.Type == PointerEventType.Unselect)
+        if (obj.Type == PointerEventType.Unselect)
         {
-            if (_target != null && _target.GetComponent<ConnectScript>().GetConnectType() == ConnectType.male)
+            Debug.Log("Deselecionado " + (_target.GetComponent<ConnectScript>().GetConnectType() == ConnectType.male));
+            if (_target != null && _target.GetComponent<ConnectScript>().GetConnectType() != ConnectType.male)
             {
                 ConnectAnimation();
             }
@@ -84,7 +86,9 @@ public class PartsScript : MonoBehaviour
         }
         if (con == null) { _connectSon = null; }
         else
+        {
             _connectSon = _connectsScriptList[_connectsScriptList.IndexOf(con)].transform;
+        }
     }
 
     public void ConnectAnimation()
@@ -96,9 +100,7 @@ public class PartsScript : MonoBehaviour
             _partsManager.CalculatingPosition(transform, _target, _connectSon);
 
         if (cp == null) return;
-        SetStatus(PieceStatus.conecting);
-        _connectedPieceScript.SetStatus(PieceStatus.conecting);
-        StartCoroutine(AnimationMoveCoroutine(cp));
+        SetStatus();
     }
 
     private IEnumerator AnimationMoveCoroutine(ConnectPosition cp)
@@ -132,8 +134,22 @@ public class PartsScript : MonoBehaviour
             this.transform.position = _backPos.position;
         }
     }
+    public void SetStatus()
+    {
+        if (GetMass() > _connectedPieceScript.GetMass())
+        {
 
-    public void SetStatus(PieceStatus st)
+
+        }
+
+
+        SetStatus(PieceStatus.conecting);
+        if (_connectedPieceScript.GetStatus() != PieceStatus.root)
+            _connectedPieceScript.SetStatus(PieceStatus.root);
+        StartCoroutine(AnimationMoveCoroutine(cp));
+    }
+
+    private void SetRigid(PieceStatus st)
     {
         _status = st;
         switch (_status)
@@ -142,7 +158,7 @@ public class PartsScript : MonoBehaviour
                 ChangeRigid(false);
                 break;
             case PieceStatus.conecting:
-                ChangeRigid(true);
+                ChangeRigid(false);
                 break;
             case PieceStatus.conected:
                 ChangeRigid(true);
@@ -158,6 +174,12 @@ public class PartsScript : MonoBehaviour
         _rigid.isKinematic = kine;
         _rigid.useGravity = !kine;
     }
+
+    #region GetSet
+    public PieceStatus GetStatus() { return _status; }
+    public float GetMass() { return _rigid.mass; }
+    #endregion
+
 }
 
 public enum ConnectType

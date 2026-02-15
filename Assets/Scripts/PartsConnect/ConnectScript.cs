@@ -4,9 +4,9 @@ using UnityEngine;
 public class ConnectScript : MonoBehaviour
 {
     [SerializeField] private ConnectType _type;
-    [SerializeField] private PartsScript _partScript;
     [SerializeField] private Collider _collider;
     [SerializeField] private Material _material;
+    [SerializeField] private PartsScript _partScript;
     public Color _natural;
     private Color _green = Color.green;
     private Color _red = Color.red;
