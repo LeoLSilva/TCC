@@ -59,9 +59,14 @@ public class PartsScript : MonoBehaviour
             Debug.Log("Deselecionado " + (_target.GetComponent<ConnectScript>().GetConnectType() == ConnectType.male));
             if (_target != null && _target.GetComponent<ConnectScript>().GetConnectType() != ConnectType.male)
             {
-                ConnectAnimation();
+                Connect();
             }
         }
+    }
+
+    private void Connect()
+    {
+        ConnectAnimation();
     }
 
     private void AddConectionsOnList()
@@ -100,7 +105,7 @@ public class PartsScript : MonoBehaviour
             _partsManager.CalculatingPosition(transform, _target, _connectSon);
 
         if (cp == null) return;
-        SetStatus();
+        StartCoroutine(AnimationMoveCoroutine(cp));
     }
 
     private IEnumerator AnimationMoveCoroutine(ConnectPosition cp)
@@ -134,19 +139,9 @@ public class PartsScript : MonoBehaviour
             this.transform.position = _backPos.position;
         }
     }
-    public void SetStatus()
+    public void SetStatus(PieceStatus st)
     {
-        if (GetMass() > _connectedPieceScript.GetMass())
-        {
-
-
-        }
-
-
-        SetStatus(PieceStatus.conecting);
-        if (_connectedPieceScript.GetStatus() != PieceStatus.root)
-            _connectedPieceScript.SetStatus(PieceStatus.root);
-        StartCoroutine(AnimationMoveCoroutine(cp));
+        _status = st;
     }
 
     private void SetRigid(PieceStatus st)
@@ -177,7 +172,12 @@ public class PartsScript : MonoBehaviour
 
     #region GetSet
     public PieceStatus GetStatus() { return _status; }
-    public float GetMass() { return _rigid.mass; }
+    public Rigidbody GetRigid() { return _rigid; }
+
+    public ConnectScript GetConnectSon()
+    {
+        return 
+    }
     #endregion
 
 }
