@@ -9,15 +9,17 @@ public class PartsScript : MonoBehaviour
 {
     [SerializeField] private PieceStatus _status;
     [SerializeField] private Transform _backPos;
-    [SerializeField] private PartsScript _connectedPieceScript;
-    [SerializeField] private Transform _target;
+    [SerializeField] private PartsScript _partScriptTarget;
+    [SerializeField] private Transform _conectorTarget;
     [SerializeField] private Grabbable _grabble;
-    private Transform _connectSon;
+    private Transform _connectorTransform;
     private PartsManager _partsManager;
     private List<ConnectScript> _connectsScriptList = new List<ConnectScript>();
     private float _timeAnimate = 0.25f;
-    private Rigidbody _rigid;
 
+    [Header("Componente Rigid")]
+    [SerializeField] private float _mass;
+    private Rigidbody _rigid;
 
     [Header("Somentes testes no inspetor")]
     // teste editor
@@ -42,10 +44,11 @@ public class PartsScript : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.S) && test && _target.GetComponent<ConnectScript>().GetConnectType() == ConnectType.famale)
+        if (Input.GetKeyDown(KeyCode.S) && test && _conectorTarget.GetComponent<ConnectScript>().GetConnectType() == ConnectType.famale)
         {
             Debug.Log(name); ConnectAnimation();
         }
+        if (Input.GetKeyDown(KeyCode.D) && test) { SetStatus(PieceStatus.none); }
     }
 
     private void OnGrabbleEvent(PointerEvent obj)
@@ -56,10 +59,10 @@ public class PartsScript : MonoBehaviour
         }
         if (obj.Type == PointerEventType.Unselect)
         {
-            Debug.Log("Deselecionado " + (_target.GetComponent<ConnectScript>().GetConnectType() == ConnectType.male));
-            if (_target != null && _target.GetComponent<ConnectScript>().GetConnectType() != ConnectType.male)
+            Debug.Log("Deselecionado " + (_conectorTarget.GetComponent<ConnectScript>().GetConnectType() == ConnectType.male));
+            if (_conectorTarget != null && _conectorTarget.GetComponent<ConnectScript>().GetConnectType() != ConnectType.male)
             {
-                Connect();
+                ConnectAnimation();
             }
         }
     }
@@ -84,25 +87,22 @@ public class PartsScript : MonoBehaviour
 
     public void SetTarget(Transform target, ConnectScript con)
     {
-        if (target != null)
+        _conectorTarget = target;
+        _connectorTransform = null;
+        if (target != null && con != null)
         {
-            _target = target;
-            _connectedPieceScript = _target.parent.GetComponent<PartsScript>();
-        }
-        if (con == null) { _connectSon = null; }
-        else
-        {
-            _connectSon = _connectsScriptList[_connectsScriptList.IndexOf(con)].transform;
+            _partScriptTarget = _conectorTarget.parent.GetComponent<PartsScript>();
+            _connectorTransform = _connectsScriptList[_connectsScriptList.IndexOf(con)].transform;
         }
     }
 
     public void ConnectAnimation()
     {
         if (_status == PieceStatus.conecting || _status == PieceStatus.conected) return;
-        if (_target == null || _connectSon == null) return;
+        if (_conectorTarget == null || _connectorTransform == null) return;
 
         ConnectPosition cp =
-            _partsManager.CalculatingPosition(transform, _target, _connectSon);
+            _partsManager.CalculatingPosition(transform, _conectorTarget, _connectorTransform);
 
         if (cp == null) return;
         StartCoroutine(AnimationMoveCoroutine(cp));
@@ -129,7 +129,7 @@ public class PartsScript : MonoBehaviour
         }
 
         transform.SetPositionAndRotation(targetPos, targetRot);
-        _partsManager.SetConection(this, _connectedPieceScript);
+        _partsManager.SetConection(this, _partScriptTarget);
     }
 
     private void OnTriggerStay(Collider col)
@@ -139,23 +139,18 @@ public class PartsScript : MonoBehaviour
             this.transform.position = _backPos.position;
         }
     }
-    public void SetStatus(PieceStatus st)
-    {
-        _status = st;
-    }
 
-    private void SetRigid(PieceStatus st)
+    public void SetStatus(PieceStatus st)
     {
         _status = st;
         switch (_status)
         {
             case PieceStatus.none:
-                ChangeRigid(false);
-                break;
-            case PieceStatus.conecting:
+                //RigidController(true);
                 ChangeRigid(false);
                 break;
             case PieceStatus.conected:
+                //RigidController(false);
                 ChangeRigid(true);
                 break;
             case PieceStatus.root:
@@ -170,14 +165,21 @@ public class PartsScript : MonoBehaviour
         _rigid.useGravity = !kine;
     }
 
+    private void RigidController(bool create)
+    {
+        if (!create && _rigid != null) Destroy(_rigid);
+        else
+        {
+            Rigidbody r = this.gameObject.AddComponent<Rigidbody>();            
+            r.mass = _mass;
+            this.gameObject.GetComponent<Grabbable>();
+        }
+    }
+
     #region GetSet
     public PieceStatus GetStatus() { return _status; }
     public Rigidbody GetRigid() { return _rigid; }
-
-    public ConnectScript GetConnectSon()
-    {
-        return 
-    }
+    public float GetMass() { return _mass; }
     #endregion
 
 }

@@ -14,17 +14,6 @@ public class PartsManager : MonoBehaviour
         SetList(obj1, target);
 
     }
-    //private void CreateJoin(PartsScript obj1, PartsScript target)
-    //{
-    //    PartsScript root = obj1.GetRigid().mass >= target.GetRigid().mass ? obj1 : target;
-    //    PartsScript connected = root == obj1 ? target : obj1;
-    //    DefineRoot(root, connected);
-    //    float totalMass = root.GetRigid().mass + connected.GetRigid().mass;
-    //    FixedJoint joint = connected.gameObject.AddComponent<FixedJoint>();
-    //    joint.connectedBody = root.GetRigid();
-    //    joint.breakForce = 100f;
-    //    joint.breakTorque = Mathf.Infinity;
-    //}
 
     private void CreateJoin(PartsScript obj1, PartsScript target)
     {
@@ -32,19 +21,6 @@ public class PartsManager : MonoBehaviour
         PartsScript connected = root == obj1 ? target : obj1;
         DefineRoot(root, connected);
 
-        Rigidbody rootRb = root.GetComponent<Rigidbody>();
-        Rigidbody otherRb = connected.GetComponent<Rigidbody>();
-
-        float otherMass = otherRb.mass;
-
-        Destroy(otherRb);
-
-        connected.transform.SetParent(root.transform);
-        connected.transform.localPosition = connected._co;
-        connected.transform.localRotation = Quaternion.identity;
-
-        rootRb.mass += otherMass;
-        rootRb.ResetCenterOfMass();
     }
 
     public ConnectPosition CalculatingPosition(Transform father, Transform target, Transform conSon)
@@ -74,6 +50,8 @@ public class PartsManager : MonoBehaviour
     private void DefineRoot(PartsScript root, PartsScript connected)
     {
         root.SetStatus(PieceStatus.root);
+        //root.GetRigid().mass += connected.GetMass();
+        connected.transform.SetParent(root.transform);
         connected.SetStatus(PieceStatus.conected);
     }
 
