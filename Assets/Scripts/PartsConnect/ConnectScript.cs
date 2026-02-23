@@ -7,10 +7,19 @@ public class ConnectScript : MonoBehaviour
     [SerializeField] private Collider _collider;
     [SerializeField] private Material _material;
     [SerializeField] private PartsScript _partScript;
-    public Color _natural;
+    [SerializeField] private bool _isOccupied = false;
+    private Color _natural;
     private Color _green = Color.green;
     private Color _red = Color.red;
 
+    private void Awake()
+    {
+        Collider col = GetComponent<Collider>();
+        if (col != null)
+        {
+            col.isTrigger = true;
+        }
+    }
 
     private void Start()
     {

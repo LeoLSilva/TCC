@@ -2135,13 +2135,17 @@ PrefabInstance:
       propertyPath: _backPos
       value: 
       objectReference: {fileID: 1063382236}
+    - target: {fileID: 4576688054450631601, guid: 675741eb54d67a14bbe60fd1d7d32ffa, type: 3}
+      propertyPath: _kinematicWhileSelected
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4764629987136540677, guid: 675741eb54d67a14bbe60fd1d7d32ffa, type: 3}
       propertyPath: m_Name
       value: F
       objectReference: {fileID: 0}
     - target: {fileID: 4764629987136540677, guid: 675741eb54d67a14bbe60fd1d7d32ffa, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5284003389376744127, guid: 675741eb54d67a14bbe60fd1d7d32ffa, type: 3}
       propertyPath: m_LocalPosition.x
@@ -22862,13 +22866,14 @@ GameObject:
   - component: {fileID: 822832940}
   - component: {fileID: 822832939}
   - component: {fileID: 822832946}
+  - component: {fileID: 822832948}
   m_Layer: 0
   m_Name: '[BuildingBlock] Cube'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &822832939
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23052,7 +23057,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 822832938}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a955335ff9487fe4c8a76b3b90847595, type: 3}
   m_Name: 
@@ -23061,6 +23066,28 @@ MonoBehaviour:
   myConnectorPoint: {fileID: 466260482}
   snapDistance: 0.15
   detachForce: 100
+--- !u!114 &822832948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 822832938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f02a2c72fd703d43a9cb2c081e3c9ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _connectsScriptList: []
+  _status: 0
+  _backPos: {fileID: 0}
+  _partScriptTarget: {fileID: 0}
+  _conectorTarget: {fileID: 0}
+  _grabble: {fileID: 822832939}
+  _mass: 1
+  _detachForce: 100
+  _isGrabbed: 0
+  test: 0
 --- !u!1001 &824771187
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -38706,6 +38733,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2903075793520354169, guid: 75a9bede8501f664e94651292dd7dc06, type: 3}
       propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4931106190032721095, guid: 75a9bede8501f664e94651292dd7dc06, type: 3}
+      propertyPath: _kinematicWhileSelected
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7473399759535717921, guid: 75a9bede8501f664e94651292dd7dc06, type: 3}
@@ -46868,13 +46899,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 958013240348814363, guid: ec5474584781bba41a8cd77ebbc44420, type: 3}
+      propertyPath: _kinematicWhileSelected
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2519315677569695023, guid: ec5474584781bba41a8cd77ebbc44420, type: 3}
       propertyPath: m_Name
       value: "Cabe\xE7a"
       objectReference: {fileID: 0}
     - target: {fileID: 2519315677569695023, guid: ec5474584781bba41a8cd77ebbc44420, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3007763460041566101, guid: ec5474584781bba41a8cd77ebbc44420, type: 3}
       propertyPath: m_LocalPosition.x
@@ -47410,7 +47445,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 98018286695191837, guid: 9fabb3da82fb9714a83ddc4a5f2b68d8, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 727309007555252135, guid: 9fabb3da82fb9714a83ddc4a5f2b68d8, type: 3}
       propertyPath: m_LocalPosition.x
@@ -47456,6 +47491,10 @@ PrefabInstance:
       propertyPath: _backPos
       value: 
       objectReference: {fileID: 1063382236}
+    - target: {fileID: 4103103848554707746, guid: 9fabb3da82fb9714a83ddc4a5f2b68d8, type: 3}
+      propertyPath: _kinematicWhileSelected
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -51806,6 +51845,7 @@ GameObject:
   - component: {fileID: 1898707501}
   - component: {fileID: 1898707500}
   - component: {fileID: 1898707505}
+  - component: {fileID: 1898707506}
   - component: {fileID: 1898707499}
   - component: {fileID: 1898707498}
   - component: {fileID: 1898707497}
@@ -51816,7 +51856,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1898707497
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52000,7 +52040,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1898707496}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a955335ff9487fe4c8a76b3b90847595, type: 3}
   m_Name: 
@@ -52009,6 +52049,28 @@ MonoBehaviour:
   myConnectorPoint: {fileID: 2058905532}
   snapDistance: 0.15
   detachForce: 100
+--- !u!114 &1898707506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898707496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f02a2c72fd703d43a9cb2c081e3c9ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _connectsScriptList: []
+  _status: 0
+  _backPos: {fileID: 0}
+  _partScriptTarget: {fileID: 0}
+  _conectorTarget: {fileID: 0}
+  _grabble: {fileID: 1898707497}
+  _mass: 1
+  _detachForce: 100
+  _isGrabbed: 0
+  test: 0
 --- !u!1001 &1902039762
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -53941,6 +54003,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 93361505768408915, guid: 733134e6436f70d4ba7a48a3822838b8, type: 3}
+      propertyPath: _kinematicWhileSelected
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1552314136967828293, guid: 733134e6436f70d4ba7a48a3822838b8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.2028
@@ -53987,7 +54053,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2216120486133795327, guid: 733134e6436f70d4ba7a48a3822838b8, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5652609258634944063, guid: 733134e6436f70d4ba7a48a3822838b8, type: 3}
       propertyPath: _backPos

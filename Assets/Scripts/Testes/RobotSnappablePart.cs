@@ -34,7 +34,7 @@ public class RobotSnappablePart : MonoBehaviour
     public float snapDistance = 0.15f;
 
     [Tooltip("Força necessária para quebrar o encaixe ao puxar as peças para lados opostos")]
-    public float detachForce = 1f; // REDUZIDO
+    public float detachForce = 100f; // REDUZIDO
 
     private Rigidbody rb;
     private Grabbable grabbable;
