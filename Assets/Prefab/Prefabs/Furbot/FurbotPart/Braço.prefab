@@ -262,15 +262,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 896f2d2b400d99f4b89200ee182cb15f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.4846
+      value: 3.4849
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 896f2d2b400d99f4b89200ee182cb15f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.7091
+      value: 0.7504
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 896f2d2b400d99f4b89200ee182cb15f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.55756
+      value: 1.2012601
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 896f2d2b400d99f4b89200ee182cb15f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -333,6 +333,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 896f2d2b400d99f4b89200ee182cb15f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4103103848554707746}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 896f2d2b400d99f4b89200ee182cb15f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3198094259727379500}
   m_SourcePrefab: {fileID: 100100000, guid: 896f2d2b400d99f4b89200ee182cb15f, type: 3}
 --- !u!1 &98018286695191837 stripped
 GameObject:
@@ -347,7 +350,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 98018286695191837}
   serializedVersion: 4
-  m_Mass: 2
+  m_Mass: 0.6
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -378,12 +381,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f02a2c72fd703d43a9cb2c081e3c9ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _connectsScriptList: []
   _status: 0
   _backPos: {fileID: 0}
   _partScriptTarget: {fileID: 0}
   _conectorTarget: {fileID: 0}
   _grabble: {fileID: 0}
-  _mass: 2
+  _mass: 0.6
+  _detachForce: 100
+  _isGrabbed: 0
   test: 0
 --- !u!64 &8216390596231061808
 MeshCollider:
@@ -422,14 +428,31 @@ MonoBehaviour:
   _transferOnSecondSelection: 0
   _addNewPointsToFront: 0
   _forwardElement: {fileID: 0}
-  _oneGrabTransformer: {fileID: 0}
-  _twoGrabTransformer: {fileID: 0}
+  _oneGrabTransformer: {fileID: 3198094259727379500}
+  _twoGrabTransformer: {fileID: 3198094259727379500}
   _targetTransform: {fileID: 0}
   _maxGrabPoints: -1
   _rigidbody: {fileID: 5650164665375188810}
-  _kinematicWhileSelected: 1
+  _kinematicWhileSelected: 0
   _throwWhenUnselected: 1
   _forceKinematicDisabled: 0
+--- !u!114 &3198094259727379500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 98018286695191837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdc13bcd5aadead4fbef9b56f822118e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _velocityFactor: 60
+  _angularVelocityFactor: 0.6
+  _maxLinearDelta: 100
+  _maxAngularDelta: 200
+  _rigidbody: {fileID: 5650164665375188810}
 --- !u!4 &727309007555252135 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 896f2d2b400d99f4b89200ee182cb15f, type: 3}

@@ -50,7 +50,6 @@ public class PartsManager : MonoBehaviour
     private void DefineRoot(PartsScript root, PartsScript connected)
     {
         root.SetStatus(PieceStatus.root);
-        //root.GetRigid().mass += connected.GetMass();
         connected.transform.SetParent(root.transform);
         connected.SetStatus(PieceStatus.conected);
     }

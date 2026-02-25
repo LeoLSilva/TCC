@@ -136,19 +136,14 @@ public class PartsScript : MonoBehaviour
     {
         if (_status == PieceStatus.conecting || _status == PieceStatus.conected) return;
         if (_conectorTarget == null || _connectorTransform == null) return;
-
         SetStatus(PieceStatus.conecting);
-
-        // Mantém a sua excelente lógica de cálculo de posição
         ConnectPosition cp = _partsManager.CalculatingPosition(transform, _conectorTarget, _connectorTransform);
         if (cp == null) return;
-
         StartCoroutine(AnimationMoveCoroutine(cp));
     }
 
     private IEnumerator AnimationMoveCoroutine(ConnectPosition cp)
     {
-        // 1. Durante a animação, remove a gravidade e física para ela flutuar suavemente
         ChangeRigid(true);
 
         Vector3 startPos = transform.position;

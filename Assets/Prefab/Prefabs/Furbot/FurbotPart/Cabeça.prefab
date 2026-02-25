@@ -482,15 +482,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 577075544bb151a4b8be4cc23041a01d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.2028
+      value: 3.2031
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 577075544bb151a4b8be4cc23041a01d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.709
+      value: 0.7503
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 577075544bb151a4b8be4cc23041a01d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.27024
+      value: 0.91394
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 577075544bb151a4b8be4cc23041a01d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -577,12 +577,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f02a2c72fd703d43a9cb2c081e3c9ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _connectsScriptList: []
   _status: 0
   _backPos: {fileID: 0}
   _partScriptTarget: {fileID: 0}
   _conectorTarget: {fileID: 0}
   _grabble: {fileID: 0}
-  _mass: 4
+  _mass: 0.8
+  _detachForce: 100
+  _isGrabbed: 0
   test: 0
 --- !u!54 &8251152869774729365
 Rigidbody:
@@ -592,7 +595,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2519315677569695023}
   serializedVersion: 4
-  m_Mass: 4
+  m_Mass: 0.8
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
