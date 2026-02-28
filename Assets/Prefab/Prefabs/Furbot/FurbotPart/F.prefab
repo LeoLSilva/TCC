@@ -128,27 +128,27 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 24f9321642eb8e7409f84253bb548375, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.008529725
+      value: 0.029778812
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 24f9321642eb8e7409f84253bb548375, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.008529725
+      value: 0.028030163
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 24f9321642eb8e7409f84253bb548375, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.007382288
+      value: 0.025283493
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 24f9321642eb8e7409f84253bb548375, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.135
+      value: 4.5219
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 24f9321642eb8e7409f84253bb548375, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.876
+      value: 1.1344
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 24f9321642eb8e7409f84253bb548375, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.959
+      value: 1.2729
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 24f9321642eb8e7409f84253bb548375, type: 3}
       propertyPath: m_LocalRotation.w
@@ -251,7 +251,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4764629987136540677}
   serializedVersion: 4
-  m_Mass: 0.5
+  m_Mass: 0.1
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}

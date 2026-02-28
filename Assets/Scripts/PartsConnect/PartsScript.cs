@@ -19,7 +19,7 @@ public class PartsScript : MonoBehaviour
     private float _timeAnimate = 0.25f;
 
     [Header("Componente Rigid")]
-    [SerializeField] private float _mass = 1f;
+    [SerializeField] private float _mass;
     private Rigidbody _rigid;
 
     [Header("Nova Mecânica de Física (Configurable Joint)")]
@@ -46,7 +46,8 @@ public class PartsScript : MonoBehaviour
         _rigid = GetComponent<Rigidbody>();
         _partsManager = FindAnyObjectByType<PartsManager>();
         _grabble = this.GetComponent<Grabbable>();
-        _myColliders = GetComponentsInChildren<Collider>(); // Guarda colisores para ignorar durante o encaixe
+        _myColliders = GetComponentsInChildren<Collider>();
+        _mass = _rigid.mass;
 
         AddConectionsOnList();
 
