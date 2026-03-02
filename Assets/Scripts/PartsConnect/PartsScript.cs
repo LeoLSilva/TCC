@@ -2,17 +2,18 @@ using Oculus.Interaction;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PartsScript : MonoBehaviour
 {
-    [SerializeField] private List<ConnectScript> _connectsScriptList = new List<ConnectScript>();
+    [SerializeField] private List<SnapIndicator> _connectsScriptList = new List<SnapIndicator>();
     [SerializeField] private PieceStatus _status;
     [SerializeField] private Transform _backPos;
 
     // Referências do encaixe
     [SerializeField] private PartsScript _partScriptTarget;
     [SerializeField] private Transform _conectorTarget;
-    private Transform _connectorTransform;
+    [SerializeField] private Transform _connectorTransform;
 
     [SerializeField] private Grabbable _grabble;
     private PartsManager _partsManager;
@@ -29,6 +30,8 @@ public class PartsScript : MonoBehaviour
     private Collider[] _myColliders;
 
     public bool _isGrabbed = false; // Deteta se a mão está a segurar esta peça
+
+    public UnityEvent<bool> onChangeGrabbleStatus;
 
     [Header("Testes no inspetor")]
     public bool test = false;
@@ -63,7 +66,7 @@ public class PartsScript : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.S) && test && _conectorTarget != null && _conectorTarget.GetComponent<ConnectScript>().GetConnectType() == ConnectType.famale)
+        if (Input.GetKeyDown(KeyCode.S) && test && _conectorTarget != null)
         {
             ConnectAnimation();
         }
@@ -103,7 +106,7 @@ public class PartsScript : MonoBehaviour
             _isGrabbed = false; // Soltei a peça
 
             // Tenta encaixar se houver um alvo detetado pelos ConnectScripts
-            if (_conectorTarget != null && _conectorTarget.GetComponent<ConnectScript>().GetConnectType() != ConnectType.male)
+            if (_conectorTarget != null && _conectorTarget.GetComponent<SnapIndicator>().GetConnectType() != ConnectType.male)
             {
                 ConnectAnimation();
             }
@@ -114,7 +117,7 @@ public class PartsScript : MonoBehaviour
     {
         foreach (Transform child in transform)
         {
-            ConnectScript connect = child.GetComponent<ConnectScript>();
+            SnapIndicator connect = child.GetComponent<SnapIndicator>();
             if (connect != null)
             {
                 _connectsScriptList.Add(connect);
@@ -122,35 +125,36 @@ public class PartsScript : MonoBehaviour
         }
     }
 
-    public void SetTarget(Transform target, ConnectScript con)
+    public void SetTarget(Transform target, SnapIndicator con, bool male)
     {
         _conectorTarget = target;
         _connectorTransform = null;
         if (target != null && con != null)
         {
-            _partScriptTarget = _conectorTarget.parent.GetComponent<PartsScript>();
+            if (male)
+                _partScriptTarget = _conectorTarget.parent.GetComponent<PartsScript>();
+            else
+                _partScriptTarget = _conectorTarget.GetComponent<PartsScript>();
             _connectorTransform = _connectsScriptList[_connectsScriptList.IndexOf(con)].transform;
         }
     }
 
     public void ConnectAnimation()
     {
-        if (_status == PieceStatus.conecting || _status == PieceStatus.conected) return;
+        //if (_status == PieceStatus.conecting || _status == PieceStatus.conected) return;
         if (_conectorTarget == null || _connectorTransform == null) return;
-        SetStatus(PieceStatus.conecting);
-        ConnectPosition cp = _partsManager.CalculatingPosition(transform, _conectorTarget, _connectorTransform);
-        if (cp == null) return;
-        StartCoroutine(AnimationMoveCoroutine(cp));
+        //if (cp == null) return;
+        StartCoroutine(AnimationMoveCoroutine2());
     }
 
-    private IEnumerator AnimationMoveCoroutine(ConnectPosition cp)
+    private IEnumerator AnimationMoveCoroutine2()
     {
         ChangeRigid(true);
 
         Vector3 startPos = transform.position;
         Quaternion startRot = transform.rotation;
-        Vector3 targetPos = cp.GetPos();
-        Quaternion targetRot = cp.GetRot();
+        Vector3 targetPos = _conectorTarget.transform.position;
+        Quaternion targetRot = _conectorTarget.transform.rotation;
 
         float t = 0f;
         while (t < 1f)
@@ -162,19 +166,8 @@ public class PartsScript : MonoBehaviour
         }
 
         transform.SetPositionAndRotation(targetPos, targetRot);
-
-        // ====================================================================
-        // SUBSTITUIÇÃO DA LÓGICA ANTIGA (Ponto Chave!)
-        // ====================================================================
-        // Removido: _partsManager.SetConection(this, _partScriptTarget);
-        // Não usamos mais parenting ou managers para "travar" a peça.
-        // A partir de agora, o ConfigurableJoint é a ÚNICA coisa que as une.
         CreatePhysicsJoint();
     }
-
-    // ========================================================================
-    // LÓGICA NOVA: JOINT FÍSICO (Como nos "Dois Cubos")
-    // ========================================================================
     private void CreatePhysicsJoint()
     {
         if (_partScriptTarget != null)
@@ -182,22 +175,17 @@ public class PartsScript : MonoBehaviour
             Rigidbody targetRb = _partScriptTarget.GetRigid();
             if (targetRb != null)
             {
-                // Ignora colisão entre as duas peças para não repelirem
                 Collider[] targetColliders = _partScriptTarget.GetComponentsInChildren<Collider>();
                 IgnoreCollisionsWith(targetColliders, true);
 
-                // Cria a Solda Física
                 _currentJoint = gameObject.AddComponent<ConfigurableJoint>();
                 _currentJoint.connectedBody = targetRb;
 
-                // Forças e estabilidade
-                _currentJoint.breakForce = Mathf.Infinity; // Começa infinito (proteção de impacto)
-                _currentJoint.breakTorque = Mathf.Infinity; // Torque infinito para não soltar ao girar
+                _currentJoint.breakForce = Mathf.Infinity;
+                _currentJoint.breakTorque = Mathf.Infinity;
 
                 _currentJoint.enablePreprocessing = false;
                 _currentJoint.enableCollision = false;
-
-                // Trava todos os movimentos da junta, imitando um Lego
                 _currentJoint.xMotion = ConfigurableJointMotion.Locked;
                 _currentJoint.yMotion = ConfigurableJointMotion.Locked;
                 _currentJoint.zMotion = ConfigurableJointMotion.Locked;
@@ -207,11 +195,9 @@ public class PartsScript : MonoBehaviour
             }
         }
 
-        // Finaliza o encaixe, reativando a física para o corpo agir como um só
         SetStatus(PieceStatus.conected);
     }
 
-    // Chamado automaticamente pela Unity quando a força _detachForce é superada pelas mãos do jogador
     private void OnJointBreak(float breakForce)
     {
         Debug.Log($"A peça desencaixou! Força aplicada: {breakForce}");
@@ -228,7 +214,6 @@ public class PartsScript : MonoBehaviour
 
         if (_partScriptTarget != null)
         {
-            // Restaura as colisões quando separadas
             Collider[] targetColliders = _partScriptTarget.GetComponentsInChildren<Collider>();
             IgnoreCollisionsWith(targetColliders, false);
         }
@@ -244,7 +229,7 @@ public class PartsScript : MonoBehaviour
     {
         foreach (Collider myCol in _myColliders)
         {
-            if (myCol == null || myCol.isTrigger) continue; // Ignora BoxColliders dos conectores
+            if (myCol == null || myCol.isTrigger) continue;
             foreach (Collider targetCol in targetColliders)
             {
                 if (targetCol == null || targetCol.isTrigger) continue;
@@ -252,26 +237,22 @@ public class PartsScript : MonoBehaviour
             }
         }
     }
-
-    // ========================================================================
-    // STATUS E FÍSICA
-    // ========================================================================
     public void SetStatus(PieceStatus st)
     {
         _status = st;
         switch (_status)
         {
             case PieceStatus.none:
-                ChangeRigid(false); // Solta, física normal
+                ChangeRigid(false);
                 break;
             case PieceStatus.conecting:
-                ChangeRigid(true); // Kinematic durante a animação para não cair
+                ChangeRigid(true);
                 break;
             case PieceStatus.conected:
-                ChangeRigid(false); // NOVA LÓGICA: Peça conectada usa a física normal para mexer o conjunto todo!
+                ChangeRigid(false);
                 break;
             case PieceStatus.root:
-                ChangeRigid(false); // Raiz livre para ser movida
+                ChangeRigid(false);
                 break;
         }
     }
