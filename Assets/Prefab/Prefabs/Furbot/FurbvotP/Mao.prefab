@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 268482513811031892}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.054069996, y: 0.02091, z: 0.022336}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -70,8 +70,8 @@ MonoBehaviour:
   _maxInteractors: -1
   _maxSelectingInteractors: -1
   _data: {fileID: 0}
-  _pointableElement: {fileID: 0}
-  _rigidbody: {fileID: 0}
+  _pointableElement: {fileID: 4378095800738706399}
+  _rigidbody: {fileID: 6370562335598280441}
   _physicsGrabbable: {fileID: 0}
   _resetGrabOnGrabsUpdated: 1
   _scoringModifier:
@@ -111,8 +111,8 @@ MonoBehaviour:
   _maxInteractors: -1
   _maxSelectingInteractors: -1
   _data: {fileID: 0}
-  _pointableElement: {fileID: 0}
-  _rigidbody: {fileID: 0}
+  _pointableElement: {fileID: 4378095800738706399}
+  _rigidbody: {fileID: 6370562335598280441}
   _grabSource: {fileID: 0}
   _useClosestPointAsGrabSource: 0
   _releaseDistance: 0
@@ -210,27 +210,27 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 1a9e64961f8b4b149b9a722f1425b922, type: 3}
       propertyPath: m_LocalScale.x
-      value: 30.000004
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1a9e64961f8b4b149b9a722f1425b922, type: 3}
       propertyPath: m_LocalScale.y
-      value: 30.000004
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1a9e64961f8b4b149b9a722f1425b922, type: 3}
       propertyPath: m_LocalScale.z
-      value: 30.000004
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1a9e64961f8b4b149b9a722f1425b922, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 2.6706
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1a9e64961f8b4b149b9a722f1425b922, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.958
+      value: 0.974
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1a9e64961f8b4b149b9a722f1425b922, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.3172
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1a9e64961f8b4b149b9a722f1425b922, type: 3}
       propertyPath: m_LocalRotation.w
@@ -342,13 +342,15 @@ MonoBehaviour:
   _connectsScriptList: []
   _status: 0
   _backPos: {fileID: 0}
+  _snapTarget: {fileID: 0}
+  _myActiveSnap: {fileID: 0}
   _partScriptTarget: {fileID: 0}
-  _conectorTarget: {fileID: 0}
-  _connectorTransform: {fileID: 0}
   _grabble: {fileID: 0}
   _mass: 0.6
-  _detachForce: 100
   _isGrabbed: 0
+  onChangeGrabbleStatus:
+    m_PersistentCalls:
+      m_Calls: []
   test: 0
 --- !u!114 &1302816591605835615
 MonoBehaviour:
@@ -375,7 +377,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5726673057475164278}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 0.1
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -413,6 +415,6 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -7445209749466077704, guid: 1a9e64961f8b4b149b9a722f1425b922, type: 3}

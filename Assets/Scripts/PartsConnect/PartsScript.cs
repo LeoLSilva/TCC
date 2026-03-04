@@ -10,10 +10,10 @@ public class PartsScript : MonoBehaviour
     [SerializeField] private PieceStatus _status;
     [SerializeField] private Transform _backPos;
 
-    // ReferÍncias do encaixe
+    // Refer√™ncias do encaixe limpas e diretas
+    [SerializeField] private SnapIndicator _snapTarget; // A f√™mea (alvo)
+    [SerializeField] private SnapIndicator _myActiveSnap; // O macho (nossa pe√ßa)
     [SerializeField] private PartsScript _partScriptTarget;
-    [SerializeField] private Transform _conectorTarget;
-    [SerializeField] private Transform _connectorTransform;
 
     [SerializeField] private Grabbable _grabble;
     private PartsManager _partsManager;
@@ -23,19 +23,20 @@ public class PartsScript : MonoBehaviour
     [SerializeField] private float _mass;
     private Rigidbody _rigid;
 
-    [Header("Nova Mec‚nica de FÌsica (Configurable Joint)")]
-    [Tooltip("ForÁa que a m„o precisa fazer para desencaixar")]
-    [SerializeField] private float _detachForce = 100f;
+    [Header("Nova Mec√¢nica de F√≠sica (Configurable Joint)")]
+    [Tooltip("For√ßa que a m√£o precisa fazer para desencaixar")]
+    private float _detachForce = 10f; // Aumentado para VR
     private ConfigurableJoint _currentJoint;
-    private Collider[] _myColliders;
 
-    public bool _isGrabbed = false; // Deteta se a m„o est· a segurar esta peÁa
-
+    public bool _isGrabbed = false;
     public UnityEvent<bool> onChangeGrabbleStatus;
 
     [Header("Testes no inspetor")]
     public bool test = false;
     private PieceStatus _lastStatus;
+
+    private float _originalDrag;
+    private float _originalAngularDrag;
 
     private void OnValidate()
     {
@@ -49,8 +50,18 @@ public class PartsScript : MonoBehaviour
         _rigid = GetComponent<Rigidbody>();
         _partsManager = FindAnyObjectByType<PartsManager>();
         _grabble = this.GetComponent<Grabbable>();
-        _myColliders = GetComponentsInChildren<Collider>();
         _mass = _rigid.mass;
+
+        if (_rigid != null)
+        {
+            _originalDrag = _rigid.linearDamping;
+            _originalAngularDrag = _rigid.angularDamping;
+
+            // Configura√ß√µes extremas para impedir que o rob√¥ trema como gelatina
+            _rigid.solverIterations = 20;
+            _rigid.solverVelocityIterations = 20;
+            _rigid.maxAngularVelocity = 20f;
+        }
 
         AddConectionsOnList();
 
@@ -66,27 +77,18 @@ public class PartsScript : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.S) && test && _conectorTarget != null)
-        {
-            ConnectAnimation();
-        }
         if (Input.GetKeyDown(KeyCode.D) && test)
         {
-            BreakPhysicalConnection(); // ForÁa a quebra para teste
+            BreakPhysicalConnection();
         }
 
-        // ====================================================================
-        // NOVA L”GICA: ProteÁ„o Inteligente contra Quebra (Mesa/Ch„o e InÈrcia)
-        // ====================================================================
+        // Prote√ß√£o contra quebra acidental (S√≥ quebra se puxar as duas partes ou a base)
         if (_currentJoint != null && _partScriptTarget != null)
         {
             bool isTargetGrabbed = _partScriptTarget._isGrabbed;
             bool isTargetRoot = _partScriptTarget.GetStatus() == PieceStatus.root;
             bool amIRoot = this.GetStatus() == PieceStatus.root;
 
-            // A junta S” se torna quebr·vel se:
-            // 1. O jogador estiver a segurar as DUAS peÁas ao mesmo tempo (puxar uma de cada lado).
-            // 2. OU o jogador estiver a segurar uma peÁa e a outra for o 'root' (base fixa).
             bool canBreak = (_isGrabbed && isTargetGrabbed) ||
                             (_isGrabbed && isTargetRoot) ||
                             (isTargetGrabbed && amIRoot);
@@ -99,16 +101,29 @@ public class PartsScript : MonoBehaviour
     {
         if (obj.Type == PointerEventType.Select)
         {
-            _isGrabbed = true; // Estou a segurar a peÁa
+            _isGrabbed = true;
+            onChangeGrabbleStatus?.Invoke(true);
         }
         else if (obj.Type == PointerEventType.Unselect)
         {
-            _isGrabbed = false; // Soltei a peÁa
+            _isGrabbed = false;
+            onChangeGrabbleStatus?.Invoke(false);
 
-            // Tenta encaixar se houver um alvo detetado pelos ConnectScripts
-            if (_conectorTarget != null && _conectorTarget.GetComponent<SnapIndicator>().GetConnectType() != ConnectType.male)
+            // SISTEMA DE TRAVA (LOCK): Garante que ningu√©m roube a f√™mea no mesmo milissegundo
+            if (_snapTarget != null && _myActiveSnap != null)
             {
-                ConnectAnimation();
+                if (!_snapTarget.IsConnected && !_myActiveSnap.IsConnected)
+                {
+                    // CORRE√á√ÉO: Desliga o holograma ANTES de travar, sen√£o o script ignora o comando!
+                    if (_snapTarget.GetConnectType() == ConnectType.famale)
+                        _snapTarget.ChangeMesh(null, false);
+
+                    // Trancamos os dois conectores logo em seguida.
+                    _snapTarget.IsConnected = true;
+                    _myActiveSnap.IsConnected = true;
+
+                    ConnectAnimation();
+                }
             }
         }
     }
@@ -125,25 +140,28 @@ public class PartsScript : MonoBehaviour
         }
     }
 
-    public void SetTarget(Transform target, SnapIndicator con, bool male)
+    // NOVA ASSINATURA: Chamada pelo SnapIndicator Macho
+    public void SetTarget(SnapIndicator targetSnap, SnapIndicator mySnap)
     {
-        _conectorTarget = target;
-        _connectorTransform = null;
-        if (target != null && con != null)
+        _snapTarget = targetSnap;
+        _myActiveSnap = mySnap;
+        if (targetSnap != null)
         {
-            if (male)
-                _partScriptTarget = _conectorTarget.parent.GetComponent<PartsScript>();
-            else
-                _partScriptTarget = _conectorTarget.GetComponent<PartsScript>();
-            _connectorTransform = _connectsScriptList[_connectsScriptList.IndexOf(con)].transform;
+            _partScriptTarget = targetSnap.ParentPart;
         }
+    }
+
+    // NOVA FUN√á√ÉO: Limpa o alvo caso o jogador afaste a m√£o antes de soltar
+    public void ClearTarget()
+    {
+        _snapTarget = null;
+        _myActiveSnap = null;
+        _partScriptTarget = null;
     }
 
     public void ConnectAnimation()
     {
-        //if (_status == PieceStatus.conecting || _status == PieceStatus.conected) return;
-        if (_conectorTarget == null || _connectorTransform == null) return;
-        //if (cp == null) return;
+        if (_snapTarget == null) return;
         StartCoroutine(AnimationMoveCoroutine2());
     }
 
@@ -153,8 +171,10 @@ public class PartsScript : MonoBehaviour
 
         Vector3 startPos = transform.position;
         Quaternion startRot = transform.rotation;
-        Vector3 targetPos = _conectorTarget.transform.position;
-        Quaternion targetRot = _conectorTarget.transform.rotation;
+
+        // Pega a posi√ß√£o e rota√ß√£o baseadas diretamente no Snap f√™mea
+        Vector3 targetPos = _snapTarget.transform.position;
+        Quaternion targetRot = _snapTarget.transform.rotation;
 
         float t = 0f;
         while (t < 1f)
@@ -168,15 +188,20 @@ public class PartsScript : MonoBehaviour
         transform.SetPositionAndRotation(targetPos, targetRot);
         CreatePhysicsJoint();
     }
+
     private void CreatePhysicsJoint()
     {
-        if (_partScriptTarget != null)
+        if (_partScriptTarget != null && _currentJoint == null)
         {
             Rigidbody targetRb = _partScriptTarget.GetRigid();
             if (targetRb != null)
             {
-                Collider[] targetColliders = _partScriptTarget.GetComponentsInChildren<Collider>();
-                IgnoreCollisionsWith(targetColliders, true);
+                // Organiza a hierarquia para a Unity entender que √© um rob√¥ s√≥
+                transform.SetParent(_partScriptTarget.transform, true);
+
+                // Ignora colis√£o com o rob√¥ INTEIRO
+                Collider[] allRobotColliders = transform.root.GetComponentsInChildren<Collider>();
+                UpdateCollisionMatrix(allRobotColliders, true);
 
                 _currentJoint = gameObject.AddComponent<ConfigurableJoint>();
                 _currentJoint.connectedBody = targetRb;
@@ -184,14 +209,30 @@ public class PartsScript : MonoBehaviour
                 _currentJoint.breakForce = Mathf.Infinity;
                 _currentJoint.breakTorque = Mathf.Infinity;
 
-                _currentJoint.enablePreprocessing = false;
+                _currentJoint.enablePreprocessing = true;
                 _currentJoint.enableCollision = false;
+
+                _currentJoint.massScale = 1f;
+                _currentJoint.connectedMassScale = 1f;
+
+                // For√ßa o snap sem efeito mola
+                _currentJoint.projectionMode = JointProjectionMode.PositionAndRotation;
+                _currentJoint.projectionDistance = 0.001f;
+                _currentJoint.projectionAngle = 0.1f;
+
                 _currentJoint.xMotion = ConfigurableJointMotion.Locked;
                 _currentJoint.yMotion = ConfigurableJointMotion.Locked;
                 _currentJoint.zMotion = ConfigurableJointMotion.Locked;
                 _currentJoint.angularXMotion = ConfigurableJointMotion.Locked;
                 _currentJoint.angularYMotion = ConfigurableJointMotion.Locked;
                 _currentJoint.angularZMotion = ConfigurableJointMotion.Locked;
+
+                // Aumenta o atrito para n√£o tremer
+                if (_rigid != null)
+                {
+                    _rigid.linearDamping = 1f;
+                    _rigid.angularDamping = 3f;
+                }
             }
         }
 
@@ -200,59 +241,76 @@ public class PartsScript : MonoBehaviour
 
     private void OnJointBreak(float breakForce)
     {
-        Debug.Log($"A peÁa desencaixou! ForÁa aplicada: {breakForce}");
+        Debug.Log($"A pe√ßa desencaixou! For√ßa aplicada: {breakForce}");
         BreakPhysicalConnection();
     }
 
     private void BreakPhysicalConnection()
     {
+        Transform oldRoot = null;
+        if (_partScriptTarget != null)
+        {
+            oldRoot = _partScriptTarget.transform.root;
+        }
+
         if (_currentJoint != null)
         {
             Destroy(_currentJoint);
             _currentJoint = null;
         }
 
-        if (_partScriptTarget != null)
+        // Volta a ser uma pe√ßa solta no mundo
+        transform.SetParent(null, true);
+
+        // Devolve colis√£o normal
+        if (oldRoot != null)
         {
-            Collider[] targetColliders = _partScriptTarget.GetComponentsInChildren<Collider>();
-            IgnoreCollisionsWith(targetColliders, false);
+            Collider[] oldRootColliders = oldRoot.GetComponentsInChildren<Collider>();
+            UpdateCollisionMatrix(oldRootColliders, false);
         }
 
-        _partScriptTarget = null;
-        _conectorTarget = null;
-        _connectorTransform = null;
+        // Restaura a f√≠sica normal
+        if (_rigid != null)
+        {
+            _rigid.linearDamping = _originalDrag;
+            _rigid.angularDamping = _originalAngularDrag;
+        }
 
+        // LIBERA OS CONECTORES PARA SEREM USADOS NOVAMENTE
+        if (_snapTarget != null) _snapTarget.IsConnected = false;
+        if (_myActiveSnap != null) _myActiveSnap.IsConnected = false;
+
+        ClearTarget();
         SetStatus(PieceStatus.none);
     }
 
-    private void IgnoreCollisionsWith(Collider[] targetColliders, bool ignore)
+    private void UpdateCollisionMatrix(Collider[] targetColliders, bool ignore)
     {
-        foreach (Collider myCol in _myColliders)
+        Collider[] myCurrentColliders = GetComponentsInChildren<Collider>();
+
+        foreach (Collider myCol in myCurrentColliders)
         {
             if (myCol == null || myCol.isTrigger) continue;
             foreach (Collider targetCol in targetColliders)
             {
-                if (targetCol == null || targetCol.isTrigger) continue;
+                if (targetCol == null || targetCol.isTrigger || myCol == targetCol) continue;
                 Physics.IgnoreCollision(myCol, targetCol, ignore);
             }
         }
     }
+
     public void SetStatus(PieceStatus st)
     {
         _status = st;
         switch (_status)
         {
             case PieceStatus.none:
+            case PieceStatus.conected:
+            case PieceStatus.root:
                 ChangeRigid(false);
                 break;
             case PieceStatus.conecting:
                 ChangeRigid(true);
-                break;
-            case PieceStatus.conected:
-                ChangeRigid(false);
-                break;
-            case PieceStatus.root:
-                ChangeRigid(false);
                 break;
         }
     }
@@ -266,11 +324,24 @@ public class PartsScript : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay(Collider col)
+    private void OnTriggerEnter(Collider col)
     {
+        // Reseta totalmente a in√©rcia se cair no ch√£o
         if (col.gameObject.CompareTag("floor"))
         {
-            this.transform.position = _backPos.position;
+            if (_rigid != null)
+            {
+                _rigid.isKinematic = true;
+                this.transform.position = _backPos.position;
+                this.transform.rotation = _backPos.rotation;
+                _rigid.linearVelocity = Vector3.zero;
+                _rigid.angularVelocity = Vector3.zero;
+                _rigid.isKinematic = false;
+            }
+            else
+            {
+                this.transform.position = _backPos.position;
+            }
         }
     }
 
@@ -287,6 +358,8 @@ public enum ConnectType
     male,
     famale
 }
+
+
 
 public enum PieceStatus
 {
