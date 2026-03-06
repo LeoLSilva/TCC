@@ -128,27 +128,27 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 6eca34954c608734fa48ab45d9153f23, type: 3}
       propertyPath: m_LocalScale.x
-      value: 30
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6eca34954c608734fa48ab45d9153f23, type: 3}
       propertyPath: m_LocalScale.y
-      value: 30
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6eca34954c608734fa48ab45d9153f23, type: 3}
       propertyPath: m_LocalScale.z
-      value: 30
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6eca34954c608734fa48ab45d9153f23, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.333
+      value: 3.247
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6eca34954c608734fa48ab45d9153f23, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.278
+      value: 0.955
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6eca34954c608734fa48ab45d9153f23, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.8966
+      value: 0.525
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6eca34954c608734fa48ab45d9153f23, type: 3}
       propertyPath: m_LocalRotation.w
@@ -245,13 +245,15 @@ MonoBehaviour:
   _connectsScriptList: []
   _status: 0
   _backPos: {fileID: 0}
+  _snapTarget: {fileID: 0}
+  _myActiveSnap: {fileID: 0}
   _partScriptTarget: {fileID: 0}
-  _conectorTarget: {fileID: 0}
-  _connectorTransform: {fileID: 0}
   _grabble: {fileID: 0}
-  _mass: 0.6
-  _detachForce: 100
+  _mass: 0.45
   _isGrabbed: 0
+  onChangeGrabbleStatus:
+    m_PersistentCalls:
+      m_Calls: []
   test: 0
 --- !u!114 &5235372271456081287
 MonoBehaviour:
@@ -301,7 +303,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3022905555630070273}
   serializedVersion: 4
-  m_Mass: 0.3
+  m_Mass: 0.45
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}

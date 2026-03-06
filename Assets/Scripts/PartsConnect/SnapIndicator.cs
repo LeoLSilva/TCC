@@ -7,16 +7,16 @@ public class SnapIndicator : MonoBehaviour
     [SerializeField] private ConnectType _type;
 
     // Propriedades Públicas para comunicação clara entre as peças
-    public PartsScript ParentPart { get; private set; }
-    public bool IsConnected { get; set; } = false; // Trava a peça se ela já estiver em uso
-    public SnapIndicator CurrentHover { get; private set; } // Sabe em quem está encostando agora
+    private PartsScript _parentPart { get; set; }
+    private bool _isConnected = false;
+    private SnapIndicator _currentHover { get; set; }
 
     private void Start()
     {
         _indicator = GetComponent<MeshRenderer>();
         if (_indicator != null) _indicator.enabled = false;
 
-        ParentPart = GetComponentInParent<PartsScript>();
+        _parentPart = GetComponentInParent<PartsScript>();
 
         // Lógica do Relay para evitar o Bug do Meta SDK
         if (_type == ConnectType.male)
@@ -42,7 +42,7 @@ public class SnapIndicator : MonoBehaviour
     public void HandleTriggerEnter(Collider other)
     {
         // Se já estou conectado ou bati em algo que não é peça, ignora.
-        if (IsConnected || other.CompareTag("obj") == false) return;
+        if (_isConnected || other.CompareTag("obj") == false) return;
 
         SnapIndicator otherSnap = other.GetComponent<SnapIndicator>();
         if (otherSnap == null)
@@ -52,17 +52,17 @@ public class SnapIndicator : MonoBehaviour
         }
 
         // Ignora se não achou o snap, se o alvo já está ocupado, ou se os gêneros são iguais
-        if (otherSnap == null || otherSnap.IsConnected || otherSnap.GetConnectType() == this._type) return;
+        if (otherSnap == null || otherSnap._isConnected || otherSnap.GetConnectType() == this._type) return;
 
-        CurrentHover = otherSnap;
+        _currentHover = otherSnap;
 
         // Se eu sou o MACHO e o jogador ESTÁ me segurando
-        if (_type == ConnectType.male && ParentPart != null && ParentPart._isGrabbed)
+        if (_type == ConnectType.male && _parentPart != null && _parentPart._isGrabbed)
         {
-            ParentPart.SetTarget(otherSnap, this); // Aviso meu script pai quem é o meu alvo
+            _parentPart.SetTarget(otherSnap, this); // Aviso meu script pai quem é o meu alvo
         }
         // Se eu sou a FÊMEA (não importa se estou na mão ou solta)
-        else if (_type == ConnectType.famale)
+        else if (_type == ConnectType.famale && otherSnap._parentPart._isGrabbed)
         {
             ChangeMesh(other.gameObject, true); // Mostro o holograma
         }
@@ -75,7 +75,7 @@ public class SnapIndicator : MonoBehaviour
 
     public void HandleTriggerExit(Collider other)
     {
-        if (CurrentHover == null) return;
+        if (_currentHover == null) return;
 
         SnapIndicator otherSnap = other.GetComponent<SnapIndicator>();
         if (otherSnap == null)
@@ -85,17 +85,17 @@ public class SnapIndicator : MonoBehaviour
         }
 
         // Se quem saiu foi exatamente quem eu estava encostando
-        if (otherSnap == CurrentHover)
+        if (otherSnap == _currentHover)
         {
-            if (_type == ConnectType.male && !IsConnected && ParentPart != null)
+            if (_type == ConnectType.male && !_isConnected && _parentPart != null)
             {
-                ParentPart.ClearTarget(); // Perdi o alvo, limpo o script pai
+                _parentPart.ClearTarget(); // Perdi o alvo, limpo o script pai
             }
-            else if (_type == ConnectType.famale && !IsConnected)
+            else if (_type == ConnectType.famale && !_isConnected)
             {
                 ChangeMesh(null, false); // Apago o holograma
             }
-            CurrentHover = null;
+            _currentHover = null;
         }
     }
 
@@ -107,7 +107,7 @@ public class SnapIndicator : MonoBehaviour
     // Função pública para que o PartsScript possa forçar o desligamento do holograma ao conectar
     public void ChangeMesh(GameObject obj, bool show)
     {
-        if (_indicator == null || IsConnected) return;
+        if (_indicator == null || _isConnected) return;
 
         if (show && obj != null)
         {
@@ -134,4 +134,8 @@ public class SnapIndicator : MonoBehaviour
     }
 
     public ConnectType GetConnectType() { return _type; }
+    public bool GetIsConnect() { return _isConnected; }
+    public void SetIsConnect(bool con) { _isConnected = con; } 
+    public PartsScript GetPartScript() { return _parentPart; }
+    public void SetPartScript(PartsScript part) { _parentPart = part; }
 }

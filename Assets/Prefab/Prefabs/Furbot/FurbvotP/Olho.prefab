@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockId: f8766c17-aaf8-4b55-9431-de8deea83842
-  instanceId: 8607f671-6829-456e-a27a-f036026d02e0
+  instanceId: 3dcfc0f0-c969-4ac9-a0c5-d80fa2702f43
   version: 1
   installationRoutineCheckpoint:
     _installationRoutineId: f8338144-8280-4ff6-9455-ae2bb9c20fe8
@@ -222,15 +222,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 668ebc398231b744ca201c3f22e394fc, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.8516
+      value: 3.1103
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 668ebc398231b744ca201c3f22e394fc, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.954
+      value: 0.9796
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 668ebc398231b744ca201c3f22e394fc, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.4006
+      value: 0.2709
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 668ebc398231b744ca201c3f22e394fc, type: 3}
       propertyPath: m_LocalRotation.w
@@ -268,6 +268,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Olho
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 668ebc398231b744ca201c3f22e394fc, type: 3}
+      propertyPath: m_TagString
+      value: obj
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -292,7 +296,7 @@ PrefabInstance:
       addedObject: {fileID: 6491592110123718942}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 668ebc398231b744ca201c3f22e394fc, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8030974553740940716}
+      addedObject: {fileID: 5228014317750547552}
   m_SourcePrefab: {fileID: 100100000, guid: 668ebc398231b744ca201c3f22e394fc, type: 3}
 --- !u!4 &2523868112313736947 stripped
 Transform:
@@ -346,7 +350,7 @@ MonoBehaviour:
   _myActiveSnap: {fileID: 0}
   _partScriptTarget: {fileID: 0}
   _grabble: {fileID: 0}
-  _mass: 0.6
+  _mass: 0.15
   _isGrabbed: 0
   onChangeGrabbleStatus:
     m_PersistentCalls:
@@ -377,7 +381,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2904052108172264521}
   serializedVersion: 4
-  m_Mass: 0.1
+  m_Mass: 0.15
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -396,8 +400,8 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!64 &8030974553740940716
-MeshCollider:
+--- !u!65 &5228014317750547552
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -414,7 +418,6 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -7448274923851435093, guid: 668ebc398231b744ca201c3f22e394fc, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 0.0058690547, y: 0.003914458, z: 0.0007092174}
+  m_Center: {x: -0.0000776262, y: 0.00014747534, z: -0.000052191535}

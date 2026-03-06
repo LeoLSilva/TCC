@@ -81,7 +81,10 @@ public class PartsScript : MonoBehaviour
         {
             BreakPhysicalConnection();
         }
-
+        if (Input.GetKeyDown(KeyCode.S) && test)
+        {
+            ConnectAnimation();
+        }
         // Proteção contra quebra acidental (Só quebra se puxar as duas partes ou a base)
         if (_currentJoint != null && _partScriptTarget != null)
         {
@@ -112,15 +115,15 @@ public class PartsScript : MonoBehaviour
             // SISTEMA DE TRAVA (LOCK): Garante que ninguém roube a fêmea no mesmo milissegundo
             if (_snapTarget != null && _myActiveSnap != null)
             {
-                if (!_snapTarget.IsConnected && !_myActiveSnap.IsConnected)
+                if (!_snapTarget.GetIsConnect() && !_myActiveSnap.GetIsConnect())
                 {
                     // CORREÇÃO: Desliga o holograma ANTES de travar, senão o script ignora o comando!
                     if (_snapTarget.GetConnectType() == ConnectType.famale)
                         _snapTarget.ChangeMesh(null, false);
 
                     // Trancamos os dois conectores logo em seguida.
-                    _snapTarget.IsConnected = true;
-                    _myActiveSnap.IsConnected = true;
+                    _snapTarget.SetIsConnect(true);
+                    _myActiveSnap.SetIsConnect(true);
 
                     ConnectAnimation();
                 }
@@ -147,7 +150,7 @@ public class PartsScript : MonoBehaviour
         _myActiveSnap = mySnap;
         if (targetSnap != null)
         {
-            _partScriptTarget = targetSnap.ParentPart;
+            _partScriptTarget = targetSnap.GetPartScript();
         }
     }
 
@@ -277,8 +280,8 @@ public class PartsScript : MonoBehaviour
         }
 
         // LIBERA OS CONECTORES PARA SEREM USADOS NOVAMENTE
-        if (_snapTarget != null) _snapTarget.IsConnected = false;
-        if (_myActiveSnap != null) _myActiveSnap.IsConnected = false;
+        if (_snapTarget != null) _snapTarget.SetIsConnect(false);
+        if (_myActiveSnap != null) _myActiveSnap.SetIsConnect(false);
 
         ClearTarget();
         SetStatus(PieceStatus.none);
