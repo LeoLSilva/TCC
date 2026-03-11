@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8688148384293892071}
   - component: {fileID: 3736455600029878774}
   - component: {fileID: 4230487686538785029}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: '[BuildingBlock] HandGrabInstallationRoutine'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 4576688054450631601}
   - component: {fileID: 1611144139625351189}
   - component: {fileID: 8783369512914425549}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: F
   m_TagString: obj
   m_Icon: {fileID: 0}
@@ -338,7 +338,7 @@ GameObject:
   - component: {fileID: 6989477865629821093}
   - component: {fileID: 6535965658327762858}
   - component: {fileID: 8620883667754773061}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SnapindicatorPrefab (2)
   m_TagString: obj
   m_Icon: {fileID: 0}

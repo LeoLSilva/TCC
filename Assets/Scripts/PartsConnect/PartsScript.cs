@@ -21,7 +21,7 @@ public class PartsScript : MonoBehaviour
 
     [Header("Componente Rigid")]
     [SerializeField] private float _mass;
-    private Rigidbody _rigid;
+    public Rigidbody _rigid;
 
     [Header("Nova Mecânica de Física (Configurable Joint)")]
     [Tooltip("Força que a mão precisa fazer para desencaixar")]
@@ -45,9 +45,13 @@ public class PartsScript : MonoBehaviour
         SetStatus(_status);
     }
 
-    private void Start()
+    private void Awake()
     {
         _rigid = GetComponent<Rigidbody>();
+    }
+    private void Start()
+    {
+        
         _partsManager = FindAnyObjectByType<PartsManager>();
         _grabble = this.GetComponent<Grabbable>();
         _mass = _rigid.mass;
@@ -315,10 +319,13 @@ public class PartsScript : MonoBehaviour
             case PieceStatus.conecting:
                 ChangeRigid(true);
                 break;
+            case PieceStatus.printing:
+                ChangeRigid(true);
+                break;
         }
     }
 
-    private void ChangeRigid(bool isKinematic)
+    public void ChangeRigid(bool isKinematic)
     {
         if (_rigid != null)
         {
@@ -369,5 +376,6 @@ public enum PieceStatus
     none,
     conecting,
     conected,
-    root
+    root,
+    printing
 }
