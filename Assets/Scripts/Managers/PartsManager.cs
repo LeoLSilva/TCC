@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
@@ -57,3 +58,10 @@ public class PartsManager : MonoBehaviour
 
 }
 
+[Serializable]
+public struct PartSnapPair
+{
+    public GameObject part;
+    public GameObject target;
+    public int snap;
+}

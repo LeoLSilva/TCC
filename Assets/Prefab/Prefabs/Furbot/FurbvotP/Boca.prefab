@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockId: f8766c17-aaf8-4b55-9431-de8deea83842
-  instanceId: 97d1f51b-3925-427c-b739-f993ec8847f9
+  instanceId: a88a0971-3106-4a15-a026-dde72c336bdc
   version: 1
   installationRoutineCheckpoint:
     _installationRoutineId: f8338144-8280-4ff6-9455-ae2bb9c20fe8
@@ -261,7 +261,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f02a2c72fd703d43a9cb2c081e3c9ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _connectsScriptList: []
+  _connectsScriptList:
+  - {fileID: 224542157678233064}
   _status: 0
   _backPos: {fileID: 0}
   _snapTarget: {fileID: 0}
@@ -269,6 +270,7 @@ MonoBehaviour:
   _partScriptTarget: {fileID: 0}
   _grabble: {fileID: 0}
   _mass: 0.2
+  _rigid: {fileID: 0}
   _isGrabbed: 0
   onChangeGrabbleStatus:
     m_PersistentCalls:
@@ -406,7 +408,7 @@ PrefabInstance:
       objectReference: {fileID: 4006634011385816265, guid: 6eca34954c608734fa48ab45d9153f23, type: 3}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Name
-      value: SnapindicatorPrefab (4)
+      value: SnapindicatorPrefab
       objectReference: {fileID: 0}
     - target: {fileID: 4571409986272682272, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: _type
@@ -417,6 +419,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
+--- !u!114 &224542157678233064 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4571409986272682272, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
+  m_PrefabInstance: {fileID: 4354227462070478024}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dcf077aa7bc40b4b906510692be9b97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &4054953939201416136 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 300410565130321664, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}

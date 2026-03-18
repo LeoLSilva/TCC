@@ -223,7 +223,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f02a2c72fd703d43a9cb2c081e3c9ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _connectsScriptList: []
+  _connectsScriptList:
+  - {fileID: 8620883667754773061}
   _status: 0
   _backPos: {fileID: 0}
   _snapTarget: {fileID: 0}
@@ -231,6 +232,7 @@ MonoBehaviour:
   _partScriptTarget: {fileID: 0}
   _grabble: {fileID: 4576688054450631601}
   _mass: 0.15
+  _rigid: {fileID: 0}
   _isGrabbed: 0
   onChangeGrabbleStatus:
     m_PersistentCalls:

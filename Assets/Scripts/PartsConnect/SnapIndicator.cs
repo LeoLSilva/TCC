@@ -6,7 +6,6 @@ public class SnapIndicator : MonoBehaviour
     [SerializeField] private MeshRenderer _indicator;
     [SerializeField] private ConnectType _type;
 
-    // Propriedades Públicas para comunicação clara entre as peças
     private PartsScript _parentPart { get; set; }
     private bool _isConnected = false;
     private SnapIndicator _currentHover { get; set; }

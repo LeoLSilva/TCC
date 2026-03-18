@@ -1,4 +1,5 @@
 using Oculus.Interaction;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,7 +11,6 @@ public class PartsScript : MonoBehaviour
     [SerializeField] private PieceStatus _status;
     [SerializeField] private Transform _backPos;
 
-    // Referências do encaixe limpas e diretas
     [SerializeField] private SnapIndicator _snapTarget; // A fêmea (alvo)
     [SerializeField] private SnapIndicator _myActiveSnap; // O macho (nossa peça)
     [SerializeField] private PartsScript _partScriptTarget;
@@ -38,6 +38,8 @@ public class PartsScript : MonoBehaviour
     private float _originalDrag;
     private float _originalAngularDrag;
 
+    public event Action<ObjectIdentify> OnSnapped;
+
     private void OnValidate()
     {
         if (_status == _lastStatus) return;
@@ -51,7 +53,7 @@ public class PartsScript : MonoBehaviour
     }
     private void Start()
     {
-        
+
         _partsManager = FindAnyObjectByType<PartsManager>();
         _grabble = this.GetComponent<Grabbable>();
         _mass = _rigid.mass;
@@ -137,6 +139,7 @@ public class PartsScript : MonoBehaviour
 
     private void AddConectionsOnList()
     {
+        if (_connectsScriptList.Count > 0) return;
         foreach (Transform child in transform)
         {
             SnapIndicator connect = child.GetComponent<SnapIndicator>();
@@ -147,7 +150,17 @@ public class PartsScript : MonoBehaviour
         }
     }
 
-    // NOVA ASSINATURA: Chamada pelo SnapIndicator Macho
+    public SnapIndicator GetSnapOnList(int pos)
+    {
+        Debug.Log(pos + " : " + _connectsScriptList.Count + " : " + this.gameObject);
+        return _connectsScriptList[pos];
+    }
+
+    public void AutoConnect(SnapIndicator targetSnap, SnapIndicator mySnap)
+    {
+        SetTarget(targetSnap, mySnap);
+        ConnectAnimation();
+    }
     public void SetTarget(SnapIndicator targetSnap, SnapIndicator mySnap)
     {
         _snapTarget = targetSnap;
@@ -158,7 +171,6 @@ public class PartsScript : MonoBehaviour
         }
     }
 
-    // NOVA FUNÇÃO: Limpa o alvo caso o jogador afaste a mão antes de soltar
     public void ClearTarget()
     {
         _snapTarget = null;
@@ -242,7 +254,6 @@ public class PartsScript : MonoBehaviour
                 }
             }
         }
-
         SetStatus(PieceStatus.conected);
     }
 
@@ -359,6 +370,17 @@ public class PartsScript : MonoBehaviour
     public PieceStatus GetStatus() { return _status; }
     public Rigidbody GetRigid() { return _rigid; }
     public float GetMass() { return _mass; }
+
+
+    public SnapIndicator GetMacho()
+    {
+        foreach (SnapIndicator s in _connectsScriptList)
+        {
+            if (s.GetConnectType() == ConnectType.male)
+                return s;
+        }
+        return null;
+    }
     #endregion
 }
 

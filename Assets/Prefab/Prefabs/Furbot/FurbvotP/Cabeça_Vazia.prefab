@@ -140,7 +140,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f02a2c72fd703d43a9cb2c081e3c9ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _connectsScriptList: []
+  _connectsScriptList:
+  - {fileID: 2406000851020424158}
+  - {fileID: 3176637326609095643}
+  - {fileID: 4023804319625924051}
+  - {fileID: 3813244271450036322}
+  - {fileID: 4403586105493263154}
+  - {fileID: 8274499250476673226}
   _status: 0
   _backPos: {fileID: 0}
   _snapTarget: {fileID: 0}
@@ -148,6 +154,7 @@ MonoBehaviour:
   _partScriptTarget: {fileID: 0}
   _grabble: {fileID: 0}
   _mass: 0.5
+  _rigid: {fileID: 0}
   _isGrabbed: 0
   onChangeGrabbleStatus:
     m_PersistentCalls:
@@ -1068,7 +1075,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockId: f8766c17-aaf8-4b55-9431-de8deea83842
-  instanceId: 6742cf01-d87f-4a1a-a6eb-97d4e8c8ea12
+  instanceId: f327697d-9b22-4256-b054-4112b06c028e
   version: 1
   installationRoutineCheckpoint:
     _installationRoutineId: f8338144-8280-4ff6-9455-ae2bb9c20fe8
