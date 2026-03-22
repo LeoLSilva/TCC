@@ -284,6 +284,9 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1a9e64961f8b4b149b9a722f1425b922, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 2059778617605127213}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1a9e64961f8b4b149b9a722f1425b922, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 4378095800738706399}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1a9e64961f8b4b149b9a722f1425b922, type: 3}
       insertIndex: -1
@@ -296,7 +299,10 @@ PrefabInstance:
       addedObject: {fileID: 6370562335598280441}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1a9e64961f8b4b149b9a722f1425b922, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4518779393049012540}
+      addedObject: {fileID: 5900691251400988730}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1a9e64961f8b4b149b9a722f1425b922, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7812353176194288651}
   m_SourcePrefab: {fileID: 100100000, guid: 1a9e64961f8b4b149b9a722f1425b922, type: 3}
 --- !u!4 &4914247847578903244 stripped
 Transform:
@@ -308,6 +314,19 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1a9e64961f8b4b149b9a722f1425b922, type: 3}
   m_PrefabInstance: {fileID: 4879741576308737319}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2059778617605127213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5726673057475164278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc8729a6dee8ed8419e649f1f236c3d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _detachForce: 10
 --- !u!114 &4378095800738706399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -350,7 +369,6 @@ MonoBehaviour:
   _myActiveSnap: {fileID: 0}
   _partScriptTarget: {fileID: 0}
   _grabble: {fileID: 0}
-  _mass: 0.25
   _isGrabbed: 0
   onChangeGrabbleStatus:
     m_PersistentCalls:
@@ -400,8 +418,21 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!64 &4518779393049012540
-MeshCollider:
+--- !u!114 &5900691251400988730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5726673057475164278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc8729a6dee8ed8419e649f1f236c3d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _detachForce: 10
+--- !u!135 &7812353176194288651
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -418,7 +449,6 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -7445209749466077704, guid: 1a9e64961f8b4b149b9a722f1425b922, type: 3}
+  serializedVersion: 3
+  m_Radius: 0.0032737374
+  m_Center: {x: -5.820766e-10, y: -4.656613e-10, z: 0}

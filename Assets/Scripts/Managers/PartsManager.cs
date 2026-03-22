@@ -1,13 +1,35 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
 public class PartsManager : MonoBehaviour
 {
     [SerializeField] private PartsScript _root;
+    [SerializeField] private PartsScript _grabble;
+    [SerializeField] private AutoReleaseOnForce _auto;
     private List<PartsScript> _partsList = new List<PartsScript>();
+
+    private void OnEnable()
+    {
+        PartsScript.OnPartGrabbed += HandlePartGrabbed;
+    }
+    private void OnDisable()
+    {
+        PartsScript.OnPartGrabbed -= HandlePartGrabbed;
+    }
+    private void HandlePartGrabbed(PartsScript part)
+    {
+        if (part._isGrabbed)
+        {
+            _grabble = part;
+            //_auto.jointToCheck = part.GetComponent<ConfigurableJoint>();
+        }
+        else
+            _grabble = null;
+    }
 
     public void SetConection(PartsScript obj1, PartsScript target)
     {

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8688148384293892071}
   - component: {fileID: 3736455600029878774}
   - component: {fileID: 4230487686538785029}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: '[BuildingBlock] HandGrabInstallationRoutine'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -129,12 +129,14 @@ GameObject:
   - component: {fileID: 5284003389376744127}
   - component: {fileID: 9150002190483309850}
   - component: {fileID: 6422029485224047056}
+  - component: {fileID: 7666839512221663477}
   - component: {fileID: 360992003215806598}
   - component: {fileID: 3124656224507029375}
   - component: {fileID: 4576688054450631601}
   - component: {fileID: 1611144139625351189}
   - component: {fileID: 8783369512914425549}
-  m_Layer: 6
+  - component: {fileID: 3429265770044029462}
+  m_Layer: 0
   m_Name: F
   m_TagString: obj
   m_Icon: {fileID: 0}
@@ -211,6 +213,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &7666839512221663477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4764629987136540677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc8729a6dee8ed8419e649f1f236c3d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _detachForce: 10
 --- !u!114 &360992003215806598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,8 +246,6 @@ MonoBehaviour:
   _myActiveSnap: {fileID: 0}
   _partScriptTarget: {fileID: 0}
   _grabble: {fileID: 4576688054450631601}
-  _mass: 0.15
-  _rigid: {fileID: 0}
   _isGrabbed: 0
   onChangeGrabbleStatus:
     m_PersistentCalls:
@@ -327,6 +340,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -1644355878584749679, guid: e3fc5d8dda2340445b7063cd8de27b33, type: 3}
+--- !u!114 &3429265770044029462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4764629987136540677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc8729a6dee8ed8419e649f1f236c3d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _detachForce: 10
 --- !u!1 &9202255542505340379
 GameObject:
   m_ObjectHideFlags: 0
@@ -340,7 +366,7 @@ GameObject:
   - component: {fileID: 6989477865629821093}
   - component: {fileID: 6535965658327762858}
   - component: {fileID: 8620883667754773061}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: SnapindicatorPrefab (2)
   m_TagString: obj
   m_Icon: {fileID: 0}
