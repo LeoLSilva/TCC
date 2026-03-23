@@ -8,7 +8,8 @@ using static UnityEngine.XR.OpenXR.Features.Interactions.HandInteractionProfile;
 [RequireComponent(typeof(PartConnectLogic))]
 public class PartsScript : MonoBehaviour
 {
-    private List<SnapIndicator> _connectsScriptList = new List<SnapIndicator>();
+    [SerializeField] private List<SnapIndicator> _connectsScriptList = new List<SnapIndicator>();
+    [SerializeField] private string _name;
     [SerializeField] private PieceStatus _status;
     [SerializeField] private Transform _backPos;
     [SerializeField] private SnapIndicator _snapTarget;
@@ -23,21 +24,27 @@ public class PartsScript : MonoBehaviour
     private PartConnectLogic _connectLogic;
     private PieceStatus _lastStatus;
 
-    [Header("TESTES")]
     public bool _isGrabbed = false;
     public UnityEvent<bool> onChangeGrabbleStatus;
     public bool test = false;
     public static event Action<PartsScript> OnPartGrabbed;
 
+    public List<SnapIndicator> ConnectsScriptList => _connectsScriptList;
+
+    // --- SISTEMA DE TRAVA GLOBAL DE FÍSICA ---
+    public static int GlobalConnectingCount = 0;
+    private static HashSet<PartsScript> _allParts = new HashSet<PartsScript>();
+
     private void OnValidate()
     {
         if (_status == _lastStatus) return;
-        _lastStatus = _status;
         SetStatus(_status);
     }
 
     private void Awake()
     {
+        _allParts.Add(this);
+
         _rigid = GetComponent<Rigidbody>();
         _connectLogic = GetComponent<PartConnectLogic>();
 
@@ -45,12 +52,6 @@ public class PartsScript : MonoBehaviour
         {
             _connectLogic = gameObject.AddComponent<PartConnectLogic>();
         }
-    }
-
-    private void Start()
-    {
-        _partsManager = FindAnyObjectByType<PartsManager>();
-        _grabble = GetComponent<Grabbable>();
 
         if (_rigid != null)
         {
@@ -59,6 +60,12 @@ public class PartsScript : MonoBehaviour
         }
 
         AddConnectionsToList();
+    }
+
+    private void Start()
+    {
+        _partsManager = FindAnyObjectByType<PartsManager>();
+        _grabble = GetComponent<Grabbable>();
 
         if (_grabble != null)
         {
@@ -68,6 +75,8 @@ public class PartsScript : MonoBehaviour
 
     private void OnDestroy()
     {
+        _allParts.Remove(this);
+
         if (_grabble != null)
         {
             _grabble.WhenPointerEventRaised -= OnGrabbleEvent;
@@ -83,25 +92,31 @@ public class PartsScript : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.S) && test)
         {
-            ConnectAnimation();
+            StartConnectionProcess();
         }
 
-        if (_partScriptTarget != null)
-        {
-            bool isTargetGrabbed = _partScriptTarget._isGrabbed;
-            bool isTargetRoot = _partScriptTarget.GetStatus() == PieceStatus.root;
-            bool amIRoot = GetStatus() == PieceStatus.root;
+        UpdateBreakForceLogic();
+    }
 
-            bool canBreak = (_isGrabbed && isTargetGrabbed) ||
-                            (_isGrabbed && isTargetRoot) ||
-                            (isTargetGrabbed && amIRoot);
+    private void UpdateBreakForceLogic()
+    {
+        if (_status == PieceStatus.conecting || _partScriptTarget == null) return;
 
-            _connectLogic.UpdateBreakForce(canBreak);
-        }
+        bool isTargetGrabbed = _partScriptTarget._isGrabbed;
+        bool isTargetRoot = _partScriptTarget.GetStatus() == PieceStatus.root;
+        bool amIRoot = GetStatus() == PieceStatus.root;
+
+        bool canBreak = (_isGrabbed && isTargetGrabbed) ||
+                        (_isGrabbed && isTargetRoot) ||
+                        (isTargetGrabbed && amIRoot);
+
+        _connectLogic.UpdateBreakForce(canBreak);
     }
 
     private void OnGrabbleEvent(PointerEvent obj)
     {
+        if (_status == PieceStatus.conecting) return;
+
         if (obj.Type == PointerEventType.Select)
         {
             _isGrabbed = true;
@@ -111,21 +126,7 @@ public class PartsScript : MonoBehaviour
         {
             _isGrabbed = false;
             OnPartGrabbed?.Invoke(this);
-            if (_snapTarget != null && _myActiveSnap != null)
-            {
-                if (!_snapTarget.GetIsConnect() && !_myActiveSnap.GetIsConnect())
-                {
-                    if (_snapTarget.GetConnectType() == ConnectType.famale)
-                    {
-                        _snapTarget.ChangeMesh(null, false);
-                    }
-
-                    _snapTarget.SetIsConnect(true);
-                    _myActiveSnap.SetIsConnect(true);
-
-                    ConnectAnimation();
-                }
-            }
+            ValidateAndStartConnection();
         }
     }
 
@@ -145,36 +146,101 @@ public class PartsScript : MonoBehaviour
 
     public SnapIndicator GetSnapFromList(int pos)
     {
-        Debug.Log(pos + " : " + _connectsScriptList.Count + " : " + gameObject);
         return _connectsScriptList[pos];
     }
 
-    public void AutoConnect(SnapIndicator targetSnap, SnapIndicator mySnap)
+    public SnapIndicator GetMaleConnector()
     {
-        SetTarget(targetSnap, mySnap);
-        ConnectAnimation();
+        foreach (SnapIndicator s in _connectsScriptList)
+        {
+            if (s.GetConnectType() == ConnectType.male)
+            {
+                return s;
+            }
+        }
+        return null;
     }
 
-    public void SetTarget(SnapIndicator targetSnap, SnapIndicator mySnap)
+    public void SetupConnectionData(SnapIndicator targetSnap, SnapIndicator mySnap)
     {
+        if (_status == PieceStatus.conecting) return;
+
         _snapTarget = targetSnap;
         _myActiveSnap = mySnap;
+
         if (targetSnap != null)
         {
             _partScriptTarget = targetSnap.GetPartScript();
+
+            if (_partScriptTarget == null)
+            {
+                _partScriptTarget = targetSnap.GetComponentInParent<PartsScript>();
+                if (_partScriptTarget != null)
+                {
+                    targetSnap.SetPartScript(_partScriptTarget);
+                }
+            }
         }
     }
 
-    public void ClearTarget()
+    public void ClearConnectionData()
     {
+        if (_status == PieceStatus.conecting) return;
+
         _snapTarget = null;
         _myActiveSnap = null;
         _partScriptTarget = null;
     }
 
-    public void ConnectAnimation()
+    public void AutoConnect(SnapIndicator targetSnap, SnapIndicator mySnap)
     {
-        if (_snapTarget == null) return;
+        if (_status == PieceStatus.conecting) return;
+
+        SetupConnectionData(targetSnap, mySnap);
+        StartInstantConnectionProcess();
+    }
+
+    private void StartInstantConnectionProcess()
+    {
+        if (_snapTarget == null || _status == PieceStatus.conecting) return;
+
+        SetStatus(PieceStatus.conecting);
+
+        if (_snapTarget.GetConnectType() == ConnectType.famale)
+        {
+            _snapTarget.ChangeMesh(null, false);
+        }
+
+        _snapTarget.SetIsConnect(true);
+        _myActiveSnap.SetIsConnect(true);
+
+        // Tempo 0f forçará o PartConnectLogic a pular a animação e criar os joints imediatamente.
+        // Dica: Se o PartConnectLogic der erro de "divisão por zero", altere o 0f para 0.001f
+        _connectLogic.StartAnimation(_snapTarget.transform, _partScriptTarget, 0f);
+    }
+
+    private void ValidateAndStartConnection()
+    {
+        if (_snapTarget == null || _myActiveSnap == null) return;
+        if (_snapTarget.GetIsConnect() || _myActiveSnap.GetIsConnect()) return;
+
+        StartConnectionProcess();
+    }
+
+    private void StartConnectionProcess()
+    {
+        if (_snapTarget == null || _status == PieceStatus.conecting) return;
+
+        SetStatus(PieceStatus.conecting);
+
+        if (_snapTarget.GetConnectType() == ConnectType.famale)
+        {
+            _snapTarget.ChangeMesh(null, false);
+        }
+
+        _snapTarget.SetIsConnect(true);
+        _myActiveSnap.SetIsConnect(true);
+
         _connectLogic.StartAnimation(_snapTarget.transform, _partScriptTarget, _timeAnimate);
     }
 
@@ -183,13 +249,59 @@ public class PartsScript : MonoBehaviour
         if (_snapTarget != null) _snapTarget.SetIsConnect(false);
         if (_myActiveSnap != null) _myActiveSnap.SetIsConnect(false);
 
-        ClearTarget();
+        _status = PieceStatus.none;
+        ClearConnectionData();
         SetStatus(PieceStatus.none);
     }
 
     public void SetStatus(PieceStatus st)
     {
+        if (Application.isPlaying)
+        {
+            // Se entrou no status "conecting"
+            if (_lastStatus != PieceStatus.conecting && st == PieceStatus.conecting)
+            {
+                GlobalConnectingCount++;
+                if (GlobalConnectingCount == 1) RefreshAllPhysics();
+            }
+            // Se saiu do status "conecting" (ex: foi para "conected" ou "none")
+            else if (_lastStatus == PieceStatus.conecting && st != PieceStatus.conecting)
+            {
+                GlobalConnectingCount--;
+                if (GlobalConnectingCount <= 0)
+                {
+                    GlobalConnectingCount = 0;
+                    RefreshAllPhysics();
+                }
+            }
+        }
+
         _status = st;
+        _lastStatus = st;
+
+        ApplyPhysicsBasedOnStatus();
+    }
+
+    public static void RefreshAllPhysics()
+    {
+        foreach (var part in _allParts)
+        {
+            if (part != null)
+            {
+                part.ApplyPhysicsBasedOnStatus();
+            }
+        }
+    }
+
+    public void ApplyPhysicsBasedOnStatus()
+    {
+        // Se alguma peça no mundo estiver conectando, congela a física desta peça também!
+        if (GlobalConnectingCount > 0)
+        {
+            ChangeRigid(true);
+            return;
+        }
+
         switch (_status)
         {
             case PieceStatus.none:
@@ -236,18 +348,6 @@ public class PartsScript : MonoBehaviour
     public PieceStatus GetStatus() { return _status; }
     public Rigidbody GetRigid() { return _rigid; }
     public float GetMass() { return _mass; }
-
-    public SnapIndicator GetMaleConnector()
-    {
-        foreach (SnapIndicator s in _connectsScriptList)
-        {
-            if (s.GetConnectType() == ConnectType.male)
-            {
-                return s;
-            }
-        }
-        return null;
-    }
 }
 
 public enum ConnectType

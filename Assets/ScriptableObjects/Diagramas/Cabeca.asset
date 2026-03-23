@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67ba3e1980db9a1489056ec04a965e39, type: 3}
+  m_Name: Cabeca
+  m_EditorClassIdentifier: 
+  rootPart:
+    partPrefab: {fileID: 2279998065231382442, guid: 18d70f4d80836c941836ed6ca37d02a4, type: 3}
+    connections:
+    - conName: ConAntenaUm
+      connectedPart:
+        partPrefab: {fileID: 4764629987136540677, guid: 6d4a8610635885f4d82f8f184bd3fbc4, type: 3}
+        connections: []
+    - conName: ConAntenaDois
+      connectedPart:
+        partPrefab: {fileID: 4764629987136540677, guid: 6d4a8610635885f4d82f8f184bd3fbc4, type: 3}
+        connections: []
+    - conName: ConOlhoUm
+      connectedPart:
+        partPrefab: {fileID: 2904052108172264521, guid: 066ac6f55b4bb164aa3cc73ac214be16, type: 3}
+        connections: []
+    - conName: ConOlhoDois
+      connectedPart:
+        partPrefab: {fileID: 2904052108172264521, guid: 066ac6f55b4bb164aa3cc73ac214be16, type: 3}
+        connections: []
+    - conName: ConBoca
+      connectedPart:
+        partPrefab: {fileID: 827149500101627580, guid: 7bc739a289d736a4493b337ea6983fb2, type: 3}
+        connections: []

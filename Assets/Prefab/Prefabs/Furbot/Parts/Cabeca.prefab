@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 6550154370844262418}
   - component: {fileID: 471590742091795878}
   m_Layer: 0
-  m_Name: "Cabe\xE7a_Vazia"
+  m_Name: Cabeca
   m_TagString: obj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -143,13 +143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f02a2c72fd703d43a9cb2c081e3c9ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _connectsScriptList:
-  - {fileID: 2406000851020424158}
-  - {fileID: 3176637326609095643}
-  - {fileID: 4023804319625924051}
-  - {fileID: 3813244271450036322}
-  - {fileID: 4403586105493263154}
-  - {fileID: 8274499250476673226}
+  _name: Cabeca
   _status: 0
   _backPos: {fileID: 0}
   _snapTarget: {fileID: 0}
@@ -354,7 +348,7 @@ GameObject:
   - component: {fileID: 2544690781394307341}
   - component: {fileID: 3813244271450036322}
   m_Layer: 0
-  m_Name: SnapindicatorPrefab(Olho)
+  m_Name: ConOlhoUm
   m_TagString: obj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -478,7 +472,7 @@ GameObject:
   - component: {fileID: 72705169652069940}
   - component: {fileID: 3176637326609095643}
   m_Layer: 0
-  m_Name: SnapindicatorPrefab(Antena)
+  m_Name: ConAntenaUm
   m_TagString: obj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -726,7 +720,7 @@ GameObject:
   - component: {fileID: 6031382351660577361}
   - component: {fileID: 4023804319625924051}
   m_Layer: 0
-  m_Name: SnapindicatorPrefab(Antena)
+  m_Name: ConAntenaDois
   m_TagString: obj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -850,7 +844,7 @@ GameObject:
   - component: {fileID: 8863987893763393622}
   - component: {fileID: 4403586105493263154}
   m_Layer: 0
-  m_Name: SnapindicatorPrefab(Olho) (1)
+  m_Name: ConOlhoDois
   m_TagString: obj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -974,7 +968,7 @@ GameObject:
   - component: {fileID: 5749944624554840942}
   - component: {fileID: 8274499250476673226}
   m_Layer: 0
-  m_Name: SnapindicatorPrefab(Boca)
+  m_Name: ConBoca
   m_TagString: obj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
