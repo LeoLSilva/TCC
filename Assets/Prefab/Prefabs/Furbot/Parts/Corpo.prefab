@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockId: f8766c17-aaf8-4b55-9431-de8deea83842
-  instanceId: 16970972-3604-4347-8521-d9cda1c7f300
+  instanceId: e254c7b3-4a2a-4b3d-9b44-df5013410ee9
   version: 1
   installationRoutineCheckpoint:
     _installationRoutineId: f8338144-8280-4ff6-9455-ae2bb9c20fe8
@@ -358,7 +358,7 @@ PrefabInstance:
       objectReference: {fileID: -5835959402294703878, guid: 3d0214745226b44499d2d1b6211e0b99, type: 3}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Name
-      value: SnapindicatorPrefab(Bola)
+      value: ConBola
       objectReference: {fileID: 0}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Layer
@@ -754,6 +754,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f02a2c72fd703d43a9cb2c081e3c9ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _connectsScriptList: []
   _name: Corpo
   _status: 0
   _backPos: {fileID: 0}

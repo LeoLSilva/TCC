@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67ba3e1980db9a1489056ec04a965e39, type: 3}
+  m_Name: Corpo
+  m_EditorClassIdentifier: 
+  rootPart:
+    partPrefab: {fileID: 6404463418283132380, guid: b490d2aa5341a8146a8360b9a1d899bb, type: 3}
+    connections:
+    - conName: ConBola
+      connectedPart:
+        partPrefab: {fileID: 8798101802912769788, guid: f93e9d72e6aad804fa3dc161a1e57c49, type: 3}
+        connections: []
