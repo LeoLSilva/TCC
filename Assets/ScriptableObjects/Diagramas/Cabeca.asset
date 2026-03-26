@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cabeca
   m_EditorClassIdentifier: 
   rootPart:
-    partPrefab: {fileID: 2279998065231382442, guid: 18d70f4d80836c941836ed6ca37d02a4, type: 3}
+    partPrefab: {fileID: 2279998065231382442, guid: 49d71ab5e014a5c4885db9a54f687f4e, type: 3}
     connections:
     - conName: ConAntenaUm
       connectedPart:

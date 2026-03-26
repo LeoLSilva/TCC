@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2825177390162069070}
   - component: {fileID: 2798950738128455811}
   - component: {fileID: 7391046458882477618}
-  m_Layer: 0
+  m_Layer: 31
   m_Name: '[BuildingBlock] HandGrabInstallationRoutine (2)'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -228,7 +228,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 31
       objectReference: {fileID: 0}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_IsActive
@@ -362,7 +362,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 31
       objectReference: {fileID: 0}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_IsActive
@@ -526,7 +526,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 31
       objectReference: {fileID: 0}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_IsActive
@@ -620,7 +620,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 689f3e4c682b44a4da56778164b8a2c7, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 31
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 689f3e4c682b44a4da56778164b8a2c7, type: 3}
       propertyPath: m_TagString
@@ -767,6 +767,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   test: 0
+  _printer: 0
 --- !u!54 &5646614789308918329
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1022,7 +1023,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 31
       objectReference: {fileID: 0}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_IsActive

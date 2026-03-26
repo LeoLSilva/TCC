@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using static UnityEngine.XR.OpenXR.Features.Interactions.HandInteractionProfile;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 [RequireComponent(typeof(PartConnectLogic))]
 public class PartsScript : MonoBehaviour
@@ -17,6 +17,7 @@ public class PartsScript : MonoBehaviour
     [SerializeField] private PartsScript _partScriptTarget;
     [SerializeField] private Grabbable _grabble;
 
+    [SerializeField] private bool _isPanel = false;
     private PartsManager _partsManager;
     private float _timeAnimate = 0.25f;
     private float _mass;
@@ -34,7 +35,6 @@ public class PartsScript : MonoBehaviour
     // --- SISTEMA DE TRAVA GLOBAL DE FÍSICA ---
     public static int GlobalConnectingCount = 0;
     private static HashSet<PartsScript> _allParts = new HashSet<PartsScript>();
-
     private void OnValidate()
     {
         if (_status == _lastStatus) return;
@@ -71,6 +71,11 @@ public class PartsScript : MonoBehaviour
         {
             _grabble.WhenPointerEventRaised += OnGrabbleEvent;
         }
+    }
+
+    private void FixedUpdate()
+    {
+        if (!_isPanel && _rigid.isKinematic) { ChangeAllRigid(false); }
     }
 
     private void OnDestroy()
@@ -195,7 +200,6 @@ public class PartsScript : MonoBehaviour
     public void AutoConnect(SnapIndicator targetSnap, SnapIndicator mySnap)
     {
         if (_status == PieceStatus.conecting) return;
-
         SetupConnectionData(targetSnap, mySnap);
         StartInstantConnectionProcess();
     }
@@ -258,13 +262,11 @@ public class PartsScript : MonoBehaviour
     {
         if (Application.isPlaying)
         {
-            // Se entrou no status "conecting"
             if (_lastStatus != PieceStatus.conecting && st == PieceStatus.conecting)
             {
                 GlobalConnectingCount++;
                 if (GlobalConnectingCount == 1) RefreshAllPhysics();
             }
-            // Se saiu do status "conecting" (ex: foi para "conected" ou "none")
             else if (_lastStatus == PieceStatus.conecting && st != PieceStatus.conecting)
             {
                 GlobalConnectingCount--;
@@ -295,25 +297,22 @@ public class PartsScript : MonoBehaviour
 
     public void ApplyPhysicsBasedOnStatus()
     {
-        // Se alguma peça no mundo estiver conectando, congela a física desta peça também!
         if (GlobalConnectingCount > 0)
         {
             ChangeRigid(true);
             return;
         }
 
-        switch (_status)
-        {
-            case PieceStatus.none:
-            case PieceStatus.conected:
-            case PieceStatus.root:
-                ChangeRigid(false);
-                break;
-            case PieceStatus.conecting:
-            case PieceStatus.printing:
-                ChangeRigid(true);
-                break;
-        }
+        //switch (_status)
+        //{
+        //    case PieceStatus.none:
+        //    case PieceStatus.conected:
+        //    case PieceStatus.root:
+        //        ChangeRigid(false);
+        //        break;
+        //    case PieceStatus.conecting:
+        //        break;
+        //}
     }
 
     public void ChangeRigid(bool isKinematic)
@@ -345,9 +344,32 @@ public class PartsScript : MonoBehaviour
         }
     }
 
+    public void ChangeAllRigid(bool v)
+    {
+        PartsScript[] parts = GetComponentsInChildren<PartsScript>();
+        int count = 0;
+        foreach (PartsScript child in parts)
+        {
+            if (child != null)
+            {
+                count++;
+                child.ChangeRigid(v);
+                Debug.Log(child.name);
+            }
+        }
+        Debug.Log(count);
+        Debug.Log(v);
+    }
+
     public PieceStatus GetStatus() { return _status; }
     public Rigidbody GetRigid() { return _rigid; }
     public float GetMass() { return _mass; }
+
+    public void SetPainel(bool isPanel)
+    {
+        _isPanel = isPanel;
+        ChangeAllRigid(isPanel);
+    }
 }
 
 public enum ConnectType
@@ -362,6 +384,5 @@ public enum PieceStatus
     none,
     conecting,
     conected,
-    root,
-    printing
+    root
 }

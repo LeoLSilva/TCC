@@ -5,32 +5,51 @@ using static DiagramSerializable;
 public class DiagramManager : MonoBehaviour
 {
     [SerializeField] private DiagramScriptableObject _diagramScriptable;
+    [SerializeField] private Transform _painelPoint;
+    [SerializeField] private GameObject _painelObject;
+    private PartsScript _partsForPrinterScript;
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(0)) { SpawnDiagram(); }
     }
 
-    private void SpawnDiagram()
+    public PartsScript SetDiagram(DiagramScriptableObject diagramScriptable)
     {
+        _diagramScriptable = diagramScriptable;
+        return SpawnDiagram();
+    }
 
-        if (_diagramScriptable == null || _diagramScriptable.rootPart == null || _diagramScriptable.rootPart.partPrefab == null) { return; }
+    private PartsScript SpawnDiagram()
+    {
+        if (_diagramScriptable == null || _diagramScriptable.rootPart == null || _diagramScriptable.rootPart.partPrefab == null)
+        {
+            return null;
+        }
 
-        SpawnAll(_diagramScriptable.rootPart, transform.position, transform.rotation, null, "");
+        if (_painelObject != null)
+        {
+            Destroy(_painelObject);
+        }
 
+        _partsForPrinterScript = SpawnAll(_diagramScriptable.rootPart, _painelPoint.position, _painelPoint.rotation, null, "");
+        _painelObject = _partsForPrinterScript.gameObject;
 
-
+        return _partsForPrinterScript;
     }
 
     PartsScript SpawnAll(DiagramNode node, Vector3 pos, Quaternion rot, PartsScript parentScript, string conName)
     {
         if (node == null || node.partPrefab == null) return null;
+
         GameObject newPart = Instantiate(node.partPrefab, pos, rot);
         PartsScript newPartScript = newPart.GetComponent<PartsScript>();
+
         if (parentScript != null && !string.IsNullOrEmpty(conName))
         {
             SnapIndicator targetSnap = FindSnapIndicatorByName(parentScript, conName);
             SnapIndicator mySnap = FindMaleConnector(newPartScript);
+
             if (targetSnap != null)
             {
                 newPart.transform.position = targetSnap.transform.position;
@@ -44,7 +63,6 @@ public class DiagramManager : MonoBehaviour
                 if (mySnap == null) Debug.LogWarning($"Falha: A peça '{newPart.name}' não possui nenhum SnapIndicator configurado como 'male'!");
             }
         }
-
         else if (parentScript == null)
         {
             newPartScript.SetStatus(PieceStatus.root);
@@ -106,5 +124,10 @@ public class DiagramManager : MonoBehaviour
             }
         }
         return null;
+    }
+
+    public GameObject GetPainelObject()
+    {
+        return _painelObject;
     }
 }

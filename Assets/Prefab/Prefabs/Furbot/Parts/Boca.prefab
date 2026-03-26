@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8065426532945372262}
   - component: {fileID: 922664242125167245}
   - component: {fileID: 4653964826141139770}
-  m_Layer: 0
+  m_Layer: 31
   m_Name: '[BuildingBlock] HandGrabInstallationRoutine (5)'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -187,6 +187,10 @@ PrefabInstance:
       value: Boca
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5b634f0b8c7c1c54db07e64c2285c75f, type: 3}
+      propertyPath: m_Layer
+      value: 31
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5b634f0b8c7c1c54db07e64c2285c75f, type: 3}
       propertyPath: m_TagString
       value: obj
       objectReference: {fileID: 0}
@@ -280,6 +284,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f02a2c72fd703d43a9cb2c081e3c9ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _connectsScriptList: []
   _name: Boca
   _status: 0
   _backPos: {fileID: 0}
@@ -292,6 +297,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   test: 0
+  _printer: 0
 --- !u!114 &6284609621406976314
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -438,6 +444,10 @@ PrefabInstance:
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Name
       value: SnapindicatorPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
+      propertyPath: m_Layer
+      value: 31
       objectReference: {fileID: 0}
     - target: {fileID: 4571409986272682272, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: _type
