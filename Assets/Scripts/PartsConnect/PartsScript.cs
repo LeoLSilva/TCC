@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 [RequireComponent(typeof(PartConnectLogic))]
 public class PartsScript : MonoBehaviour
@@ -17,7 +16,6 @@ public class PartsScript : MonoBehaviour
     [SerializeField] private PartsScript _partScriptTarget;
     [SerializeField] private Grabbable _grabble;
 
-    [SerializeField] private bool _isPanel = false;
     private PartsManager _partsManager;
     private float _timeAnimate = 0.25f;
     private float _mass;
@@ -32,9 +30,6 @@ public class PartsScript : MonoBehaviour
 
     public List<SnapIndicator> ConnectsScriptList => _connectsScriptList;
 
-    // --- SISTEMA DE TRAVA GLOBAL DE FÍSICA ---
-    public static int GlobalConnectingCount = 0;
-    private static HashSet<PartsScript> _allParts = new HashSet<PartsScript>();
     private void OnValidate()
     {
         if (_status == _lastStatus) return;
@@ -43,8 +38,6 @@ public class PartsScript : MonoBehaviour
 
     private void Awake()
     {
-        _allParts.Add(this);
-
         _rigid = GetComponent<Rigidbody>();
         _connectLogic = GetComponent<PartConnectLogic>();
 
@@ -73,15 +66,8 @@ public class PartsScript : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
-    {
-        if (!_isPanel && _rigid.isKinematic) { ChangeAllRigid(false); }
-    }
-
     private void OnDestroy()
     {
-        _allParts.Remove(this);
-
         if (_grabble != null)
         {
             _grabble.WhenPointerEventRaised -= OnGrabbleEvent;
@@ -218,8 +204,6 @@ public class PartsScript : MonoBehaviour
         _snapTarget.SetIsConnect(true);
         _myActiveSnap.SetIsConnect(true);
 
-        // Tempo 0f forçará o PartConnectLogic a pular a animação e criar os joints imediatamente.
-        // Dica: Se o PartConnectLogic der erro de "divisão por zero", altere o 0f para 0.001f
         _connectLogic.StartAnimation(_snapTarget.transform, _partScriptTarget, 0f);
     }
 
@@ -253,66 +237,25 @@ public class PartsScript : MonoBehaviour
         if (_snapTarget != null) _snapTarget.SetIsConnect(false);
         if (_myActiveSnap != null) _myActiveSnap.SetIsConnect(false);
 
-        _status = PieceStatus.none;
         ClearConnectionData();
         SetStatus(PieceStatus.none);
     }
 
     public void SetStatus(PieceStatus st)
     {
-        if (Application.isPlaying)
-        {
-            if (_lastStatus != PieceStatus.conecting && st == PieceStatus.conecting)
-            {
-                GlobalConnectingCount++;
-                if (GlobalConnectingCount == 1) RefreshAllPhysics();
-            }
-            else if (_lastStatus == PieceStatus.conecting && st != PieceStatus.conecting)
-            {
-                GlobalConnectingCount--;
-                if (GlobalConnectingCount <= 0)
-                {
-                    GlobalConnectingCount = 0;
-                    RefreshAllPhysics();
-                }
-            }
-        }
-
         _status = st;
         _lastStatus = st;
 
-        ApplyPhysicsBasedOnStatus();
-    }
-
-    public static void RefreshAllPhysics()
-    {
-        foreach (var part in _allParts)
+        if (_status == PieceStatus.conected && transform.parent != null)
         {
-            if (part != null)
+            gameObject.layer = transform.parent.gameObject.layer;
+
+            Rigidbody parentRigid = transform.parent.GetComponentInParent<Rigidbody>();
+            if (parentRigid != null)
             {
-                part.ApplyPhysicsBasedOnStatus();
+                ChangeRigid(parentRigid.isKinematic);
             }
         }
-    }
-
-    public void ApplyPhysicsBasedOnStatus()
-    {
-        if (GlobalConnectingCount > 0)
-        {
-            ChangeRigid(true);
-            return;
-        }
-
-        //switch (_status)
-        //{
-        //    case PieceStatus.none:
-        //    case PieceStatus.conected:
-        //    case PieceStatus.root:
-        //        ChangeRigid(false);
-        //        break;
-        //    case PieceStatus.conecting:
-        //        break;
-        //}
     }
 
     public void ChangeRigid(bool isKinematic)
@@ -321,6 +264,21 @@ public class PartsScript : MonoBehaviour
         {
             _rigid.isKinematic = isKinematic;
             _rigid.useGravity = !isKinematic;
+        }
+    }
+
+    public void SetHierarchyLayerAndPhysics(string layerName, bool makeKinematic)
+    {
+        int newLayer = LayerMask.NameToLayer(layerName);
+
+        PartsScript[] allConnectedParts = GetComponentsInChildren<PartsScript>(true);
+        foreach (PartsScript part in allConnectedParts)
+        {
+            if (part != null)
+            {
+                part.gameObject.layer = newLayer;
+                part.ChangeRigid(makeKinematic);
+            }
         }
     }
 
@@ -344,32 +302,9 @@ public class PartsScript : MonoBehaviour
         }
     }
 
-    public void ChangeAllRigid(bool v)
-    {
-        PartsScript[] parts = GetComponentsInChildren<PartsScript>();
-        int count = 0;
-        foreach (PartsScript child in parts)
-        {
-            if (child != null)
-            {
-                count++;
-                child.ChangeRigid(v);
-                Debug.Log(child.name);
-            }
-        }
-        Debug.Log(count);
-        Debug.Log(v);
-    }
-
     public PieceStatus GetStatus() { return _status; }
     public Rigidbody GetRigid() { return _rigid; }
     public float GetMass() { return _mass; }
-
-    public void SetPainel(bool isPanel)
-    {
-        _isPanel = isPanel;
-        ChangeAllRigid(isPanel);
-    }
 }
 
 public enum ConnectType

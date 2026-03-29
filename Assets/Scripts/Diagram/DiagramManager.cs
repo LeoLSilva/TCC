@@ -1,41 +1,33 @@
-using System;
 using UnityEngine;
 using static DiagramSerializable;
 
 public class DiagramManager : MonoBehaviour
 {
-    [SerializeField] private DiagramScriptableObject _diagramScriptable;
     [SerializeField] private Transform _painelPoint;
-    [SerializeField] private GameObject _painelObject;
-    private PartsScript _partsForPrinterScript;
+    [SerializeField] private GameObject _lastPainelObject;
 
-    private void Update()
+    public PartsScript SetDiagram(DiagramScriptableObject diagramScriptable, Vector3 targetPosition)
     {
-        if (Input.GetMouseButtonDown(0)) { SpawnDiagram(); }
+        return SpawnDiagram(diagramScriptable, targetPosition);
     }
 
-    public PartsScript SetDiagram(DiagramScriptableObject diagramScriptable)
+    private PartsScript SpawnDiagram(DiagramScriptableObject diagramScriptable, Vector3 targetPosition)
     {
-        _diagramScriptable = diagramScriptable;
-        return SpawnDiagram();
-    }
-
-    private PartsScript SpawnDiagram()
-    {
-        if (_diagramScriptable == null || _diagramScriptable.rootPart == null || _diagramScriptable.rootPart.partPrefab == null)
+        if (diagramScriptable == null || diagramScriptable.rootPart == null || diagramScriptable.rootPart.partPrefab == null)
         {
             return null;
         }
 
-        if (_painelObject != null)
+        Quaternion spawnRot = _painelPoint != null ? _painelPoint.rotation : Quaternion.identity;
+
+        PartsScript rootPartScript = SpawnAll(diagramScriptable.rootPart, targetPosition, spawnRot, null, "");
+
+        if (rootPartScript != null)
         {
-            Destroy(_painelObject);
+            _lastPainelObject = rootPartScript.gameObject;
         }
 
-        _partsForPrinterScript = SpawnAll(_diagramScriptable.rootPart, _painelPoint.position, _painelPoint.rotation, null, "");
-        _painelObject = _partsForPrinterScript.gameObject;
-
-        return _partsForPrinterScript;
+        return rootPartScript;
     }
 
     PartsScript SpawnAll(DiagramNode node, Vector3 pos, Quaternion rot, PartsScript parentScript, string conName)
@@ -56,11 +48,6 @@ public class DiagramManager : MonoBehaviour
                 newPart.transform.rotation = targetSnap.transform.rotation;
 
                 newPartScript.AutoConnect(targetSnap, mySnap);
-            }
-            else
-            {
-                if (targetSnap == null) Debug.LogWarning($"Falha: O conector (fêmea) '{conName}' não foi encontrado dentro do Prefab '{parentScript.gameObject.name}'!");
-                if (mySnap == null) Debug.LogWarning($"Falha: A peça '{newPart.name}' não possui nenhum SnapIndicator configurado como 'male'!");
             }
         }
         else if (parentScript == null)
@@ -95,13 +82,11 @@ public class DiagramManager : MonoBehaviour
         }
 
         SnapIndicator[] indicators = parent.GetComponentsInChildren<SnapIndicator>(true);
-        string nomesEncontrados = "";
         foreach (SnapIndicator indicator in indicators)
         {
             if (indicator.GetConnectType() == ConnectType.famale)
             {
                 string indName = indicator.gameObject.name.Trim();
-                nomesEncontrados += $"[{indName}] ";
                 if (string.Equals(indName, searchName, System.StringComparison.OrdinalIgnoreCase))
                 {
                     return indicator;
@@ -109,7 +94,6 @@ public class DiagramManager : MonoBehaviour
             }
         }
 
-        Debug.LogWarning($"Conector '{conName}' não encontrado na peça '{parent.gameObject.name}'! Conectores fêmea disponíveis nesta peça são: {nomesEncontrados}");
         return null;
     }
 
@@ -128,6 +112,6 @@ public class DiagramManager : MonoBehaviour
 
     public GameObject GetPainelObject()
     {
-        return _painelObject;
+        return _lastPainelObject;
     }
 }

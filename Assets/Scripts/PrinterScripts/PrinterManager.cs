@@ -14,20 +14,6 @@ public class PrinterManager : MonoBehaviour
         _animator = GetComponent<Animator>();
         _diagramManager = FindAnyObjectByType<DiagramManager>();
     }
-
-    private void Update()
-    {
-        if (Input.GetKeyUp(KeyCode.R) && _isEmpty)
-        {
-            StartCoroutine(SpawnPointAnim());
-        }
-        else if (Input.GetKeyDown(KeyCode.Q))
-        {
-            Destroy(_currentPart.gameObject);
-            _currentPart = null;
-            _isEmpty = true;
-        }
-    }
     public void Printer()
     {
         if (_isEmpty)
@@ -38,13 +24,17 @@ public class PrinterManager : MonoBehaviour
         _isEmpty = false;
         _animator.SetInteger("anim", 1);
         yield return new WaitForSeconds(1f);
+
         _currentPart = Instantiate(_diagramManager.GetPainelObject().GetComponent<PartsScript>());
         _currentPart.transform.position = _spawnPoint.transform.position;
         _currentPart.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
-        _currentPart.ChangeAllRigid(false);
+
+        _currentPart.SetHierarchyLayerAndPhysics("Mask", false);
+
         yield return new WaitForSeconds(.5f);
         _animator.SetInteger("anim", 2);
         yield return new WaitForSeconds(2.15f);
         _animator.SetInteger("anim", 0);
+        _currentPart.SetHierarchyLayerAndPhysics("Default", false);
     }
 }
