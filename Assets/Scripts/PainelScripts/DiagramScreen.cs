@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class PainelManager : MonoBehaviour
+public class DiagramScreen : MonoBehaviour
 {
     [SerializeField] private int _currentDiagram;
     [SerializeField] private List<DiagramScriptableObject> _diagramsList = new List<DiagramScriptableObject>();
+    [SerializeField] private List<GameObject> _gameObjectList = new List<GameObject>();
     [SerializeField] private TextMeshProUGUI _diagramName;
     [SerializeField] private DiagramManager _diagramManager;
     [SerializeField] private PrinterManager _printerManager;
@@ -35,7 +37,8 @@ public class PainelManager : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.E))
         {
             ChangeDiagram(false);
-        } else if (Input.GetKeyDown(KeyCode.W))
+        }
+        else if (Input.GetKeyDown(KeyCode.W))
         {
             PrinterBtn();
         }
@@ -64,7 +67,7 @@ public class PainelManager : MonoBehaviour
 
             var spawnedObj = _diagramManager.SetDiagram(_diagramsList[i], spawnPos);
             spawnedObj.SetHierarchyLayerAndPhysics("Mask", true);
-
+            _gameObjectList.Add(spawnedObj.gameObject);
             _spawnedCount++;
         }
     }
@@ -84,7 +87,7 @@ public class PainelManager : MonoBehaviour
 
         var spawnedObj = _diagramManager.SetDiagram(newDiagram, spawnPos);
         spawnedObj.SetHierarchyLayerAndPhysics("Mask", true);
-
+        _gameObjectList.Add(spawnedObj.gameObject);
         _spawnedCount++;
     }
 
@@ -102,5 +105,10 @@ public class PainelManager : MonoBehaviour
     public void PrinterBtn()
     {
         _printerManager.Printer();
+    }
+
+    private DiagramScriptableObject GetObjectList()
+    {
+        return _diagramsList[_currentDiagram];
     }
 }

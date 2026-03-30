@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2825177390162069070}
   - component: {fileID: 2798950738128455811}
   - component: {fileID: 7391046458882477618}
-  m_Layer: 31
+  m_Layer: 0
   m_Name: '[BuildingBlock] HandGrabInstallationRoutine (2)'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockId: f8766c17-aaf8-4b55-9431-de8deea83842
-  instanceId: e254c7b3-4a2a-4b3d-9b44-df5013410ee9
+  instanceId: d5a3e193-bab5-40a4-a4e3-e11b7e4f7926
   version: 1
   installationRoutineCheckpoint:
     _installationRoutineId: f8338144-8280-4ff6-9455-ae2bb9c20fe8
@@ -224,11 +224,11 @@ PrefabInstance:
       objectReference: {fileID: -5569450276598155973, guid: 1cb22cfca3e2db24f9283329cef00dd0, type: 3}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Name
-      value: "SnapindicatorPrefab(Cabe\xE7a)"
+      value: ConCabeca
       objectReference: {fileID: 0}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Layer
-      value: 31
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_IsActive
@@ -262,27 +262,27 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 300410565130321664, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.97
+      value: 0.91
       objectReference: {fileID: 0}
     - target: {fileID: 300410565130321664, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.97
+      value: 0.91
       objectReference: {fileID: 0}
     - target: {fileID: 300410565130321664, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.97
+      value: 0.91
       objectReference: {fileID: 0}
     - target: {fileID: 300410565130321664, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.00059
+      value: 0.00066
       objectReference: {fileID: 0}
     - target: {fileID: 300410565130321664, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.0112
+      value: -0.01169
       objectReference: {fileID: 0}
     - target: {fileID: 300410565130321664, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.00531
+      value: 0.00532
       objectReference: {fileID: 0}
     - target: {fileID: 300410565130321664, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -362,7 +362,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Layer
-      value: 31
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_IsActive
@@ -490,19 +490,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1326040776900005071, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Size.y
-      value: 0.013799377
+      value: 0.01317321
       objectReference: {fileID: 0}
     - target: {fileID: 1326040776900005071, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Size.z
-      value: 0.012033704
+      value: 0.012033703
       objectReference: {fileID: 0}
     - target: {fileID: 1326040776900005071, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Center.x
-      value: -0.000010719895
+      value: -0.000010719952
       objectReference: {fileID: 0}
     - target: {fileID: 1326040776900005071, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Center.y
-      value: 0.0006228188
+      value: 0.00030973554
       objectReference: {fileID: 0}
     - target: {fileID: 1326040776900005071, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Center.z
@@ -522,11 +522,11 @@ PrefabInstance:
       objectReference: {fileID: 4006634011385816265, guid: 6eca34954c608734fa48ab45d9153f23, type: 3}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Name
-      value: SnapindicatorPrefab(Braco) (1)
+      value: ConBracoDois
       objectReference: {fileID: 0}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Layer
-      value: 31
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_IsActive
@@ -572,27 +572,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 689f3e4c682b44a4da56778164b8a2c7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 4.417
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 689f3e4c682b44a4da56778164b8a2c7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.002
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 689f3e4c682b44a4da56778164b8a2c7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.868
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 689f3e4c682b44a4da56778164b8a2c7, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: 0.7660445
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 689f3e4c682b44a4da56778164b8a2c7, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.7071068
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 689f3e4c682b44a4da56778164b8a2c7, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0.6427876
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 689f3e4c682b44a4da56778164b8a2c7, type: 3}
       propertyPath: m_LocalRotation.z
@@ -600,11 +600,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 689f3e4c682b44a4da56778164b8a2c7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 90
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 689f3e4c682b44a4da56778164b8a2c7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: -80
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 689f3e4c682b44a4da56778164b8a2c7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -620,7 +620,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 689f3e4c682b44a4da56778164b8a2c7, type: 3}
       propertyPath: m_Layer
-      value: 31
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 689f3e4c682b44a4da56778164b8a2c7, type: 3}
       propertyPath: m_TagString
@@ -813,8 +813,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.015474129, y: 0.002234217, z: 0.017089533}
-  m_Center: {x: 0.0007675648, y: 0.007925945, z: 0.0057087243}
+  m_Size: {x: 0.0154741295, y: 0, z: 0.017089533}
+  m_Center: {x: 0.0007675648, y: 0.007446027, z: 0.0057087243}
 --- !u!65 &3635107252609887102
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -834,8 +834,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0, y: 0.019895487, z: 0.017504519}
-  m_Center: {x: -0.00820854, y: -0.0009078608, z: 0.005741531}
+  m_Size: {x: 0, y: 0.01817116, z: 0.017504519}
+  m_Center: {x: -0.00820854, y: -0.001770027, z: 0.00574153}
 --- !u!65 &3509098851799532378
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -855,8 +855,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0, y: 0.01960263, z: 0.017277991}
-  m_Center: {x: 0.009474108, y: -0.000761427, z: 0.0058547943}
+  m_Size: {x: 0, y: 0.018115392, z: 0.017277991}
+  m_Center: {x: 0.009474108, y: -0.001505049, z: 0.005854794}
 --- !u!65 &8969823649046702202
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -876,8 +876,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.015526468, y: 0.008995593, z: 0}
-  m_Center: {x: 0.00066253246, y: -0.005723435, z: -0.00390248}
+  m_Size: {x: 0.015526468, y: 0.017490366, z: 0}
+  m_Center: {x: 0.0006625325, y: -0.0014760509, z: -0.0041222884}
 --- !u!65 &5382029897925023280
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -897,8 +897,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.016326642, y: 0.008946204, z: 0}
-  m_Center: {x: 0.0012043357, y: -0.0056987414, z: 0.014524488}
+  m_Size: {x: 0.016326642, y: 0.016708363, z: 0}
+  m_Center: {x: 0.0012043356, y: -0.0010707558, z: 0.015498931}
 --- !u!114 &4653063390026927919
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -986,19 +986,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1326040776900005071, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Size.y
-      value: 0.013799377
+      value: 0.013001132
       objectReference: {fileID: 0}
     - target: {fileID: 1326040776900005071, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Size.z
-      value: 0.012033704
+      value: 0.012033703
       objectReference: {fileID: 0}
     - target: {fileID: 1326040776900005071, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Center.x
-      value: -0.000010719895
+      value: -0.000010719952
       objectReference: {fileID: 0}
     - target: {fileID: 1326040776900005071, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Center.y
-      value: 0.0006228188
+      value: 0.00022369623
       objectReference: {fileID: 0}
     - target: {fileID: 1326040776900005071, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Center.z
@@ -1018,11 +1018,11 @@ PrefabInstance:
       objectReference: {fileID: 4006634011385816265, guid: 6eca34954c608734fa48ab45d9153f23, type: 3}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Name
-      value: SnapindicatorPrefab(Braco)
+      value: ConBracoUm
       objectReference: {fileID: 0}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_Layer
-      value: 31
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3992330593431975614, guid: 48e0fbcfb375fd946801b92c635b579a, type: 3}
       propertyPath: m_IsActive

@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 458508232340956977}
   - component: {fileID: 6550154370844262418}
   - component: {fileID: 471590742091795878}
-  m_Layer: 31
+  m_Layer: 0
   m_Name: "Cabe\xE7a_Vazia"
   m_TagString: obj
   m_Icon: {fileID: 0}
@@ -348,13 +348,13 @@ GameObject:
   - component: {fileID: 864406880321436205}
   - component: {fileID: 2544690781394307341}
   - component: {fileID: 3813244271450036322}
-  m_Layer: 31
+  m_Layer: 0
   m_Name: ConOlhoUm
   m_TagString: obj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6425072000452647524
 Transform:
   m_ObjectHideFlags: 0
@@ -472,13 +472,13 @@ GameObject:
   - component: {fileID: 4272152163719272763}
   - component: {fileID: 72705169652069940}
   - component: {fileID: 3176637326609095643}
-  m_Layer: 31
+  m_Layer: 0
   m_Name: ConAntenaUm
   m_TagString: obj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1679282089794536955
 Transform:
   m_ObjectHideFlags: 0
@@ -596,7 +596,7 @@ GameObject:
   - component: {fileID: 9197359049789489109}
   - component: {fileID: 6731572740650937397}
   - component: {fileID: 2406000851020424158}
-  m_Layer: 31
+  m_Layer: 0
   m_Name: SnapindicatorPrefab(Corpo)
   m_TagString: obj
   m_Icon: {fileID: 0}
@@ -720,7 +720,7 @@ GameObject:
   - component: {fileID: 2246449694100892160}
   - component: {fileID: 6031382351660577361}
   - component: {fileID: 4023804319625924051}
-  m_Layer: 31
+  m_Layer: 0
   m_Name: ConAntenaDois
   m_TagString: obj
   m_Icon: {fileID: 0}
@@ -844,13 +844,13 @@ GameObject:
   - component: {fileID: 6168145464309757223}
   - component: {fileID: 8863987893763393622}
   - component: {fileID: 4403586105493263154}
-  m_Layer: 31
+  m_Layer: 0
   m_Name: ConOlhoDois
   m_TagString: obj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5453129252641933659
 Transform:
   m_ObjectHideFlags: 0
@@ -968,13 +968,13 @@ GameObject:
   - component: {fileID: 7671336673882598287}
   - component: {fileID: 5749944624554840942}
   - component: {fileID: 8274499250476673226}
-  m_Layer: 31
+  m_Layer: 0
   m_Name: ConBoca
   m_TagString: obj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8115378932125356794
 Transform:
   m_ObjectHideFlags: 0
@@ -1091,7 +1091,7 @@ GameObject:
   - component: {fileID: 8995503326729035501}
   - component: {fileID: 6546424997578377637}
   - component: {fileID: 6832583667469683986}
-  m_Layer: 31
+  m_Layer: 0
   m_Name: '[BuildingBlock] HandGrabInstallationRoutine (1)'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
