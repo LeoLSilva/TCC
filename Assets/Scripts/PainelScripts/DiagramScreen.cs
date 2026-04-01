@@ -1,32 +1,45 @@
+using Oculus.Interaction;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DiagramScreen : MonoBehaviour
 {
+    [SerializeField] private GameObject _printerBtn;
     [SerializeField] private int _currentDiagram;
+    [SerializeField] private TextMeshProUGUI _diagramName;
+
+    [Header("Lists")]
     [SerializeField] private List<DiagramScriptableObject> _diagramsList = new List<DiagramScriptableObject>();
     [SerializeField] private List<GameObject> _gameObjectList = new List<GameObject>();
-    [SerializeField] private TextMeshProUGUI _diagramName;
+
+    [Header("Other Scripts")]
     [SerializeField] private DiagramManager _diagramManager;
     [SerializeField] private PrinterManager _printerManager;
+    [SerializeField] private PainelUI _painelUi;
+
+    [Header("Transforms")]
     [SerializeField] private Transform _cameraTransform;
     [SerializeField] private Transform _spawnStartPoint;
 
 
-    public DiagramScriptableObject _diagramaTeste;
     private int _spawnedCount = 0;
 
     private void Start()
     {
         _printerManager = FindAnyObjectByType<PrinterManager>();
         _diagramManager = FindAnyObjectByType<DiagramManager>();
-
+        _printerManager.OnPrinterStateChanged += _SetButtonPrintActive;
         SpawnAllDiagrams();
         MoveCamera();
     }
 
+    private void _SetButtonPrintActive(bool obj)
+    {
+        BlockPrinterBtn(obj);
+    }
 
     private void Update()
     {
@@ -104,11 +117,17 @@ public class DiagramScreen : MonoBehaviour
 
     public void PrinterBtn()
     {
-        _printerManager.Printer();
+        _printerManager.Printer(GetObjectList());
     }
 
-    private DiagramScriptableObject GetObjectList()
+    private GameObject GetObjectList()
     {
-        return _diagramsList[_currentDiagram];
+        return _gameObjectList[_currentDiagram];
+    }
+
+    public void BlockPrinterBtn(bool block)
+    {
+        _printerBtn.GetComponent<RayInteractable>().enabled = !block;
+        _painelUi.BlockButtonColor(_printerBtn.GetComponent<Image>(), block);
     }
 }
