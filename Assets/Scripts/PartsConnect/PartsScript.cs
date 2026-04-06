@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using static DiagramSerializable;
 
 [RequireComponent(typeof(PartConnectLogic))]
 public class PartsScript : MonoBehaviour
@@ -22,6 +23,8 @@ public class PartsScript : MonoBehaviour
     private Rigidbody _rigid;
     private PartConnectLogic _connectLogic;
     private PieceStatus _lastStatus;
+    private DiagramRegister _diagramRegister;
+    private bool _hasRegisteredConnection = false;
 
     public bool _isGrabbed = false;
     public UnityEvent<bool> onChangeGrabbleStatus;
@@ -57,6 +60,7 @@ public class PartsScript : MonoBehaviour
 
     private void Start()
     {
+        _diagramRegister = this.GetComponent<DiagramRegister>();
         _partsManager = FindAnyObjectByType<PartsManager>();
         _grabble = GetComponent<Grabbable>();
 
@@ -86,6 +90,15 @@ public class PartsScript : MonoBehaviour
             StartConnectionProcess();
         }
 
+        if (Input.GetKeyDown(KeyCode.P) && test && _status == PieceStatus.root)
+        {
+            DiagramJsonSaver.SaveDiagram(_diagramRegister, this.gameObject.name);
+        }
+
+        if (Input.GetKeyDown(KeyCode.R) && test)
+        {
+            FindAnyObjectByType<DiagramCreaterManager>().RefreshDiagramList();
+        }
         UpdateBreakForceLogic();
     }
 
@@ -93,13 +106,21 @@ public class PartsScript : MonoBehaviour
     {
         if (_status == PieceStatus.conecting || _partScriptTarget == null) return;
 
-        bool isTargetGrabbed = _partScriptTarget._isGrabbed;
-        bool isTargetRoot = _partScriptTarget.GetStatus() == PieceStatus.root;
-        bool amIRoot = GetStatus() == PieceStatus.root;
+        bool canBreak = false;
 
-        bool canBreak = (_isGrabbed && isTargetGrabbed) ||
-                        (_isGrabbed && isTargetRoot) ||
-                        (isTargetGrabbed && amIRoot);
+        if (_isGrabbed)
+        {
+            PartsScript currentAncestor = _partScriptTarget;
+            while (currentAncestor != null)
+            {
+                if (currentAncestor._isGrabbed)
+                {
+                    canBreak = true;
+                    break;
+                }
+                currentAncestor = currentAncestor.GetTargetPart();
+            }
+        }
 
         _connectLogic.UpdateBreakForce(canBreak);
     }
@@ -234,20 +255,51 @@ public class PartsScript : MonoBehaviour
 
     public void HandleConnectionBroken()
     {
+        if (_hasRegisteredConnection && _snapTarget != null && _partScriptTarget != null)
+        {
+            DiagramRegister targetRegister = _partScriptTarget.GetComponent<DiagramRegister>();
+            DiagramRegister myRegister = GetComponent<DiagramRegister>();
+
+            if (targetRegister != null && myRegister != null)
+            {
+                targetRegister.RemoveConnection(_snapTarget.gameObject.name, myRegister);
+            }
+        }
+
         if (_snapTarget != null) _snapTarget.SetIsConnect(false);
         if (_myActiveSnap != null) _myActiveSnap.SetIsConnect(false);
 
         ClearConnectionData();
+
+        _hasRegisteredConnection = false;
+
         SetStatus(PieceStatus.none);
     }
 
     public void SetStatus(PieceStatus st)
     {
+        if (_status == PieceStatus.root && st == PieceStatus.none && transform.childCount > 0)
+        {
+            return;
+        }
+
+        bool wasNotConnected = (_status != PieceStatus.conected);
         _status = st;
         _lastStatus = st;
 
         if (_status == PieceStatus.conected && transform.parent != null)
         {
+            if (wasNotConnected && !_hasRegisteredConnection)
+            {
+                DiagramRegister targetRegister = _partScriptTarget.GetComponent<DiagramRegister>();
+
+                if (targetRegister != null)
+                {
+                    targetRegister.AddConnection(_snapTarget.gameObject.name, _diagramRegister);
+                }
+                _hasRegisteredConnection = true;
+            }
+
             gameObject.layer = transform.parent.gameObject.layer;
 
             Rigidbody parentRigid = transform.parent.GetComponentInParent<Rigidbody>();
@@ -305,6 +357,7 @@ public class PartsScript : MonoBehaviour
     public PieceStatus GetStatus() { return _status; }
     public Rigidbody GetRigid() { return _rigid; }
     public float GetMass() { return _mass; }
+    public PartsScript GetTargetPart() { return _partScriptTarget; }
 }
 
 public enum ConnectType

@@ -136,7 +136,11 @@ public class SnapIndicator : MonoBehaviour
 
     public ConnectType GetConnectType() { return _type; }
     public bool GetIsConnect() { return _isConnected; }
-    public void SetIsConnect(bool con) { _isConnected = con; }
+    public void SetIsConnect(bool con)
+    {
+        _isConnected = con;
+        this.gameObject.SetActive(!con);
+    }
     public PartsScript GetPartScript() { return _parentPart; }
     public void SetPartScript(PartsScript part) { _parentPart = part; }
 }

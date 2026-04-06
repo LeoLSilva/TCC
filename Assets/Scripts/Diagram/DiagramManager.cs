@@ -114,4 +114,57 @@ public class DiagramManager : MonoBehaviour
     {
         return _lastPainelObject;
     }
+
+    public PartsScript SetDiagramJson(DiagramJsonSaver.NodeSaveData nodeData, Vector3 targetPosition)
+    {
+        if (nodeData == null || string.IsNullOrEmpty(nodeData.prefabName)) return null;
+
+        Quaternion spawnRot = _painelPoint != null ? _painelPoint.rotation : Quaternion.identity;
+        PartsScript rootPartScript = SpawnAllJson(nodeData, targetPosition, spawnRot, null, "");
+
+        if (rootPartScript != null)
+        {
+            _lastPainelObject = rootPartScript.gameObject;
+        }
+
+        return rootPartScript;
+    }
+
+    private PartsScript SpawnAllJson(DiagramJsonSaver.NodeSaveData node, Vector3 pos, Quaternion rot, PartsScript parentScript, string conName)
+    {
+        if (node == null || string.IsNullOrEmpty(node.prefabName)) return null;
+
+        GameObject prefab = Resources.Load<GameObject>(node.prefabName);
+        if (prefab == null) return null;
+
+        GameObject newPart = Instantiate(prefab, pos, rot);
+        PartsScript newPartScript = newPart.GetComponent<PartsScript>();
+
+        if (parentScript != null && !string.IsNullOrEmpty(conName))
+        {
+            SnapIndicator targetSnap = FindSnapIndicatorByName(parentScript, conName);
+            SnapIndicator mySnap = FindMaleConnector(newPartScript);
+
+            if (targetSnap != null)
+            {
+                newPart.transform.position = targetSnap.transform.position;
+                newPart.transform.rotation = targetSnap.transform.rotation;
+                newPartScript.AutoConnect(targetSnap, mySnap);
+            }
+        }
+        else if (parentScript == null)
+        {
+            newPartScript.SetStatus(PieceStatus.root);
+        }
+
+        if (node.connections != null && node.connections.Count > 0)
+        {
+            foreach (DiagramJsonSaver.ConnectionSaveData connection in node.connections)
+            {
+                if (string.IsNullOrWhiteSpace(connection.conName)) continue;
+                SpawnAllJson(connection.connectedPart, Vector3.zero, Quaternion.identity, newPartScript, connection.conName);
+            }
+        }
+        return newPartScript;
+    }
 }

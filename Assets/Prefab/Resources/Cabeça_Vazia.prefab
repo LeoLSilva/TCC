@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1508704249859644688}
   - component: {fileID: 2540070944010834613}
   - component: {fileID: 334623552967698047}
+  - component: {fileID: -939001024480848381}
   - component: {fileID: 3903609409794613854}
   - component: {fileID: 3732243364205890003}
   - component: {fileID: 1666242969299676553}
@@ -104,6 +105,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-939001024480848381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2279998065231382442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb27c60bc6c979a4ba6c2195d72043fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rootPart:
+    partPrefab: {fileID: 0}
+    connections: []
 --- !u!54 &3903609409794613854
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -354,7 +370,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6425072000452647524
 Transform:
   m_ObjectHideFlags: 0
@@ -478,7 +494,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1679282089794536955
 Transform:
   m_ObjectHideFlags: 0
@@ -850,7 +866,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5453129252641933659
 Transform:
   m_ObjectHideFlags: 0
@@ -974,7 +990,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8115378932125356794
 Transform:
   m_ObjectHideFlags: 0

@@ -70,7 +70,11 @@ public class PartConnectLogic : MonoBehaviour
             Rigidbody targetRb = _targetPartScript.GetRigid();
             if (targetRb != null)
             {
-                transform.SetParent(_targetPartScript.transform, true);
+                PartsManager manager = FindAnyObjectByType<PartsManager>();
+                if (manager != null)
+                {
+                    manager.SetConection(_partsScript, _targetPartScript);
+                }
 
                 Collider[] allRobotColliders = transform.root.GetComponentsInChildren<Collider>();
                 UpdateCollisionMatrix(allRobotColliders, true);
@@ -106,8 +110,6 @@ public class PartConnectLogic : MonoBehaviour
                 }
             }
         }
-
-        _partsScript.SetStatus(PieceStatus.conected);
     }
 
     private void OnJointBreak(float breakForce)

@@ -1,9 +1,6 @@
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class PartsManager : MonoBehaviour
 {
@@ -25,7 +22,6 @@ public class PartsManager : MonoBehaviour
         if (part._isGrabbed)
         {
             _grabble = part;
-            //_auto.jointToCheck = part.GetComponent<ConfigurableJoint>();
         }
         else
             _grabble = null;
@@ -40,10 +36,14 @@ public class PartsManager : MonoBehaviour
 
     private void CreateJoin(PartsScript obj1, PartsScript target)
     {
-        PartsScript root = obj1.GetRigid().mass >= target.GetRigid().mass ? obj1 : target;
+        PartsScript root;
+
+        if (obj1.GetStatus() == PieceStatus.root) { root = obj1; }
+        else if (target.GetStatus() == PieceStatus.root) { root = target; }
+        else { root = obj1.GetRigid().mass >= target.GetRigid().mass ? obj1 : target; }
+
         PartsScript connected = root == obj1 ? target : obj1;
         DefineRoot(root, connected);
-
     }
 
     public ConnectPosition CalculatingPosition(Transform father, Transform target, Transform conSon)
