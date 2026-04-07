@@ -76,8 +76,8 @@ public class PartConnectLogic : MonoBehaviour
                     manager.SetConection(_partsScript, _targetPartScript);
                 }
 
-                Collider[] allRobotColliders = transform.root.GetComponentsInChildren<Collider>();
-                UpdateCollisionMatrix(allRobotColliders, true);
+                Collider[] allTargetColliders = _targetPartScript.GetComponentsInChildren<Collider>();
+                UpdateCollisionMatrix(allTargetColliders, true);
 
                 _currentJoint = gameObject.AddComponent<ConfigurableJoint>();
                 _currentJoint.connectedBody = targetRb;
@@ -120,24 +120,16 @@ public class PartConnectLogic : MonoBehaviour
 
     public void BreakConnection()
     {
-        Transform oldRoot = null;
-        if (_targetPartScript != null)
-        {
-            oldRoot = _targetPartScript.transform.root;
-        }
-
         if (_currentJoint != null)
         {
             Destroy(_currentJoint);
             _currentJoint = null;
         }
 
-        transform.SetParent(null, true);
-
-        if (oldRoot != null)
+        if (_targetPartScript != null)
         {
-            Collider[] oldRootColliders = oldRoot.GetComponentsInChildren<Collider>();
-            UpdateCollisionMatrix(oldRootColliders, false);
+            Collider[] oldTargetColliders = _targetPartScript.GetComponentsInChildren<Collider>();
+            UpdateCollisionMatrix(oldTargetColliders, false);
         }
 
         Rigidbody rigid = _partsScript.GetRigid();

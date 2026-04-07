@@ -19,22 +19,27 @@ public class DiagramManager : MonoBehaviour
         }
 
         Quaternion spawnRot = _painelPoint != null ? _painelPoint.rotation : Quaternion.identity;
+        GameObject diagramContainer = new GameObject($"DiagramContainer_{diagramScriptable.name}");
+        diagramContainer.transform.position = targetPosition;
+        diagramContainer.transform.rotation = spawnRot;
 
-        PartsScript rootPartScript = SpawnAll(diagramScriptable.rootPart, targetPosition, spawnRot, null, "");
+
+        PartsScript rootPartScript = SpawnAll(diagramScriptable.rootPart, targetPosition, spawnRot, null, "", diagramContainer.transform);
 
         if (rootPartScript != null)
         {
             _lastPainelObject = rootPartScript.gameObject;
-        }
+        } else Destroy(diagramContainer);
 
         return rootPartScript;
     }
 
-    PartsScript SpawnAll(DiagramNode node, Vector3 pos, Quaternion rot, PartsScript parentScript, string conName)
+    PartsScript SpawnAll(DiagramNode node, Vector3 pos, Quaternion rot, PartsScript parentScript, string conName, Transform container)
     {
         if (node == null || node.partPrefab == null) return null;
 
         GameObject newPart = Instantiate(node.partPrefab, pos, rot);
+        newPart.transform.SetParent(container, true);
         PartsScript newPartScript = newPart.GetComponent<PartsScript>();
 
         if (parentScript != null && !string.IsNullOrEmpty(conName))
@@ -60,7 +65,7 @@ public class DiagramManager : MonoBehaviour
             foreach (DiagramConnection connection in node.connections)
             {
                 if (string.IsNullOrWhiteSpace(connection.conName)) continue;
-                SpawnAll(connection.connectedPart, Vector3.zero, Quaternion.identity, newPartScript, connection.conName);
+                SpawnAll(connection.connectedPart, Vector3.zero, Quaternion.identity, newPartScript, connection.conName, container);
             }
         }
         return newPartScript;
@@ -121,7 +126,8 @@ public class DiagramManager : MonoBehaviour
 
         Quaternion spawnRot = _painelPoint != null ? _painelPoint.rotation : Quaternion.identity;
         PartsScript rootPartScript = SpawnAllJson(nodeData, targetPosition, spawnRot, null, "");
-
+        GameObject part = null;
+        
         if (rootPartScript != null)
         {
             _lastPainelObject = rootPartScript.gameObject;

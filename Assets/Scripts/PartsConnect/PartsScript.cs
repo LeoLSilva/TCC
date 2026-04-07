@@ -278,7 +278,7 @@ public class PartsScript : MonoBehaviour
 
     public void SetStatus(PieceStatus st)
     {
-        if (_status == PieceStatus.root && st == PieceStatus.none && transform.childCount > 0)
+        if (_status == PieceStatus.root && st == PieceStatus.none)
         {
             return;
         }
@@ -287,7 +287,7 @@ public class PartsScript : MonoBehaviour
         _status = st;
         _lastStatus = st;
 
-        if (_status == PieceStatus.conected && transform.parent != null)
+        if (_status == PieceStatus.conected && _partScriptTarget != null)
         {
             if (wasNotConnected && !_hasRegisteredConnection)
             {
@@ -300,9 +300,9 @@ public class PartsScript : MonoBehaviour
                 _hasRegisteredConnection = true;
             }
 
-            gameObject.layer = transform.parent.gameObject.layer;
+            gameObject.layer = _partScriptTarget.gameObject.layer;
 
-            Rigidbody parentRigid = transform.parent.GetComponentInParent<Rigidbody>();
+            Rigidbody parentRigid = _partScriptTarget.GetRigid();
             if (parentRigid != null)
             {
                 ChangeRigid(parentRigid.isKinematic);
@@ -323,13 +323,53 @@ public class PartsScript : MonoBehaviour
     {
         int newLayer = LayerMask.NameToLayer(layerName);
 
-        PartsScript[] allConnectedParts = GetComponentsInChildren<PartsScript>(true);
-        foreach (PartsScript part in allConnectedParts)
+        // Inicia a busca recursiva a partir desta peça
+        ApplyLayerAndPhysicsRecursive(this, newLayer, makeKinematic, new HashSet<PartsScript>());
+    }
+
+    private void ApplyLayerAndPhysicsRecursive(PartsScript currentPart, int layer, bool kinematic, HashSet<PartsScript> visited)
+    {
+        if (currentPart == null || visited.Contains(currentPart)) return;
+
+        visited.Add(currentPart);
+
+        currentPart.gameObject.layer = layer;
+        currentPart.ChangeRigid(kinematic);
+
+        // Busca pelo pai na conexão lógica
+        PartsScript parentPart = currentPart.GetTargetPart();
+        if (parentPart != null)
         {
-            if (part != null)
+            ApplyLayerAndPhysicsRecursive(parentPart, layer, kinematic, visited);
+        }
+
+        // Busca pelos filhos através do DiagramRegister
+        DiagramRegister currentRegister = currentPart.GetComponent<DiagramRegister>();
+        if (currentRegister != null)
+        {
+            DiagramSerializable.DiagramNode node = currentRegister.GetDiagramNode();
+            if (node != null && node.connections != null)
             {
-                part.gameObject.layer = newLayer;
-                part.ChangeRigid(makeKinematic);
+                foreach (var connection in node.connections)
+                {
+                    if (connection.connectedPart != null && connection.connectedPart.partPrefab != null)
+                    {
+                        // Para não fazer uma busca pesada na cena, procuramos as instâncias
+                        // ativas que têm o mesmo DiagramRegister que o node conectado
+                        DiagramRegister[] allRegisters = FindObjectsByType<DiagramRegister>(FindObjectsSortMode.None);
+                        foreach (var reg in allRegisters)
+                        {
+                            if (reg.GetDiagramNode() == connection.connectedPart)
+                            {
+                                PartsScript childScript = reg.GetComponent<PartsScript>();
+                                if (childScript != null)
+                                {
+                                    ApplyLayerAndPhysicsRecursive(childScript, layer, kinematic, visited);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

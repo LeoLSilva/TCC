@@ -70,14 +70,12 @@ public class PartsManager : MonoBehaviour
         _partsList.Add(obj1);
         _partsList.Add(target);
     }
+
     private void DefineRoot(PartsScript root, PartsScript connected)
     {
         root.SetStatus(PieceStatus.root);
-        connected.transform.SetParent(root.transform);
         connected.SetStatus(PieceStatus.conected);
     }
-
-
 }
 
 [Serializable]
