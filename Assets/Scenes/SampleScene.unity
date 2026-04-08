@@ -369,7 +369,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 6
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenCancel.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -378,7 +378,7 @@ PrefabInstance:
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 261823096}
+      objectReference: {fileID: 1914523852}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenUnselect.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 6
@@ -401,7 +401,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SetActive
+      value: SelectTab
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenUnselect.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -417,7 +417,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: UnityEngine.GameObject, UnityEngine
+      value: PainelUI, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenCancel.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
@@ -1406,7 +1406,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenUnselect.m_PersistentCalls.m_Calls.Array.size
@@ -1418,7 +1418,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 6
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
@@ -1431,7 +1431,7 @@ PrefabInstance:
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1818416066}
+      objectReference: {fileID: 1914523852}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
@@ -1462,7 +1462,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SetActive
+      value: SelectTab
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
@@ -1482,11 +1482,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: UnityEngine.GameObject, UnityEngine
+      value: PainelUI, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
       value: UnityEngine.GameObject, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
+      propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenCancel.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
@@ -4221,7 +4225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32be1995f50b0a4db8cfc228c0d5c9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentPart: {fileID: 0}
+  _currentPartObject: {fileID: 0}
   _diagramScreen: {fileID: 0}
   _spawnPoint: {fileID: 572247904}
   _isEmpty: 1
@@ -4998,7 +5002,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenUnselect.m_PersistentCalls.m_Calls.Array.size
@@ -5010,7 +5014,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 6
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
@@ -5023,7 +5027,7 @@ PrefabInstance:
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 261823096}
+      objectReference: {fileID: 1914523852}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
@@ -5054,7 +5058,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SetActive
+      value: SelectTab
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
@@ -5074,11 +5078,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: UnityEngine.GameObject, UnityEngine
+      value: PainelUI, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
       value: UnityEngine.GameObject, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
+      propertyPath: _whenSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3595782266006677800, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: _whenCancel.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
@@ -5168,6 +5176,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 979d63642482cac47b4865ca50792c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1221633034 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5862305604472742542, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
+  m_PrefabInstance: {fileID: 1221633025}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1221633027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1296834077
@@ -6262,11 +6281,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5bd13dee4fd1e94b999bdc890afbc9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _currentScreen:
+    buttonImage: {fileID: 0}
+    panel: {fileID: 0}
   _tabs:
+  - buttonImage: {fileID: 32193177}
+    panel: {fileID: 2061371086}
   - buttonImage: {fileID: 190512243}
     panel: {fileID: 261823096}
-  - buttonImage: {fileID: 32193177}
-    panel: {fileID: 261823096}
+  - buttonImage: {fileID: 1221633034}
+    panel: {fileID: 1818416066}
 --- !u!114 &1914523853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6376,6 +6400,7 @@ RectTransform:
   m_Children:
   - {fileID: 1914523849}
   - {fileID: 1120395806}
+  - {fileID: 2061371087}
   - {fileID: 261823097}
   - {fileID: 1818416067}
   m_Father: {fileID: 2088940460}
@@ -6552,6 +6577,41 @@ Transform:
   m_Children: []
   m_Father: {fileID: 966077965}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2061371086
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2061371087}
+  m_Layer: 5
+  m_Name: PecasScreen
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2061371087
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2061371086}
+  m_LocalRotation: {x: -0, y: -0.00000001719655, z: 0.000000024340437, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.13800654}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1939076122}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -0.09200966, y: -1.7750107}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &2088940458
 PrefabInstance:
   m_ObjectHideFlags: 0

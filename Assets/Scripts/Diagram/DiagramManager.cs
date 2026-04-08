@@ -125,9 +125,9 @@ public class DiagramManager : MonoBehaviour
         if (nodeData == null || string.IsNullOrEmpty(nodeData.prefabName)) return null;
 
         Quaternion spawnRot = _painelPoint != null ? _painelPoint.rotation : Quaternion.identity;
+        GameObject diagramContainer = new GameObject($"DiagramContainer_{nodeData.prefabName}");
         PartsScript rootPartScript = SpawnAllJson(nodeData, targetPosition, spawnRot, null, "");
-        GameObject part = null;
-        
+
         if (rootPartScript != null)
         {
             _lastPainelObject = rootPartScript.gameObject;

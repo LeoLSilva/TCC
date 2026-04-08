@@ -98,7 +98,7 @@ public class DiagramScreen : MonoBehaviour
 
             var spawnedObj = _diagramManager.SetDiagram(_diagramsList[i], spawnPos);
             spawnedObj.SetHierarchyLayerAndPhysics("Mask", true);
-            _gameObjectList.Add(spawnedObj.gameObject);
+            _gameObjectList.Add(spawnedObj.transform.parent.gameObject);
             _spawnedCount++;
         }
     }
@@ -118,7 +118,7 @@ public class DiagramScreen : MonoBehaviour
 
         var spawnedObj = _diagramManager.SetDiagram(newDiagram, spawnPos);
         spawnedObj.SetHierarchyLayerAndPhysics("Mask", true);
-        _gameObjectList.Add(spawnedObj.gameObject);
+        _gameObjectList.Add(spawnedObj.transform.parent.gameObject);
         _spawnedCount++;
     }
 

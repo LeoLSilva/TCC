@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class PainelUI : MonoBehaviour
 {
 
+    [SerializeField] private TabData _currentScreen;
 
     [System.Serializable]
     public struct TabData
@@ -27,20 +28,35 @@ public class PainelUI : MonoBehaviour
     {
         if (_tabs.Count > 0) SelectTab(0);
     }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            SelectTab(0);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            SelectTab(1);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            SelectTab(2);
+        }
+    }
     public void SelectTab(int index)
     {
         if (index < 0 || index >= _tabs.Count) return;
 
-        if (_currentIndex != -1)
+        if (_currentScreen.panel != null)
         {
-            _tabs[_currentIndex].panel.SetActive(false);
-            _tabs[_currentIndex].buttonImage.color = _naturalColor;
+            _currentScreen.panel.SetActive(false);
+            _currentScreen.buttonImage.color = _naturalColor;
         }
+        _currentScreen = _tabs[index];
+        _currentScreen.panel.SetActive(true);
+        _currentScreen.buttonImage.color = _clickedColor;
 
-        _tabs[index].panel.SetActive(true);
-        _tabs[index].buttonImage.color = _clickedColor;
-
-        _currentIndex = index;
     }
 
     public void BlockButtonColor(Image buttonImage, bool block)

@@ -88,13 +88,12 @@ public class CreatedDiagramScreen : MonoBehaviour
         {
             Vector3 spawnPos = startPos;
             spawnPos.x += i * 10f;
-
             var spawnedObj = _diagramManager.SetDiagramJson(_diagramsList[i].rootNode, spawnPos);
 
             if (spawnedObj != null)
             {
                 spawnedObj.SetHierarchyLayerAndPhysics("Mask", true);
-                _gameObjectList.Add(spawnedObj.gameObject);
+                _gameObjectList.Add(spawnedObj.transform.parent.gameObject);
                 _spawnedCount++;
             }
         }
