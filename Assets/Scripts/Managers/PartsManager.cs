@@ -9,6 +9,7 @@ public class PartsManager : MonoBehaviour
 
     public void SetConection(PartsScript obj1, PartsScript target)
     {
+<<<<<<< Updated upstream
         FixedJoint joint = target.gameObject.AddComponent<FixedJoint>();
         joint.connectedBody = obj1.GetComponent<Rigidbody>();
         obj1.SetStatus(PieceStatus.root);
@@ -16,6 +17,18 @@ public class PartsManager : MonoBehaviour
         _partsList.Add(obj1);
         _partsList.Add(target);
     }
+=======
+        CreateJoin(obj1, target);
+        SetList(obj1, target);
+    }
+
+    private void CreateJoin(PartsScript obj1, PartsScript target)
+    {
+        PartsScript rootOfTarget = target.GetStatus() == PieceStatus.root ? target : target.FindRootPart();
+        DefineRoot(rootOfTarget, obj1);
+    }
+
+>>>>>>> Stashed changes
     public ConnectPosition CalculatingPosition(Transform father, Transform target, Transform conSon)
     {
         if (father == null || target == null || conSon == null)

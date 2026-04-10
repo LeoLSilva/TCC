@@ -45,6 +45,48 @@ public class PartsScript : MonoBehaviour
         {
             Debug.Log(name); ConnectAnimation();
         }
+<<<<<<< Updated upstream
+=======
+
+        if (Input.GetKeyDown(KeyCode.S) && test)
+        {
+            StartConnectionProcess();
+        }
+
+        if (Input.GetKeyDown(KeyCode.P) && test && _status == PieceStatus.root)
+        {
+
+        }
+
+        if (Input.GetKeyDown(KeyCode.R) && test)
+        {
+            FindAnyObjectByType<DiagramCreaterManager>().RefreshDiagramList();
+        }
+        UpdateBreakForceLogic();
+    }
+
+    private void UpdateBreakForceLogic()
+    {
+        if (_status == PieceStatus.conecting || _partScriptTarget == null) return;
+
+        bool canBreak = false;
+
+        if (_isGrabbed)
+        {
+            PartsScript currentAncestor = _partScriptTarget;
+            while (currentAncestor != null)
+            {
+                if (currentAncestor._isGrabbed)
+                {
+                    canBreak = true;
+                    break;
+                }
+                currentAncestor = currentAncestor.GetTargetPart();
+            }
+        }
+
+        _connectLogic.UpdateBreakForce(canBreak);
+>>>>>>> Stashed changes
     }
 
     private void OnGrabbleEvent(PointerEvent obj)
@@ -135,9 +177,21 @@ public class PartsScript : MonoBehaviour
 
     public void SetStatus(PieceStatus st)
     {
+<<<<<<< Updated upstream
+=======
+        if (_status == st) return;
+
+        if (_status == PieceStatus.root && st == PieceStatus.none)
+        {
+            return;
+        }
+
+        bool wasNotConnected = (_status != PieceStatus.conected);
+>>>>>>> Stashed changes
         _status = st;
         switch (_status)
         {
+<<<<<<< Updated upstream
             case PieceStatus.none:
                 ChangeRigid(false);
                 break;
@@ -150,6 +204,65 @@ public class PartsScript : MonoBehaviour
             case PieceStatus.root:
                 ChangeRigid(false);
                 break;
+=======
+            if (wasNotConnected && !_hasRegisteredConnection)
+            {
+                DiagramRegister targetRegister = _partScriptTarget.GetComponent<DiagramRegister>();
+
+                if (targetRegister != null)
+                {
+                    targetRegister.AddConnection(_snapTarget.gameObject.name, _diagramRegister);
+                }
+                _hasRegisteredConnection = true;
+
+                OrganizeHierarchy();
+            }
+
+            gameObject.layer = _partScriptTarget.gameObject.layer;
+            ChangeRigid(false);
+        }
+    }
+
+    private void OrganizeHierarchy()
+    {
+        PartsScript rootPart = this;
+        while (rootPart.GetTargetPart() != null)
+        {
+            rootPart = rootPart.GetTargetPart();
+        }
+
+        Transform targetContainer = rootPart.transform.parent;
+        if (targetContainer == null || targetContainer.GetComponent<PartsScript>() != null || !targetContainer.name.Contains("DiagramContainer"))
+        {
+            GameObject newContainer = new GameObject($"DiagramContainer_{rootPart.gameObject.name}");
+            newContainer.transform.position = rootPart.transform.position;
+            newContainer.transform.rotation = rootPart.transform.rotation;
+            targetContainer = newContainer.transform;
+            rootPart.transform.SetParent(targetContainer, true);
+        }
+
+        Transform myContainer = transform.parent;
+
+        if (myContainer != targetContainer)
+        {
+            if (myContainer != null && myContainer.name.Contains("DiagramContainer"))
+            {
+                int childCount = myContainer.childCount;
+                for (int i = childCount - 1; i >= 0; i--)
+                {
+                    myContainer.GetChild(i).SetParent(targetContainer, true);
+                }
+
+                if (myContainer.childCount == 0)
+                {
+                    Destroy(myContainer.gameObject);
+                }
+            }
+            else
+            {
+                transform.SetParent(targetContainer, true);
+            }
+>>>>>>> Stashed changes
         }
     }
 
@@ -158,6 +271,81 @@ public class PartsScript : MonoBehaviour
         _rigid.isKinematic = kine;
         _rigid.useGravity = !kine;
     }
+<<<<<<< Updated upstream
+=======
+
+    public void SetHierarchyLayerAndPhysics(string layerName, bool makeKinematic)
+    {
+        int newLayer = LayerMask.NameToLayer(layerName);
+        PartsScript[] allParts;
+
+        if (transform.parent != null && transform.parent.name.Contains("DiagramContainer"))
+        {
+            allParts = transform.parent.GetComponentsInChildren<PartsScript>(true);
+        }
+        else
+        {
+            allParts = GetComponentsInChildren<PartsScript>(true);
+        }
+
+        foreach (var part in allParts)
+        {
+            part.gameObject.layer = newLayer;
+            part.ChangeRigid(makeKinematic);
+        }
+    }
+
+    private void OnTriggerEnter(Collider col)
+    {
+        if (col.gameObject.CompareTag("floor"))
+        {
+            if (_rigid != null)
+            {
+                _rigid.isKinematic = true;
+                transform.position = _backPos.position;
+                transform.rotation = _backPos.rotation;
+                _rigid.linearVelocity = Vector3.zero;
+                _rigid.angularVelocity = Vector3.zero;
+                _rigid.isKinematic = false;
+            }
+            else
+            {
+                transform.position = _backPos.position;
+            }
+        }
+    }
+
+    public void SaveDiagram()
+    {
+        if (_status == PieceStatus.root)
+            DiagramJsonSaver.SaveDiagram(_diagramRegister, this.gameObject.name);
+    }
+    public PartsScript FindRootPart()
+    {
+        if (_status == PieceStatus.root)
+        {
+            return this;
+        }
+
+        PartsScript currentPart = this;
+
+        while (currentPart.GetTargetPart() != null)
+        {
+            currentPart = currentPart.GetTargetPart();
+
+            if (currentPart.GetStatus() == PieceStatus.root)
+            {
+                return currentPart;
+            }
+        }
+
+        return currentPart;
+    }
+    public PieceStatus GetStatus() { return _status; }
+    public Rigidbody GetRigid() { return _rigid; }
+    public float GetMass() { return _mass; }
+    public PartsScript GetTargetPart() { return _partScriptTarget; }
+>>>>>>> Stashed changes
 }
 
 public enum ConnectType
