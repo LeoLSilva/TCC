@@ -57,5 +57,6 @@ public class PartsScreen : MonoBehaviour
     public void PrinterBtn()
     {
         _printerManager.Printer(_currentSelected);
-    }
+    } 
+
 }

@@ -16,7 +16,7 @@ public class PainelUI : MonoBehaviour
         public GameObject panel;
     }
 
-    [Header("Configuração dos Itens")]
+    [Header("Configuraï¿½ï¿½o dos Itens")]
     [SerializeField] private List<TabData> _tabs;
     private Color32 _clickedColor = new Color32(255, 255, 146, 255);
     private Color32 _blockedButton = new Color32(186, 186, 186, 255);
@@ -26,7 +26,16 @@ public class PainelUI : MonoBehaviour
 
     void Start()
     {
+        DisableAll();
         if (_tabs.Count > 0) SelectTab(0);
+    }
+
+    private void DisableAll()
+    {
+        foreach(TabData t in _tabs)
+        {
+            t.panel.SetActive(false);
+        }
     }
 
     private void Update()
@@ -56,7 +65,6 @@ public class PainelUI : MonoBehaviour
         _currentScreen = _tabs[index];
         _currentScreen.panel.SetActive(true);
         _currentScreen.buttonImage.color = _clickedColor;
-
     }
 
     public void BlockButtonColor(Image buttonImage, bool block)
@@ -65,5 +73,11 @@ public class PainelUI : MonoBehaviour
             buttonImage.color = _blockedButton;
         else
             buttonImage.color = _naturalColor;
+    }
+
+    public void ChangeScreenSelect(PartsSoloScriptableObject part){
+        _currentScreen.panel.SetActive(false);
+        SelectTab(0);
+        _currentScreen.panel.GetComponent<PartsScreen>().ChangeSelected(part);
     }
 }
