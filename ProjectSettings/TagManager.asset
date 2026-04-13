@@ -21,6 +21,7 @@ TagManager:
   - QDSUITextInvertedColor
   - QDSUITextSecondaryInvertedColor
   - obj
+  - Container
   layers:
   - Default
   - TransparentFX

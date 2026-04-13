@@ -6,4 +6,5 @@ public class DiagramScriptableObject : ScriptableObject
 {
     [Tooltip("A peça principal da montagem (ex: Corpo ou Cabeça)")]
     public DiagramNode rootPart;
+    public GameObject _Diagram;
 }

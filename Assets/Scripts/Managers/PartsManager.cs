@@ -36,14 +36,19 @@ public class PartsManager : MonoBehaviour
 
     private void CreateJoin(PartsScript obj1, PartsScript target)
     {
-        PartsScript root;
-
-        if (obj1.GetStatus() == PieceStatus.root) { root = obj1; }
-        else if (target.GetStatus() == PieceStatus.root) { root = target; }
-        else { root = obj1.GetRigid().mass >= target.GetRigid().mass ? obj1 : target; }
-
-        PartsScript connected = root == obj1 ? target : obj1;
-        DefineRoot(root, connected);
+        if (target.GetStatus() == PieceStatus.root || target.GetStatus() == PieceStatus.conected)
+        {
+            obj1.SetStatus(PieceStatus.conected);
+        }
+        else if (obj1.GetStatus() == PieceStatus.root || obj1.GetStatus() == PieceStatus.conected)
+        {
+            target.SetStatus(PieceStatus.conected);
+        }
+        else
+        {
+            target.SetStatus(PieceStatus.root);
+            obj1.SetStatus(PieceStatus.conected);
+        }
     }
 
     public ConnectPosition CalculatingPosition(Transform father, Transform target, Transform conSon)

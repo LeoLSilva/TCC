@@ -4,6 +4,7 @@ using UnityEngine.Events;
 
 public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
 {
+    [SerializeField] private GameObject _target;
     [SerializeField] private Transform _trigger;
     [SerializeField] private float _triggerStartZ = -0.07448174f;
     [SerializeField] private float _triggerEndZ = -0.09448174f;
@@ -110,6 +111,22 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
                             hitScanManager = rootObj.gameObject.AddComponent<ScanManager>();
                             hitScanManager.scanMaterial = _scanMaterial;
                         }
+
+                        // ---> ALTERAÇÃO 1: LÓGICA PARA PEGAR O CONTAINER NO _TARGET <---
+                        PartsScript hitPart = hit.collider.GetComponentInParent<PartsScript>();
+                        if (hitPart != null)
+                        {
+                            PartsScript rootPart = hitPart.FindRootPart();
+                            if (rootPart != null && rootPart.transform.parent != null && rootPart.transform.parent.name.Contains("DiagramContainer"))
+                            {
+                                _target = rootPart.transform.parent.gameObject;
+                            }
+                            else if (rootPart != null)
+                            {
+                                _target = rootPart.gameObject;
+                            }
+                        }
+                        // -----------------------------------------------------------------
                     }
                 }
             }
@@ -163,6 +180,22 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
             if (_isScanning)
             {
                 CancelScan();
+            }
+        }
+    }
+
+    public void SaveDiagram()
+    {
+        if (_target == null) return;
+
+        PartsScript[] parts = _target.GetComponentsInChildren<PartsScript>(true);
+        foreach (PartsScript part in parts)
+        {
+            if (part.GetStatus() == PieceStatus.root)
+            {
+                part.SaveDiagram();
+                Debug.Log($"Scanner salvou o diagrama da peça: {part.gameObject.name}");
+                break;
             }
         }
     }

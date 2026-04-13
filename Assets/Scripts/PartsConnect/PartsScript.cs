@@ -298,6 +298,8 @@ public class PartsScript : MonoBehaviour
                     targetRegister.AddConnection(_snapTarget.gameObject.name, _diagramRegister);
                 }
                 _hasRegisteredConnection = true;
+
+                OrganizeHierarchy();
             }
 
             gameObject.layer = _partScriptTarget.gameObject.layer;
@@ -308,6 +310,96 @@ public class PartsScript : MonoBehaviour
                 ChangeRigid(parentRigid.isKinematic);
             }
         }
+    }
+
+    private void OrganizeHierarchy()
+    {
+        if (_partScriptTarget == null) return;
+
+        Transform targetContainer = _partScriptTarget.transform.parent;
+
+        if (targetContainer == null || !targetContainer.name.Contains("DiagramContainer"))
+        {
+            targetContainer = ContainerFactory.CreateContainer(_partScriptTarget.gameObject.name, _partScriptTarget.transform.position, _partScriptTarget.transform.rotation);
+            _partScriptTarget.transform.SetParent(targetContainer, true);
+
+            PartsScript localRoot = _partScriptTarget.FindRootPart();
+            if (localRoot != null && localRoot.transform.parent != targetContainer)
+            {
+                localRoot.transform.SetParent(targetContainer, true);
+            }
+        }
+
+        Transform myContainer = this.transform.parent;
+
+        if (myContainer != null && myContainer != targetContainer && myContainer.name.Contains("DiagramContainer"))
+        {
+            int childCount = myContainer.childCount;
+            for (int i = childCount - 1; i >= 0; i--)
+            {
+                myContainer.GetChild(i).SetParent(targetContainer, true);
+            }
+
+            DiagramContainerLog targetLog = targetContainer.GetComponent<DiagramContainerLog>();
+            DiagramContainerLog myLog = myContainer.GetComponent<DiagramContainerLog>();
+
+            if (targetLog != null && myLog != null && myLog.GetFullLog().Count > 0)
+            {
+                targetLog.MergeLog(myLog.GetFullLog());
+            }
+
+            Destroy(myContainer.gameObject);
+        }
+        else if (myContainer != targetContainer)
+        {
+            this.transform.SetParent(targetContainer, true);
+        }
+
+        int targetLayer = _partScriptTarget.gameObject.layer;
+        PartsScript[] allParts = targetContainer.GetComponentsInChildren<PartsScript>();
+
+        foreach (PartsScript part in allParts)
+        {
+            part.gameObject.layer = targetLayer;
+            part.Invoke(nameof(part.SyncPhysicsDelayed), 0.2f);
+        }
+    }
+
+    public void SyncPhysicsDelayed()
+    {
+        PartsScript rootPart = FindRootPart();
+        if (rootPart != null && rootPart.GetRigid() != null)
+        {
+            ChangeRigid(rootPart.GetRigid().isKinematic);
+        }
+    }
+
+    public PartsScript FindRootPart()
+    {
+        if (_status == PieceStatus.root)
+        {
+            return this;
+        }
+
+        PartsScript currentPart = this;
+
+        while (currentPart.GetTargetPart() != null)
+        {
+            currentPart = currentPart.GetTargetPart();
+
+            if (currentPart.GetStatus() == PieceStatus.root)
+            {
+                return currentPart;
+            }
+        }
+
+        return currentPart;
+    }
+
+    public void SaveDiagram()
+    {
+        if (_status == PieceStatus.root)
+            DiagramJsonSaver.SaveDiagram(_diagramRegister, this.gameObject.name);
     }
 
     public void ChangeRigid(bool isKinematic)
@@ -323,7 +415,6 @@ public class PartsScript : MonoBehaviour
     {
         int newLayer = LayerMask.NameToLayer(layerName);
 
-        // Inicia a busca recursiva a partir desta peça
         ApplyLayerAndPhysicsRecursive(this, newLayer, makeKinematic, new HashSet<PartsScript>());
     }
 
@@ -336,14 +427,12 @@ public class PartsScript : MonoBehaviour
         currentPart.gameObject.layer = layer;
         currentPart.ChangeRigid(kinematic);
 
-        // Busca pelo pai na conexão lógica
         PartsScript parentPart = currentPart.GetTargetPart();
         if (parentPart != null)
         {
             ApplyLayerAndPhysicsRecursive(parentPart, layer, kinematic, visited);
         }
 
-        // Busca pelos filhos através do DiagramRegister
         DiagramRegister currentRegister = currentPart.GetComponent<DiagramRegister>();
         if (currentRegister != null)
         {
@@ -354,8 +443,6 @@ public class PartsScript : MonoBehaviour
                 {
                     if (connection.connectedPart != null && connection.connectedPart.partPrefab != null)
                     {
-                        // Para não fazer uma busca pesada na cena, procuramos as instâncias
-                        // ativas que têm o mesmo DiagramRegister que o node conectado
                         DiagramRegister[] allRegisters = FindObjectsByType<DiagramRegister>(FindObjectsSortMode.None);
                         foreach (var reg in allRegisters)
                         {

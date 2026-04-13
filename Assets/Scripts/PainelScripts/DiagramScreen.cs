@@ -7,12 +7,14 @@ using UnityEngine.UI;
 public class DiagramScreen : MonoBehaviour
 {
     [SerializeField] private GameObject _printerBtn;
+    [SerializeField] private GameObject _currentDiagramBD;
     [SerializeField] private int _currentDiagram;
     [SerializeField] private TextMeshProUGUI _diagramName;
 
     [Header("Lists")]
     [SerializeField] private List<DiagramScriptableObject> _diagramsList = new List<DiagramScriptableObject>();
     [SerializeField] private List<GameObject> _gameObjectList = new List<GameObject>();
+    [SerializeField] private List<GameObject> _diagramsBD = new List<GameObject>();
 
     [Header("Other Scripts")]
     [SerializeField] private DiagramManager _diagramManager;
@@ -30,6 +32,7 @@ public class DiagramScreen : MonoBehaviour
         _printerManager = FindAnyObjectByType<PrinterManager>();
         _diagramManager = FindAnyObjectByType<DiagramManager>();
         _printerManager.OnPrinterStateChanged += _SetButtonPrintActive;
+        SetDiagramBDActive();
     }
 
     private void OnEnable()
@@ -74,11 +77,25 @@ public class DiagramScreen : MonoBehaviour
         }
     }
 
+    private void SetDiagramBDActive()
+    {
+        if (_currentDiagramBD != null)
+            _currentDiagramBD.SetActive(false);
+        _currentDiagramBD = _diagramsBD[_currentDiagram];
+        _currentDiagramBD.SetActive(true);
+    }
+    public void ChangeDiagramInt(int value)
+    {
+        _currentDiagram = value;
+        SetDiagramBDActive();
+        MoveCamera();
+    }
     public void ChangeDiagram(bool left)
     {
         if (_diagramsList.Count == 0) return;
 
         _currentDiagram = (_currentDiagram + (left ? -1 : 1) + _diagramsList.Count) % _diagramsList.Count;
+        SetDiagramBDActive();
         MoveCamera();
     }
 

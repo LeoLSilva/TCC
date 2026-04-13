@@ -6,7 +6,6 @@ public class ScanManager : MonoBehaviour
     public Material scanMaterial;
     public bool effectActive = false;
 
-    // VARIÁVEIS REMOVIDAS DAQUI: speed e lineWidth
 
     private List<MeshRenderer> targets = new List<MeshRenderer>();
     private float minY, maxY;
@@ -34,11 +33,9 @@ public class ScanManager : MonoBehaviour
 
         foreach (var r in renderers)
         {
-            // Só processa se tiver o seu script
             if (r.GetComponent<PartsScript>() != null)
             {
                 targets.Add(r);
-                // Pega os limites reais no mundo
                 minY = Mathf.Min(minY, r.bounds.min.y);
                 maxY = Mathf.Max(maxY, r.bounds.max.y);
             }
@@ -47,8 +44,6 @@ public class ScanManager : MonoBehaviour
 
     void UpdateShaderParams()
     {
-        // Envia APENAS o tamanho do robô para o shader saber onde começa e termina.
-        // O Line Width e o Speed agora são lidos direto do Material!
         scanMaterial.SetFloat("_MinY", minY);
         scanMaterial.SetFloat("_MaxY", maxY);
     }

@@ -59,3 +59,4 @@ MonoBehaviour:
       connectedPart:
         partPrefab: {fileID: 8798101802912769788, guid: f93e9d72e6aad804fa3dc161a1e57c49, type: 3}
         connections: []
+  _Diagram: {fileID: 5252067483415747207, guid: 14c15cc9cef929f4f967254c5f071ae6, type: 3}

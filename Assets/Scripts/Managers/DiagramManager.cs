@@ -19,17 +19,20 @@ public class DiagramManager : MonoBehaviour
         }
 
         Quaternion spawnRot = _painelPoint != null ? _painelPoint.rotation : Quaternion.identity;
-        GameObject diagramContainer = new GameObject($"DiagramContainer_{diagramScriptable.name}");
-        diagramContainer.transform.position = targetPosition;
-        diagramContainer.transform.rotation = spawnRot;
 
+        Transform diagramContainer = ContainerFactory.CreateContainer(diagramScriptable.name, targetPosition, spawnRot);
 
-        PartsScript rootPartScript = SpawnAll(diagramScriptable.rootPart, targetPosition, spawnRot, null, "", diagramContainer.transform);
+        PartsScript rootPartScript = SpawnAll(diagramScriptable.rootPart, targetPosition, spawnRot, null, "", diagramContainer);
 
         if (rootPartScript != null)
         {
+            rootPartScript.SetStatus(PieceStatus.root);
             _lastPainelObject = rootPartScript.gameObject;
-        } else Destroy(diagramContainer);
+        }
+        else
+        {
+            Destroy(diagramContainer.gameObject);
+        }
 
         return rootPartScript;
     }
@@ -49,6 +52,9 @@ public class DiagramManager : MonoBehaviour
 
             if (targetSnap != null)
             {
+                targetSnap.gameObject.SetActive(true);
+                if (mySnap != null) mySnap.gameObject.SetActive(true);
+
                 newPart.transform.position = targetSnap.transform.position;
                 newPart.transform.rotation = targetSnap.transform.rotation;
 
@@ -125,18 +131,25 @@ public class DiagramManager : MonoBehaviour
         if (nodeData == null || string.IsNullOrEmpty(nodeData.prefabName)) return null;
 
         Quaternion spawnRot = _painelPoint != null ? _painelPoint.rotation : Quaternion.identity;
-        GameObject diagramContainer = new GameObject($"DiagramContainer_{nodeData.prefabName}");
-        PartsScript rootPartScript = SpawnAllJson(nodeData, targetPosition, spawnRot, null, "");
+
+        Transform diagramContainer = ContainerFactory.CreateContainer(nodeData.prefabName, targetPosition, spawnRot);
+
+        PartsScript rootPartScript = SpawnAllJson(nodeData, targetPosition, spawnRot, null, "", diagramContainer);
 
         if (rootPartScript != null)
         {
+            rootPartScript.SetStatus(PieceStatus.root);
             _lastPainelObject = rootPartScript.gameObject;
+        }
+        else
+        {
+            Destroy(diagramContainer.gameObject);
         }
 
         return rootPartScript;
     }
 
-    private PartsScript SpawnAllJson(DiagramJsonSaver.NodeSaveData node, Vector3 pos, Quaternion rot, PartsScript parentScript, string conName)
+    private PartsScript SpawnAllJson(DiagramJsonSaver.NodeSaveData node, Vector3 pos, Quaternion rot, PartsScript parentScript, string conName, Transform container)
     {
         if (node == null || string.IsNullOrEmpty(node.prefabName)) return null;
 
@@ -144,6 +157,8 @@ public class DiagramManager : MonoBehaviour
         if (prefab == null) return null;
 
         GameObject newPart = Instantiate(prefab, pos, rot);
+        newPart.transform.SetParent(container, true);
+
         PartsScript newPartScript = newPart.GetComponent<PartsScript>();
 
         if (parentScript != null && !string.IsNullOrEmpty(conName))
@@ -153,6 +168,9 @@ public class DiagramManager : MonoBehaviour
 
             if (targetSnap != null)
             {
+                targetSnap.gameObject.SetActive(true);
+                if (mySnap != null) mySnap.gameObject.SetActive(true);
+
                 newPart.transform.position = targetSnap.transform.position;
                 newPart.transform.rotation = targetSnap.transform.rotation;
                 newPartScript.AutoConnect(targetSnap, mySnap);
@@ -168,7 +186,7 @@ public class DiagramManager : MonoBehaviour
             foreach (DiagramJsonSaver.ConnectionSaveData connection in node.connections)
             {
                 if (string.IsNullOrWhiteSpace(connection.conName)) continue;
-                SpawnAllJson(connection.connectedPart, Vector3.zero, Quaternion.identity, newPartScript, connection.conName);
+                SpawnAllJson(connection.connectedPart, Vector3.zero, Quaternion.identity, newPartScript, connection.conName, container);
             }
         }
         return newPartScript;
