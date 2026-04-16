@@ -11,10 +11,8 @@ public class DiagramScreen : MonoBehaviour
     [SerializeField] private int _currentDiagram;
     [SerializeField] private TextMeshProUGUI _diagramName;
 
-    [Header("Lists")]
-    [SerializeField] private List<DiagramScriptableObject> _diagramsList = new List<DiagramScriptableObject>();
-    [SerializeField] private List<GameObject> _gameObjectList = new List<GameObject>();
-    [SerializeField] private List<GameObject> _diagramsBD = new List<GameObject>();
+    [Header("Data")]
+    [SerializeField] private List<DiagramDataBP> _diagramDataList = new List<DiagramDataBP>();
 
     [Header("Other Scripts")]
     [SerializeField] private DiagramManager _diagramManager;
@@ -25,34 +23,35 @@ public class DiagramScreen : MonoBehaviour
     [SerializeField] private Transform _cameraTransform;
     [SerializeField] private Transform _spawnStartPoint;
 
-    private int _spawnedCount = 0;
+    private GameObject _lastSpawnedDiagram;
 
     private void Start()
     {
+        if (_diagramManager == null)
+        {
+            _diagramManager = FindAnyObjectByType<DiagramManager>();
+        }
+
         _printerManager = FindAnyObjectByType<PrinterManager>();
-        _diagramManager = FindAnyObjectByType<DiagramManager>();
         _printerManager.OnPrinterStateChanged += _SetButtonPrintActive;
         SetDiagramBDActive();
     }
 
     private void OnEnable()
     {
-        foreach (var obj in _gameObjectList)
+        foreach (var data in _diagramDataList)
         {
-            if (obj != null) obj.SetActive(true);
+            if (data != null && data.DiagramObject != null) 
+                data.DiagramObject.SetActive(true);
         }
-
-        if (_diagramsList.Count > 0)
-            SpawnAllDiagrams();
-
-        MoveCamera();
     }
 
     private void OnDisable()
     {
-        foreach (var obj in _gameObjectList)
+        foreach (var data in _diagramDataList)
         {
-            if (obj != null) obj.SetActive(false);
+            if (data != null && data.DiagramObject != null) 
+                data.DiagramObject.SetActive(false);
         }
     }
 
@@ -81,88 +80,90 @@ public class DiagramScreen : MonoBehaviour
     {
         if (_currentDiagramBD != null)
             _currentDiagramBD.SetActive(false);
-        _currentDiagramBD = _diagramsBD[_currentDiagram];
-        _currentDiagramBD.SetActive(true);
+
+        if (_diagramDataList.Count > 0 && _currentDiagram < _diagramDataList.Count)
+        {
+            _currentDiagramBD = _diagramDataList[_currentDiagram].DiagramBD;
+            
+            if (_currentDiagramBD != null)
+                _currentDiagramBD.SetActive(true);
+
+            if (_diagramName != null && _diagramDataList[_currentDiagram].Diagram != null)
+            {
+                _diagramName.text = _diagramDataList[_currentDiagram].Diagram.name;
+            }
+        }
     }
+
     public void ChangeDiagramInt(int value)
     {
+        if (_diagramDataList.Count == 0) return;
         _currentDiagram = value;
         SetDiagramBDActive();
-        MoveCamera();
     }
+
     public void ChangeDiagram(bool left)
     {
-        if (_diagramsList.Count == 0) return;
+        if (_diagramDataList.Count == 0) return;
 
-        _currentDiagram = (_currentDiagram + (left ? -1 : 1) + _diagramsList.Count) % _diagramsList.Count;
+        _currentDiagram = (_currentDiagram + (left ? -1 : 1) + _diagramDataList.Count) % _diagramDataList.Count;
         SetDiagramBDActive();
-        MoveCamera();
     }
 
-    private void SpawnAllDiagrams()
+    public void AddNewDiagramData(DiagramDataBP newData)
     {
-        if (_diagramManager == null)
-        {
-            _diagramManager = FindAnyObjectByType<DiagramManager>();
-        }
-
-        Vector3 startPos = _spawnStartPoint != null ? _spawnStartPoint.position : Vector3.zero;
-
-        for (int i = _gameObjectList.Count; i < _diagramsList.Count; i++)
-        {
-            Vector3 spawnPos = startPos;
-            spawnPos.x += i * 10f;
-
-            var spawnedObj = _diagramManager.SetDiagram(_diagramsList[i], spawnPos);
-            spawnedObj.SetHierarchyLayerAndPhysics("Mask", true);
-            _gameObjectList.Add(spawnedObj.transform.parent.gameObject);
-            _spawnedCount++;
-        }
+        _diagramDataList.Add(newData);
+        SetDiagramBDActive();
     }
 
-    public void AddNewDiagram(DiagramScriptableObject newDiagram)
+    public void SpawnCurrentDiagramToCamera()
     {
-        if (_diagramManager == null)
+        if (_diagramDataList.Count == 0 || _currentDiagram >= _diagramDataList.Count) return;
+
+        DiagramDataBP currentData = _diagramDataList[_currentDiagram];
+        if (currentData == null || currentData.Diagram == null) return;
+
+        if (_lastSpawnedDiagram != null)
         {
-            _diagramManager = FindAnyObjectByType<DiagramManager>();
+            Destroy(_lastSpawnedDiagram);
         }
 
-        _diagramsList.Add(newDiagram);
+        Vector3 spawnPos = _spawnStartPoint != null ? _spawnStartPoint.position : 
+                          (_cameraTransform != null ? _cameraTransform.position : transform.position);
 
-        Vector3 startPos = _spawnStartPoint != null ? _spawnStartPoint.position : Vector3.zero;
-        Vector3 spawnPos = startPos;
-        spawnPos.x += _spawnedCount * 10f;
-
-        var spawnedObj = _diagramManager.SetDiagram(newDiagram, spawnPos);
-        spawnedObj.SetHierarchyLayerAndPhysics("Mask", true);
-        _gameObjectList.Add(spawnedObj.transform.parent.gameObject);
-        _spawnedCount++;
-    }
-
-    private void MoveCamera()
-    {
-        if (_cameraTransform != null)
+        PartsScript spawnedPart = _diagramManager.SetDiagram(currentData.Diagram, spawnPos);
+        
+        if (spawnedPart != null)
         {
-            Vector3 camPos = _cameraTransform.position;
-            float startX = _spawnStartPoint != null ? _spawnStartPoint.position.x : 0f;
-            camPos.x = startX + (_currentDiagram * 10f);
-            _cameraTransform.position = camPos;
+            _lastSpawnedDiagram = spawnedPart.transform.parent.gameObject;
+            spawnedPart.SetHierarchyLayerAndPhysics("Mask", true);
         }
     }
 
     public void PrinterBtn()
     {
-        _printerManager.Printer(GetObjectList());
+        if (_diagramDataList.Count > 0)
+        {
+            _printerManager.Printer(GetObjectList());
+        }
     }
 
     private GameObject GetObjectList()
     {
-        return _gameObjectList[_currentDiagram];
+        return _diagramDataList[_currentDiagram].DiagramObject;
     }
 
     public void BlockPrinterBtn(bool block)
     {
-        _printerBtn.GetComponent<RayInteractable>().enabled = !block;
-        _painelUi.BlockButtonColor(_printerBtn.GetComponent<Image>(), block);
+        if (_printerBtn != null)
+        {
+            var interactable = _printerBtn.GetComponent<RayInteractable>();
+            if (interactable != null) interactable.enabled = !block;
+            
+            if (_painelUi != null)
+            {
+                _painelUi.BlockButtonColor(_printerBtn.GetComponent<Image>(), block);
+            }
+        }
     }
 }

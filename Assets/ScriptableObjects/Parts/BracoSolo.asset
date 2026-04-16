@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30162a44ded0ddf4fb114a87d24bcd0a, type: 3}
   m_Name: BracoSolo
   m_EditorClassIdentifier: 
-  select: {fileID: 21300000, guid: b80c8bf2cee3015498943be47532f602, type: 3}
+  select: {fileID: 21300000, guid: 7f58276b82f5d460e992b7cc4bf0f000, type: 3}
   prefab: {fileID: 3022905555630070273, guid: 12abcd0eeeb879743a231229929c28b3, type: 3}
   diagram: {fileID: 21300000, guid: f1f6462eb1f572c448a6ec112426f2b3, type: 3}

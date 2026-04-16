@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30162a44ded0ddf4fb114a87d24bcd0a, type: 3}
   m_Name: BocaSolo
   m_EditorClassIdentifier: 
-  select: {fileID: 21300000, guid: f880baf7e0e8f9e42b52da71ccda4771, type: 3}
+  select: {fileID: 21300000, guid: 58e723bc3892845a194bcc5c73d2ad4d, type: 3}
   prefab: {fileID: 827149500101627580, guid: 7bc739a289d736a4493b337ea6983fb2, type: 3}
   diagram: {fileID: 21300000, guid: 1059cf55c1b6bc54aa85350c5f94bbb4, type: 3}

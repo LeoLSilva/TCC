@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30162a44ded0ddf4fb114a87d24bcd0a, type: 3}
   m_Name: CorpoSolo
   m_EditorClassIdentifier: 
-  select: {fileID: 21300000, guid: d4184fc8a6869224a837ecd114577cac, type: 3}
+  select: {fileID: 21300000, guid: 1f8f7f35783d741849b1cf0b8d42615a, type: 3}
   prefab: {fileID: 6404463418283132380, guid: b490d2aa5341a8146a8360b9a1d899bb, type: 3}
-  diagram: {fileID: 21300000, guid: 5edfea04a32a8814f928a4611f23e281, type: 3}
+  diagram: {fileID: 21300000, guid: 3f5a706b1f3b147bd92c6143d25b8c6a, type: 3}

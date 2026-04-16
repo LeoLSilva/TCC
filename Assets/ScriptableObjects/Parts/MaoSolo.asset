@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30162a44ded0ddf4fb114a87d24bcd0a, type: 3}
   m_Name: MaoSolo
   m_EditorClassIdentifier: 
-  select: {fileID: 21300000, guid: 2d4979b059799b147881051f09a18c81, type: 3}
+  select: {fileID: 21300000, guid: b3d197a944ec346e5995e5273b340bd1, type: 3}
   prefab: {fileID: 5726673057475164278, guid: 664b161fb93c6ec4d9eed6ccb08cb6ab, type: 3}
   diagram: {fileID: 21300000, guid: 9abee7f029a67c342a3c9f584a013af0, type: 3}

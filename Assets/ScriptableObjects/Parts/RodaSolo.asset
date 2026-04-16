@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30162a44ded0ddf4fb114a87d24bcd0a, type: 3}
   m_Name: RodaSolo
   m_EditorClassIdentifier: 
-  select: {fileID: 21300000, guid: 7f1ff7fedf7381942ab814aa386bf0d7, type: 3}
+  select: {fileID: 21300000, guid: 7f58276b82f5d460e992b7cc4bf0f000, type: 3}
   prefab: {fileID: 8798101802912769788, guid: f93e9d72e6aad804fa3dc161a1e57c49, type: 3}
   diagram: {fileID: 21300000, guid: 488705b727163184cbdc2e9f728ec391, type: 3}
