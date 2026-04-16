@@ -1,10 +1,10 @@
 using Oculus.Interaction.HandGrab;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
 {
-    [SerializeField] private GameObject _target;
     [SerializeField] private Transform _trigger;
     [SerializeField] private float _triggerStartZ = -0.07448174f;
     [SerializeField] private float _triggerEndZ = -0.09448174f;
@@ -23,11 +23,9 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
     [SerializeField] private LayerMask _scanLayerMask = ~0;
     [SerializeField] private string _targetTag = "obj";
 
-    [Header("Visual Effect Settings")]
-    [SerializeField] private Material _scanMaterial;
-
+    public UnityEvent<GameObject> OnScanStarted;
     public UnityEvent<float> OnScanProgress;
-    public UnityEvent OnScanComplete;
+    public UnityEvent<GameObject> OnScanComplete;
     public UnityEvent OnScanCanceled;
 
     private float _dampedUseStrength = 0;
@@ -35,7 +33,11 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
     private bool _isScanning = false;
     private float _currentScanTime = 0f;
     private bool _scanFinished = false;
-    private ScanManager _currentScanManager;
+    private GameObject _currentTarget;
+
+    [Header("Testes")]
+    public GameObject itenScannerText;
+
 
     public void BeginUse()
     {
@@ -87,92 +89,45 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
 
         if (progress >= _fireThreshold)
         {
-            if (!_isScanning)
+            if (_scanOrigin != null && Physics.Raycast(_scanOrigin.position, _scanOrigin.forward, out RaycastHit hit, _maxScanDistance, _scanLayerMask))
             {
-                _isScanning = true;
-                _currentScanTime = 0f;
-            }
-
-            bool isHittingTarget = false;
-            ScanManager hitScanManager = null;
-
-            if (_scanOrigin != null)
-            {
-                if (Physics.Raycast(_scanOrigin.position, _scanOrigin.forward, out RaycastHit hit, _maxScanDistance, _scanLayerMask))
+                if (hit.collider.CompareTag(_targetTag))
                 {
-                    if (hit.collider.CompareTag(_targetTag))
+                    GameObject hitObj = hit.collider.gameObject;
+
+                    if (!_isScanning)
                     {
-                        isHittingTarget = true;
-                        Transform rootObj = hit.collider.transform.root;
-                        hitScanManager = rootObj.GetComponent<ScanManager>();
-
-                        if (hitScanManager == null)
-                        {
-                            hitScanManager = rootObj.gameObject.AddComponent<ScanManager>();
-                            hitScanManager.scanMaterial = _scanMaterial;
-                        }
-
-                        // ---> ALTERAÇÃO 1: LÓGICA PARA PEGAR O CONTAINER NO _TARGET <---
-                        PartsScript hitPart = hit.collider.GetComponentInParent<PartsScript>();
-                        if (hitPart != null)
-                        {
-                            PartsScript rootPart = hitPart.FindRootPart();
-                            if (rootPart != null && rootPart.transform.parent != null && rootPart.transform.parent.name.Contains("DiagramContainer"))
-                            {
-                                _target = rootPart.transform.parent.gameObject;
-                            }
-                            else if (rootPart != null)
-                            {
-                                _target = rootPart.gameObject;
-                            }
-                        }
-                        // -----------------------------------------------------------------
+                        _isScanning = true;
+                        _currentTarget = hitObj;
+                        _currentScanTime = 0f;
+                        OnScanStarted?.Invoke(_currentTarget);
                     }
-                }
-            }
-
-            if (hitScanManager != _currentScanManager)
-            {
-                if (_currentScanManager != null)
-                {
-                    _currentScanManager.effectActive = false;
-                }
-                _currentScanManager = hitScanManager;
-            }
-
-            if (isHittingTarget)
-            {
-                if (_currentScanManager != null)
-                {
-                    _currentScanManager.effectActive = true;
-                }
-
-                _currentScanTime += Time.deltaTime;
-                float scanPercent = Mathf.Clamp01(_currentScanTime / _scanDuration);
-                OnScanProgress?.Invoke(scanPercent);
-
-                if (_currentScanTime >= _scanDuration)
-                {
-                    _scanFinished = true;
-                    _isScanning = false;
-
-                    if (_currentScanManager != null)
+                    else if (hitObj != _currentTarget)
                     {
-                        _currentScanManager.effectActive = false;
-                        _currentScanManager = null;
+                        CancelScan();
+                        return;
                     }
 
-                    OnScanComplete?.Invoke();
+                    _currentScanTime += Time.deltaTime;
+                    float scanPercent = Mathf.Clamp01(_currentScanTime / _scanDuration);
+                    OnScanProgress?.Invoke(scanPercent);
+
+                    if (_currentScanTime >= _scanDuration)
+                    {
+                        _scanFinished = true;
+                        _isScanning = false;
+                        OnScanComplete?.Invoke(_currentTarget);
+                        _currentTarget = null;
+                    }
+                }
+                else
+                {
+                    CancelScan();
                 }
             }
             else
             {
-                StopCurrentScanManager();
-                if (_currentScanTime > 0f)
-                {
-                    _currentScanTime = 0f;
-                    OnScanProgress?.Invoke(0f);
-                }
+                CancelScan();
             }
         }
         else if (progress <= _releaseThreshold)
@@ -184,41 +139,15 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
         }
     }
 
-    public void SaveDiagram()
-    {
-        if (_target == null) return;
-
-        PartsScript[] parts = _target.GetComponentsInChildren<PartsScript>(true);
-        foreach (PartsScript part in parts)
-        {
-            if (part.GetStatus() == PieceStatus.root)
-            {
-                part.SaveDiagram();
-                Debug.Log($"Scanner salvou o diagrama da peça: {part.gameObject.name}");
-                break;
-            }
-        }
-    }
-
     private void CancelScan()
     {
-        StopCurrentScanManager();
-
         if (_isScanning && !_scanFinished)
         {
             _isScanning = false;
             _currentScanTime = 0f;
+            _currentTarget = null;
             OnScanProgress?.Invoke(0f);
             OnScanCanceled?.Invoke();
-        }
-    }
-
-    private void StopCurrentScanManager()
-    {
-        if (_currentScanManager != null)
-        {
-            _currentScanManager.effectActive = false;
-            _currentScanManager = null;
         }
     }
 
@@ -230,10 +159,18 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
 
     public void ResetScanner()
     {
-        StopCurrentScanManager();
         _scanFinished = false;
         _currentScanTime = 0f;
         _isScanning = false;
+        _currentTarget = null;
         OnScanProgress?.Invoke(0f);
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            OnScanComplete?.Invoke(itenScannerText);
+        }
     }
 }

@@ -63,7 +63,10 @@ public class DiagramRegister : MonoBehaviour
     {
         if (node == null || node.partPrefab == null) return "";
 
+        // Limpa o (Clone) e também limpa padrões como (1), (2), (99)
         string cleanName = node.partPrefab.name.Replace("(Clone)", "").Trim();
+        cleanName = System.Text.RegularExpressions.Regex.Replace(cleanName, @"\s*\(\d+\)", "");
+        
         StringBuilder sig = new StringBuilder();
         sig.Append(cleanName).Append("[");
 
