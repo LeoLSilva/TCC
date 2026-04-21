@@ -9,11 +9,22 @@ public class DiagramRegister : MonoBehaviour
 
     private void Start()
     {
+        if (_rootPart == null)
+        {
+            _rootPart = new DiagramNode();
+        }
         _rootPart.partPrefab = this.gameObject;
     }
 
     public void AddConnection(string conName, DiagramRegister node)
     {
+        if (node == null) return;
+
+        if (_rootPart.connections == null)
+        {
+            _rootPart.connections = new List<DiagramConnection>();
+        }
+
         DiagramConnection c = new DiagramConnection();
         c.conName = conName;
         c.connectedPart = node.GetDiagramNode();
@@ -24,7 +35,7 @@ public class DiagramRegister : MonoBehaviour
 
     public void RemoveConnection(string conName, DiagramRegister node)
     {
-        if (_rootPart.connections == null) return;
+        if (_rootPart == null || _rootPart.connections == null || node == null) return;
 
         for (int i = 0; i < _rootPart.connections.Count; i++)
         {
@@ -40,7 +51,7 @@ public class DiagramRegister : MonoBehaviour
     private void ReportToContainer(bool isConnect, string conName, DiagramRegister node)
     {
         DiagramContainerLog log = GetComponentInParent<DiagramContainerLog>();
-        if (log != null)
+        if (log != null && node != null)
         {
             string parentName = this.gameObject.name.Replace("(Clone)", "").Trim();
             string childName = node.gameObject.name.Replace("(Clone)", "").Trim();
@@ -63,10 +74,9 @@ public class DiagramRegister : MonoBehaviour
     {
         if (node == null || node.partPrefab == null) return "";
 
-        // Limpa o (Clone) e também limpa padrões como (1), (2), (99)
         string cleanName = node.partPrefab.name.Replace("(Clone)", "").Trim();
         cleanName = System.Text.RegularExpressions.Regex.Replace(cleanName, @"\s*\(\d+\)", "");
-        
+
         StringBuilder sig = new StringBuilder();
         sig.Append(cleanName).Append("[");
 

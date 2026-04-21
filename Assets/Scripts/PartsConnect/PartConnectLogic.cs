@@ -44,22 +44,22 @@ public class PartConnectLogic : MonoBehaviour
     {
         _partsScript.ChangeRigid(true);
 
-        Vector3 startPos = transform.position;
-        Quaternion startRot = transform.rotation;
-
-        Vector3 targetPos = targetTransform.position;
-        Quaternion targetRot = targetTransform.rotation;
-
-        float t = 0f;
-        while (t < 1f)
+        if (timeAnimate > 0f)
         {
-            t += Time.deltaTime / timeAnimate;
-            transform.position = Vector3.Lerp(startPos, targetPos, t);
-            transform.rotation = Quaternion.Slerp(startRot, targetRot, t);
-            yield return null;
+            Vector3 startPos = transform.position;
+            Quaternion startRot = transform.rotation;
+
+            float t = 0f;
+            while (t < 1f)
+            {
+                t += Time.deltaTime / timeAnimate;
+                transform.position = Vector3.Lerp(startPos, targetTransform.position, t);
+                transform.rotation = Quaternion.Slerp(startRot, targetTransform.rotation, t);
+                yield return null;
+            }
         }
 
-        transform.SetPositionAndRotation(targetPos, targetRot);
+        transform.SetPositionAndRotation(targetTransform.position, targetTransform.rotation);
         CreatePhysicsJoint();
     }
 

@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 7666839512221663477}
   - component: {fileID: 360992003215806598}
   - component: {fileID: 3124656224507029375}
+  - component: {fileID: 372511489969915913}
   - component: {fileID: 4576688054450631601}
   - component: {fileID: 1611144139625351189}
   - component: {fileID: 8783369512914425549}
@@ -226,7 +227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb27c60bc6c979a4ba6c2195d72043fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rootPart:
+  _rootPart:
     partPrefab: {fileID: 0}
     connections: []
 --- !u!114 &7666839512221663477
@@ -294,6 +295,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 2
+--- !u!114 &372511489969915913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4764629987136540677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddf21a1ced307f044b3b0dd058793b97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  partData: {fileID: 11400000, guid: 532e5a7c621a1c643bdacae3e56bdf99, type: 2}
+  alreadyScanned: 0
 --- !u!114 &4576688054450631601
 MonoBehaviour:
   m_ObjectHideFlags: 0

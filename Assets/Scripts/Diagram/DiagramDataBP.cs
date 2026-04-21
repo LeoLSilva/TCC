@@ -1,27 +1,40 @@
 using UnityEngine;
 
-public class DiagramDataBP : MonoBehaviour
+[System.Serializable]
+public class DiagramDataBP
 {
     [SerializeField] private DiagramScriptableObject _diagram;
     [SerializeField] private GameObject _object;
     [SerializeField] private GameObject _diaBD;
 
-    public DiagramScriptableObject Diagram
+    public DiagramScriptableObject GetDiagram()
     {
-        get { return _diagram; }
-        set { _diagram = value; }
+        return _diagram;
     }
 
-    public GameObject DiagramObject
+    public void SetDiagram(DiagramScriptableObject diagram)
     {
-        get { return _object; }
-        set { _object = value; }
+        _diagram = diagram;
     }
 
-    public GameObject DiagramBD
+    public GameObject GetDiagramObject()
     {
-        get { return _diaBD; }
-        set { _diaBD = value; }
+        return _object;
+    }
+
+    public void SetDiagramObject(GameObject obj)
+    {
+        _object = obj;
+    }
+
+    public GameObject GetDiagramBD()
+    {
+        return _diaBD;
+    }
+
+    public void SetDiagramBD(GameObject diaBD)
+    {
+        _diaBD = diaBD;
     }
 
     public void CreateDiagram(DiagramScriptableObject dia, GameObject ob, GameObject diaBD)

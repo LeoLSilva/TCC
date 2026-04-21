@@ -6,21 +6,13 @@ public class ScannerManager : MonoBehaviour
 {
     [SerializeField] private ScannerTool _scannerTool;
     [SerializeField] private Material _scanMaterial;
+    [SerializeField] private MissionManager _missionManager;
 
     public UnityEvent<string> OnFirstTimeDiscovered;
     public UnityEvent OnAlreadyDiscovered;
+    public UnityEvent OnScanFailedNotSolo;
 
     private HashSet<string> _discoveredSignatures = new HashSet<string>();
-
-    public enum ScannerMode
-    {
-        SaveDiagram,
-        Mission1,
-        Disabled
-    }
-
-    [SerializeField] private ScannerMode _currentMode = ScannerMode.SaveDiagram;
-
     private ScanManager _currentVisualManager;
 
     private void OnEnable()
@@ -43,14 +35,9 @@ public class ScannerManager : MonoBehaviour
         }
     }
 
-    public void SetScannerMode(ScannerMode newMode)
-    {
-        _currentMode = newMode;
-    }
-
     private void HandleScanStarted(GameObject target)
     {
-        if (_currentMode == ScannerMode.Disabled) return;
+        if (_missionManager != null && _missionManager.GetMissionState() == MissionState.Disabled) return;
 
         Transform rootObj = target.transform.root;
         _currentVisualManager = rootObj.GetComponent<ScanManager>();
@@ -68,12 +55,15 @@ public class ScannerManager : MonoBehaviour
     {
         StopVisualEffect();
 
-        switch (_currentMode)
+        if (_missionManager == null) return;
+
+        switch (_missionManager.GetMissionState())
         {
-            case ScannerMode.SaveDiagram:
-                ExecuteSaveDiagram(target);
+            case MissionState.Mission1:
+                ExecuteSaveDiagram(target, true, StorageManager.PathPecasSolos);
                 break;
-            case ScannerMode.Mission1:
+            case MissionState.FreeMode:
+                ExecuteSaveDiagram(target, false, StorageManager.PathDiagramas);
                 break;
         }
     }
@@ -92,7 +82,7 @@ public class ScannerManager : MonoBehaviour
         }
     }
 
-    private void ExecuteSaveDiagram(GameObject hitObj)
+    private void ExecuteSaveDiagram(GameObject hitObj, bool requireSolo, string savePath)
     {
         PartsScript hitPart = hitObj.GetComponentInParent<PartsScript>();
         if (hitPart != null)
@@ -115,6 +105,12 @@ public class ScannerManager : MonoBehaviour
                 {
                     PartsScript[] parts = targetToSave.GetComponentsInChildren<PartsScript>(true);
 
+                    if (requireSolo && parts.Length > 1)
+                    {
+                        OnScanFailedNotSolo?.Invoke();
+                        return;
+                    }
+
                     foreach (PartsScript part in parts)
                     {
                         if (part.GetStatus() == PieceStatus.root || part.GetStatus() == PieceStatus.none)
@@ -123,9 +119,7 @@ public class ScannerManager : MonoBehaviour
                             if (register != null)
                             {
                                 string signature = register.GetLocalSignature();
-                                
-                                Debug.Log($"ASSINATURA FINAL GERADA: {signature}");
-                                
+
                                 if (!_discoveredSignatures.Contains(signature))
                                 {
                                     _discoveredSignatures.Add(signature);
@@ -137,7 +131,7 @@ public class ScannerManager : MonoBehaviour
                                 }
                             }
 
-                            part.SaveDiagram();
+                            part.SaveDiagram(savePath);
                             break;
                         }
                     }

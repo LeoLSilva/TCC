@@ -221,6 +221,9 @@ PrefabInstance:
       addedObject: {fileID: 3562277409415623034}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5b634f0b8c7c1c54db07e64c2285c75f, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 7126637528929792999}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5b634f0b8c7c1c54db07e64c2285c75f, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 8583807550776587901}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5b634f0b8c7c1c54db07e64c2285c75f, type: 3}
       insertIndex: -1
@@ -344,6 +347,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &7126637528929792999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 827149500101627580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddf21a1ced307f044b3b0dd058793b97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  partData: {fileID: 11400000, guid: e9994afb92a0ce0428b9d5c44008eef4, type: 2}
+  alreadyScanned: 0
 --- !u!64 &8583807550776587901
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -391,7 +408,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb27c60bc6c979a4ba6c2195d72043fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rootPart:
+  _rootPart:
     partPrefab: {fileID: 0}
     connections: []
 --- !u!1001 &4354227462070478024

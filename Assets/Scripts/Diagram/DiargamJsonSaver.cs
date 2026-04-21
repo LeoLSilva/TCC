@@ -18,37 +18,47 @@ public static class DiagramJsonSaver
     public class ConnectionSaveData
     {
         public string conName;
+        [SerializeReference]
         public NodeSaveData connectedPart;
     }
 
     public static event Action OnDiagramSaved;
 
-    public static void SaveDiagram(DiagramRegister rootRegister, string fileName)
+    public static void SaveDiagram(DiagramRegister rootRegister, string fileName, string folderPath)
     {
         if (rootRegister == null) return;
+        if (string.IsNullOrEmpty(folderPath)) return;
 
-        NodeSaveData saveData = ConvertToSaveData(rootRegister.GetDiagramNode());
+        NodeSaveData saveData = ConvertToSaveData(rootRegister.GetDiagramNode(), new HashSet<DiagramNode>());
         string currentSignature = GenerateSignature(saveData);
-        string directory = Application.persistentDataPath;
 
-        string[] allFiles = Directory.GetFiles(directory, "*.json");
-        foreach (string file in allFiles)
+        Debug.Log($"[DiagramJsonSaver] ASSINATURA FINAL GERADA: {currentSignature}");
+
+        if (Directory.Exists(folderPath))
         {
-            try
+            string[] allFiles = Directory.GetFiles(folderPath, "*.json");
+            foreach (string file in allFiles)
             {
-                string existingJson = File.ReadAllText(file);
-                NodeSaveData existingData = JsonUtility.FromJson<NodeSaveData>(existingJson);
-                if (GenerateSignature(existingData) == currentSignature)
+                try
                 {
-                    Debug.LogWarning($"Cancelado: Uma estrutura idêntica já existe no arquivo {Path.GetFileName(file)}");
-                    return;
+                    string existingJson = File.ReadAllText(file);
+                    NodeSaveData existingData = JsonUtility.FromJson<NodeSaveData>(existingJson);
+                    if (GenerateSignature(existingData) == currentSignature)
+                    {
+                        Debug.LogWarning($"[DiagramJsonSaver] Estrutura já existe no arquivo {Path.GetFileName(file)}. Ignorando duplicata.");
+                        return;
+                    }
                 }
+                catch { }
             }
-            catch { }
+        }
+        else
+        {
+            Directory.CreateDirectory(folderPath);
         }
 
         string cleanName = fileName.Replace("(Clone)", "").Replace("DiagramContainer_", "").Trim();
-        string[] existingMatchingFiles = Directory.GetFiles(directory, $"{cleanName}*.json");
+        string[] existingMatchingFiles = Directory.GetFiles(folderPath, $"{cleanName}*.json");
 
         int maxIndex = 0;
         bool baseFileExists = false;
@@ -81,10 +91,10 @@ public static class DiagramJsonSaver
             finalFileName = $"{cleanName}_{nextIndex}";
         }
 
-        string finalPath = Path.Combine(directory, $"{finalFileName}.json");
+        string finalPath = Path.Combine(folderPath, $"{finalFileName}.json");
         File.WriteAllText(finalPath, JsonUtility.ToJson(saveData, true));
 
-        Debug.Log($"Novo diagrama salvo com sucesso: {finalFileName}.json");
+        Debug.Log($"[DiagramJsonSaver] Novo diagrama salvo com sucesso em: {finalPath}");
         OnDiagramSaved?.Invoke();
     }
 
@@ -110,9 +120,11 @@ public static class DiagramJsonSaver
         return sb.ToString();
     }
 
-    private static NodeSaveData ConvertToSaveData(DiagramNode node)
+    private static NodeSaveData ConvertToSaveData(DiagramNode node, HashSet<DiagramNode> visited)
     {
-        if (node == null) return null;
+        if (node == null || visited.Contains(node)) return null;
+
+        visited.Add(node);
 
         NodeSaveData data = new NodeSaveData();
         data.prefabName = node.partPrefab != null ? node.partPrefab.name.Replace("(Clone)", "").Trim() : "";
@@ -123,10 +135,15 @@ public static class DiagramJsonSaver
             {
                 if (conn.connectedPart != null)
                 {
-                    ConnectionSaveData connData = new ConnectionSaveData();
-                    connData.conName = conn.conName;
-                    connData.connectedPart = ConvertToSaveData(conn.connectedPart);
-                    data.connections.Add(connData);
+                    NodeSaveData childData = ConvertToSaveData(conn.connectedPart, visited);
+
+                    if (childData != null)
+                    {
+                        ConnectionSaveData connData = new ConnectionSaveData();
+                        connData.conName = conn.conName;
+                        connData.connectedPart = childData;
+                        data.connections.Add(connData);
+                    }
                 }
             }
         }
