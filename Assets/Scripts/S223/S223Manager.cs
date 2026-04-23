@@ -84,16 +84,12 @@ public class S223Manager : MonoBehaviour
                     yield return StartCoroutine(_dialogueSystem.PlayDialogueRoutine(_currentLines));
                     _missionManager.SetMission(MissionState.Mission2);
                 }
-                _missionManager.SetMission(MissionState.Mission2);
                 yield break;
             }
         }
         else if (mission == MissionState.Mission2)
         {
-            if (step == 0)
-            {
                 yield return StartCoroutine(_dialogueSystem.PlayDialogueRoutine(_currentLines));
-            }
         }
         else if (mission == MissionState.FreeMode)
         {

@@ -1,5 +1,6 @@
 using Oculus.Interaction;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,8 +18,9 @@ public class PartsScreen : MonoBehaviour
     private PrinterManager _printerManager;
     private MissionManager _missionManager;
 
-    [Header("Mission1")]
+    [Header("Missions")]
     [SerializeField] private int _partsCount = 8;
+    [SerializeField] private TextMeshProUGUI _alertTxt;
 
     private void Awake()
     {
@@ -134,7 +136,16 @@ public class PartsScreen : MonoBehaviour
 
     public void ChangeSelected(PartsSoloScriptableObject p)
     {
-        if (p != null)
+        if (_missionManager.GetMissionState() == MissionState.Mission2 && _missionManager.GetStep() == 1)
+        {
+            if (_currentSelected.name != "Braco" || _currentSelected.name != "Mao")
+            {
+                _alertTxt.text = _currentSelected.name + " n√£o pertence ao Bra√ßo";
+                _alertTxt.gameObject.SetActive(true);
+                return;
+            } else if(_alertTxt.gameObject.activeInHierarchy) _alertTxt.gameObject.SetActive(false); 
+        }
+        else
         {
             _currentSelected = p.prefab;
             if (_diagramImage != null)
@@ -143,6 +154,7 @@ public class PartsScreen : MonoBehaviour
                 _diagramImage.sprite = p.diagram;
             }
         }
+
     }
 
     private void SetButtonPrintActive(bool obj)
@@ -168,14 +180,9 @@ public class PartsScreen : MonoBehaviour
     {
         if (_printerManager != null && _currentSelected != null)
         {
-            if (_missionManager != null && _missionManager.GetMissionState() == MissionState.Mission2)
+            if (_missionManager != null && _missionManager.GetMissionState() == MissionState.Mission2 && _missionManager.GetStep() == 0)
             {
-                string pName = _currentSelected.name.ToLower();
-                if (!pName.Contains("braco") && !pName.Contains("braÁo") && !pName.Contains("mao") && !pName.Contains("m„o"))
-                {
-                    _missionManager.WrongPartPrinted();
-                    return;
-                }
+
             }
 
             _printerManager.Printer(_currentSelected);

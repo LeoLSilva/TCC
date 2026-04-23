@@ -168,7 +168,6 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
                             if (_missionManager.GetMissionState() == MissionState.Mission1)
                             {
                                 if (_partsScreen != null) _partsScreen.ReceiveScannedObject(finalTarget);
-                                _missionManager.CheckScanCompletion();
                             }
                             else if (_missionManager.GetMissionState() == MissionState.Mission2)
                             {
@@ -260,7 +259,6 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
                     if (_missionManager.GetMissionState() == MissionState.Mission1)
                     {
                         if (_partsScreen != null) _partsScreen.ReceiveScannedObject(targetToScan);
-                        _missionManager.CheckScanCompletion();
                     }
                     else if (_missionManager.GetMissionState() == MissionState.Mission2)
                     {

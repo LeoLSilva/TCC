@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 6550154370844262418}
   - component: {fileID: 471590742091795878}
   m_Layer: 0
-  m_Name: "Cabe\xE7a_Vazia"
+  m_Name: CabecaS
   m_TagString: obj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

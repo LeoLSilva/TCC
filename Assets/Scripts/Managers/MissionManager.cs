@@ -5,6 +5,7 @@ using UnityEngine;
 public class MissionManager : MonoBehaviour
 {
     [SerializeField] private MissionState _currentMission = MissionState.Disabled;
+    [SerializeField] private int _currentStep = 0;
     [SerializeField] private S223Manager _s223Manager;
 
     [Header("Objetos da Missao")]
@@ -15,7 +16,6 @@ public class MissionManager : MonoBehaviour
     [SerializeField] private List<MissionDialogue> _missionDialogues;
 
     private bool _isGameplayActive = false;
-    private int _currentStep = 0;
 
     public event Action<MissionState> OnMissionChanged;
 
@@ -84,11 +84,6 @@ public class MissionManager : MonoBehaviour
         NextStep();
     }
 
-    public void CheckScanCompletion()
-    {
-
-    }
-
     private string[] GetDialoguesForMission(MissionState state, int step)
     {
         foreach (var md in _missionDialogues)
@@ -111,6 +106,9 @@ public class MissionManager : MonoBehaviour
             {
                 _scannerObject.SetActive(true);
             }
+        } else if(_currentMission == MissionState.Mission2)
+        {
+            
         }
     }
 
@@ -150,16 +148,6 @@ public class MissionManager : MonoBehaviour
     public void EndMission()
     {
         _isGameplayActive = false;
-    }
-
-    public void WrongPartPrinted()
-    {
-        _isGameplayActive = false;
-        if (_s223Manager != null)
-        {
-            string[] errorLine = new string[] { "Erro. Imprima apenas as pecas solicitadas." };
-            _s223Manager.StartDroneRoutine(this, _currentMission, 99, errorLine);
-        }
     }
 
     public void ValidateMission2Scan(GameObject scannedObj)
@@ -250,8 +238,8 @@ public class MissionManager : MonoBehaviour
         foreach (var p in parts)
         {
             string pName = p.gameObject.name.ToLower();
-            if (pName.Contains("braco") || pName.Contains("braço")) hasArm = true;
-            if (pName.Contains("mao") || pName.Contains("mão")) hasHand = true;
+            if (pName.Contains("braco") || pName.Contains("braï¿½o")) hasArm = true;
+            if (pName.Contains("mao") || pName.Contains("mï¿½o")) hasHand = true;
         }
 
         return hasArm && hasHand;
@@ -269,7 +257,7 @@ public class MissionManager : MonoBehaviour
         foreach (var p in parts)
         {
             string pName = p.gameObject.name.ToLower();
-            if (pName.Contains("cabeca") || pName.Contains("cabeça")) hasHead = true;
+            if (pName.Contains("cabeca") || pName.Contains("cabeï¿½a")) hasHead = true;
             if (pName.Contains("olho")) eyeCount++;
             if (pName.Contains("boca")) hasMouth = true;
         }
@@ -289,12 +277,17 @@ public class MissionManager : MonoBehaviour
             string pName = p.gameObject.name.ToLower();
             if (pName.Contains("diagram"))
             {
-                if (pName.Contains("braco") || pName.Contains("braço")) diagramArms++;
-                if (pName.Contains("cabeca") || pName.Contains("cabeça")) diagramHeads++;
+                if (pName.Contains("braco") || pName.Contains("braï¿½o")) diagramArms++;
+                if (pName.Contains("cabeca") || pName.Contains("cabeï¿½a")) diagramHeads++;
             }
         }
 
         return diagramArms >= 2 && diagramHeads >= 1;
+    }
+
+    public int GetStep()
+    {
+        return _currentStep;
     }
 }
 
@@ -303,6 +296,7 @@ public enum MissionState
     Menu,
     Mission1,
     Mission2,
+    Mission3,
     FreeMode,
     Disabled
 }

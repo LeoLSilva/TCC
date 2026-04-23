@@ -62,6 +62,9 @@ public class ScannerManager : MonoBehaviour
             case MissionState.Mission1:
                 ExecuteSaveDiagram(target, true, StorageManager.PathPecasSolos);
                 break;
+            case MissionState.Mission2:
+                //SettarScanner na missão 2
+                break;
             case MissionState.FreeMode:
                 ExecuteSaveDiagram(target, false, StorageManager.PathDiagramas);
                 break;
