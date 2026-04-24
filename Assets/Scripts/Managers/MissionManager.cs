@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,6 +15,11 @@ public class MissionManager : MonoBehaviour
 
     [Header("Roteiros do Drone")]
     [SerializeField] private List<MissionDialogue> _missionDialogues;
+
+    [Header("Gabaritos (Scriptables)")]
+    [SerializeField] private DiagramScriptableObject _bracoDiagram;
+    [SerializeField] private DiagramScriptableObject _headDiagram;
+    [SerializeField] private DiagramScriptableObject _furbotDiagram;
 
     private bool _isGameplayActive = false;
 
@@ -106,9 +112,6 @@ public class MissionManager : MonoBehaviour
             {
                 _scannerObject.SetActive(true);
             }
-        } else if(_currentMission == MissionState.Mission2)
-        {
-            
         }
     }
 
@@ -150,9 +153,9 @@ public class MissionManager : MonoBehaviour
         _isGameplayActive = false;
     }
 
-    public void ValidateMission2Scan(GameObject scannedObj)
+    public void DiagramValidate(GameObject scannedObj)
     {
-        if (_currentMission != MissionState.Mission2 || !_isGameplayActive) return;
+        if (_currentMission != MissionState.Mission2) return;
 
         GameObject container = scannedObj;
         if (scannedObj.transform.parent != null)
@@ -160,24 +163,13 @@ public class MissionManager : MonoBehaviour
             container = scannedObj.transform.parent.gameObject;
         }
 
-        if (_currentStep == 0)
+        if (_currentStep == 1)
         {
-            if (IsCorrectArmAssembly(container))
+            if (ValidateAssembly(container, _bracoDiagram))
             {
-                Destroy(container);
+                Destroy(scannedObj);
                 ForceDiagramTabAndAdvance();
-            }
-            else
-            {
-                WrongAssemblyScanned(container);
-            }
-        }
-        else if (_currentStep == 1)
-        {
-            if (IsCorrectHeadAssembly(container))
-            {
-                Destroy(container);
-                ForceDiagramTabAndAdvance();
+                NextStep();
             }
             else
             {
@@ -186,7 +178,20 @@ public class MissionManager : MonoBehaviour
         }
         else if (_currentStep == 2)
         {
-            if (IsCorrectFurbotAssembly(container))
+            if (ValidateAssembly(container, _headDiagram))
+            {
+                Destroy(container);
+                ForceDiagramTabAndAdvance();
+                SetMission(MissionState.Mission3);
+            }
+            else
+            {
+                WrongAssemblyScanned(container);
+            }
+        }
+        else if (_currentStep == 3)
+        {
+            if (ValidateAssembly(container, _furbotDiagram))
             {
                 Destroy(container);
                 ForceDiagramTabAndAdvance();
@@ -196,6 +201,41 @@ public class MissionManager : MonoBehaviour
                 WrongAssemblyScanned(container);
             }
         }
+    }
+
+    public bool ValidateAssembly(GameObject scannedObj, DiagramScriptableObject expectedDiagram)
+    {
+        if (scannedObj == null)
+        {
+            Debug.LogError("DEBUG MISSION: O objeto escaneado é nulo!");
+            return false;
+        }
+
+        if (expectedDiagram == null)
+        {
+            Debug.LogError("DEBUG MISSION: ERRO GRAVE! O DiagramScriptableObject está vazio. Arraste ele para o Inspector do MissionManager!");
+            return false;
+        }
+
+        Debug.Log("DEBUG MISSION: ----- INICIANDO VALIDAÇÃO -----");
+        Debug.Log("DEBUG MISSION: Assinatura Esperada (Gabarito): '" + expectedDiagram.signature + "'");
+
+        DiagramRegister[] registers = scannedObj.GetComponentsInChildren<DiagramRegister>();
+
+        foreach (var reg in registers)
+        {
+            string scannedSignature = reg.GetLocalSignature();
+            Debug.Log("DEBUG MISSION: Assinatura Lida na peça " + reg.gameObject.name + ": '" + scannedSignature + "'");
+
+            if (scannedSignature == expectedDiagram.signature)
+            {
+                Debug.Log("DEBUG MISSION: SUCESSO! A assinatura bateu!");
+                return true;
+            }
+        }
+
+        Debug.LogWarning("DEBUG MISSION: FALHOU. Nenhuma assinatura lida bateu com o gabarito.");
+        return false;
     }
 
     private void ForceDiagramTabAndAdvance()
@@ -211,78 +251,25 @@ public class MissionManager : MonoBehaviour
         {
             ds.UnlockAndAdvance();
         }
-
-        NextStep();
     }
 
     private void WrongAssemblyScanned(GameObject wrongObj)
     {
-        Destroy(wrongObj);
-
         _isGameplayActive = false;
+
         if (_s223Manager != null)
         {
-            string[] errorLine = new string[] { "Erro detectado. Montagem incorreta. Objeto destruido." };
-            _s223Manager.StartDroneRoutine(this, _currentMission, 99, errorLine);
+            StartCoroutine(ShowErrorAndRestoreRoutine());
         }
     }
 
-    private bool IsCorrectArmAssembly(GameObject obj)
+    private IEnumerator ShowErrorAndRestoreRoutine()
     {
-        PartsScript[] parts = obj.GetComponentsInChildren<PartsScript>();
-        if (parts.Length != 2) return false;
-
-        bool hasArm = false;
-        bool hasHand = false;
-
-        foreach (var p in parts)
-        {
-            string pName = p.gameObject.name.ToLower();
-            if (pName.Contains("braco") || pName.Contains("bra�o")) hasArm = true;
-            if (pName.Contains("mao") || pName.Contains("m�o")) hasHand = true;
-        }
-
-        return hasArm && hasHand;
-    }
-
-    private bool IsCorrectHeadAssembly(GameObject obj)
-    {
-        PartsScript[] parts = obj.GetComponentsInChildren<PartsScript>();
-        if (parts.Length != 4) return false;
-
-        bool hasHead = false;
-        int eyeCount = 0;
-        bool hasMouth = false;
-
-        foreach (var p in parts)
-        {
-            string pName = p.gameObject.name.ToLower();
-            if (pName.Contains("cabeca") || pName.Contains("cabe�a")) hasHead = true;
-            if (pName.Contains("olho")) eyeCount++;
-            if (pName.Contains("boca")) hasMouth = true;
-        }
-
-        return hasHead && hasMouth && (eyeCount == 2);
-    }
-
-    private bool IsCorrectFurbotAssembly(GameObject obj)
-    {
-        PartsScript[] parts = obj.GetComponentsInChildren<PartsScript>();
-
-        int diagramArms = 0;
-        int diagramHeads = 0;
-
-        foreach (var p in parts)
-        {
-            string pName = p.gameObject.name.ToLower();
-            if (pName.Contains("diagram"))
-            {
-                if (pName.Contains("braco") || pName.Contains("bra�o")) diagramArms++;
-                if (pName.Contains("cabeca") || pName.Contains("cabe�a")) diagramHeads++;
-            }
-        }
-
-        return diagramArms >= 2 && diagramHeads >= 1;
+        string[] errorLine = new string[] { "Erro detectado. Montagem incorreta. Objeto destruido." };
+        _s223Manager.StartDroneRoutine(this, _currentMission, 99, errorLine);
+        yield return new WaitForSeconds(3f);
+        string[] linesToSpeak = GetDialoguesForMission(_currentMission, _currentStep);
+        _s223Manager.StartDroneRoutine(this, _currentMission, _currentStep, linesToSpeak);
     }
 
     public int GetStep()

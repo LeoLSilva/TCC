@@ -97,7 +97,11 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
     {
         if (!_canScan || _scanFinished) return;
 
-        if (_missionManager != null && !_missionManager.IsGameplayActive()) return;
+        if (_missionManager != null && !_missionManager.IsGameplayActive())
+        {
+            if (_isScanning) Debug.LogWarning("DEBUG SCANNER: Gameplay não está ativo. Scan bloqueado.");
+            return;
+        }
 
         if (progress >= _fireThreshold)
         {
@@ -120,12 +124,14 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
                             }
                             else
                             {
+                                Debug.LogWarning("DEBUG SCANNER: Cancelado! O parent da peça não tem mais de 1 peça conectada.");
                                 CancelScan();
                                 return;
                             }
                         }
                         else
                         {
+                            Debug.LogWarning("DEBUG SCANNER: Cancelado! A peça escaneada não tem Parent (não está num container).");
                             CancelScan();
                             return;
                         }
@@ -133,6 +139,7 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
 
                     if (!_isScanning)
                     {
+                        Debug.Log("DEBUG SCANNER: Iniciou o escaneamento do objeto: " + targetToScan.name);
                         _isScanning = true;
                         _currentTarget = targetToScan;
                         _currentScanTime = 0f;
@@ -143,6 +150,7 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
                     }
                     else if (targetToScan != _currentTarget)
                     {
+                        Debug.LogWarning("DEBUG SCANNER: Cancelado! O jogador mudou o alvo no meio do scan.");
                         CancelScan();
                         return;
                     }
@@ -153,6 +161,7 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
 
                     if (_currentScanTime >= _scanDuration)
                     {
+                        Debug.Log("DEBUG SCANNER: Tempo concluído! Processando resultado...");
                         _scanFinished = true;
                         _isScanning = false;
 
@@ -167,11 +176,13 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
                         {
                             if (_missionManager.GetMissionState() == MissionState.Mission1)
                             {
+                                Debug.Log("DEBUG SCANNER: Enviando para PartsScreen (Missão 1).");
                                 if (_partsScreen != null) _partsScreen.ReceiveScannedObject(finalTarget);
                             }
                             else if (_missionManager.GetMissionState() == MissionState.Mission2)
                             {
-                                _missionManager.ValidateMission2Scan(finalTarget);
+                                Debug.Log("DEBUG SCANNER: Enviando para MissionManager validar montagem (Missão 2).");
+                                _missionManager.DiagramValidate(finalTarget);
                             }
                         }
                     }
@@ -225,47 +236,5 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
         OnScanProgress?.Invoke(0f);
 
         if (_scanManager != null) _scanManager.StopScanEffect();
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            if (itenScannerText != null)
-            {
-                GameObject targetToScan = itenScannerText;
-
-                if (_missionManager != null && _missionManager.GetMissionState() == MissionState.Mission2)
-                {
-                    if (itenScannerText.transform.parent != null)
-                    {
-                        if (itenScannerText.transform.parent.GetComponentsInChildren<PartsScript>().Length > 1)
-                        {
-                            targetToScan = itenScannerText.transform.parent.gameObject;
-                        }
-                    }
-                }
-
-                OnScanStarted?.Invoke(targetToScan);
-
-                if (_scanManager != null) _scanManager.StartScanEffect(targetToScan);
-
-                OnScanComplete?.Invoke(targetToScan);
-
-                if (_scanManager != null) _scanManager.StopScanEffect();
-
-                if (_missionManager != null)
-                {
-                    if (_missionManager.GetMissionState() == MissionState.Mission1)
-                    {
-                        if (_partsScreen != null) _partsScreen.ReceiveScannedObject(targetToScan);
-                    }
-                    else if (_missionManager.GetMissionState() == MissionState.Mission2)
-                    {
-                        _missionManager.ValidateMission2Scan(targetToScan);
-                    }
-                }
-            }
-        }
     }
 }

@@ -22,6 +22,8 @@ public class PartsScreen : MonoBehaviour
     [SerializeField] private int _partsCount = 8;
     [SerializeField] private TextMeshProUGUI _alertTxt;
 
+    private bool _mission2bool = false;
+
     private void Awake()
     {
         _painelUi = FindAnyObjectByType<PainelUI>();
@@ -33,7 +35,7 @@ public class PartsScreen : MonoBehaviour
     {
         if (_printerManager != null)
         {
-            _printerManager.OnPrinterStateChanged += SetButtonPrintActive;
+            _printerManager.OnPrinterStateChanged += BlockPrinterBtn;
         }
     }
 
@@ -136,30 +138,24 @@ public class PartsScreen : MonoBehaviour
 
     public void ChangeSelected(PartsSoloScriptableObject p)
     {
-        if (_missionManager.GetMissionState() == MissionState.Mission2 && _missionManager.GetStep() == 1)
+        _currentSelected = p.prefab;
+        if (_diagramImage != null)
         {
-            if (_currentSelected.name != "Braco" || _currentSelected.name != "Mao")
+            _diagramImage.gameObject.SetActive(true);
+            _diagramImage.sprite = p.diagram;
+        }
+        if (_missionManager.GetMissionState() == MissionState.Mission2 && _missionManager.GetStep() == 0)
+        {
+            _mission2bool = (_currentSelected.name != "Braco" && _currentSelected.name != "Mao");
+            Debug.Log(_mission2bool);
+            if (_mission2bool)
             {
                 _alertTxt.text = _currentSelected.name + " não pertence ao Braço";
-                _alertTxt.gameObject.SetActive(true);
-                return;
-            } else if(_alertTxt.gameObject.activeInHierarchy) _alertTxt.gameObject.SetActive(false); 
-        }
-        else
-        {
-            _currentSelected = p.prefab;
-            if (_diagramImage != null)
-            {
-                _diagramImage.gameObject.SetActive(true);
-                _diagramImage.sprite = p.diagram;
             }
+            _alertTxt.gameObject.SetActive(_mission2bool);
+            BlockPrinterBtn(_mission2bool);
         }
 
-    }
-
-    private void SetButtonPrintActive(bool obj)
-    {
-        BlockPrinterBtn(obj);
     }
 
     public void BlockPrinterBtn(bool block)
@@ -180,11 +176,10 @@ public class PartsScreen : MonoBehaviour
     {
         if (_printerManager != null && _currentSelected != null)
         {
-            if (_missionManager != null && _missionManager.GetMissionState() == MissionState.Mission2 && _missionManager.GetStep() == 0)
+            if(_missionManager.GetMissionState() == MissionState.Mission2 && _missionManager.GetStep() == 0)
             {
-
+                _painelUi.AddItemMission2(_currentSelected.name);
             }
-
             _printerManager.Printer(_currentSelected);
         }
     }

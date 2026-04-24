@@ -140,15 +140,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5b634f0b8c7c1c54db07e64c2285c75f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.3855104
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5b634f0b8c7c1c54db07e64c2285c75f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.9386
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5b634f0b8c7c1c54db07e64c2285c75f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.43204
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5b634f0b8c7c1c54db07e64c2285c75f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -206,9 +206,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5b634f0b8c7c1c54db07e64c2285c75f, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -4827254988565725480}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5b634f0b8c7c1c54db07e64c2285c75f, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 5960419190748120135}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5b634f0b8c7c1c54db07e64c2285c75f, type: 3}
       insertIndex: -1
@@ -242,19 +239,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5b634f0b8c7c1c54db07e64c2285c75f, type: 3}
   m_PrefabInstance: {fileID: 557260837153027053}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &-4827254988565725480
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 827149500101627580}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc8729a6dee8ed8419e649f1f236c3d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _detachForce: 10
 --- !u!114 &5960419190748120135
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346,7 +330,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &7126637528929792999
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -16,6 +16,10 @@ public class PainelUI : MonoBehaviour
     private Color32 _naturalColor = Color.white;
     private int _currentIndex = -1;
 
+    [Header("Missão2")]
+    [SerializeField] private List<string> partsMission2;
+
+
     private void Awake()
     {
         if (_missionManager == null)
@@ -157,6 +161,13 @@ public class PainelUI : MonoBehaviour
         {
             _currentScreen.panel.GetComponent<PartsScreen>().ChangeSelected(part);
         }
+    }
+
+    public void AddItemMission2(string part)
+    {
+        if (!partsMission2.Contains(part))
+            partsMission2.Add(part);
+        if (partsMission2.Count > 1) _missionManager.NextStep();
     }
 }
 

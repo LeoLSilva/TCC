@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67ba3e1980db9a1489056ec04a965e39, type: 3}
   m_Name: Braco
   m_EditorClassIdentifier: 
+  signature: 'Braco[ConMao:Mao[],]'
   rootPart:
     partPrefab: {fileID: 3022905555630070273, guid: 12abcd0eeeb879743a231229929c28b3, type: 3}
     connections:
