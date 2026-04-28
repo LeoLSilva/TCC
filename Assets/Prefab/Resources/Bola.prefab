@@ -347,6 +347,7 @@ MonoBehaviour:
   _rootPart:
     partPrefab: {fileID: 0}
     connections: []
+  _partData: {fileID: 11400000, guid: 1a80058c0d4f32345941039a3e40b954, type: 2}
 --- !u!114 &3946804874204784072
 MonoBehaviour:
   m_ObjectHideFlags: 0

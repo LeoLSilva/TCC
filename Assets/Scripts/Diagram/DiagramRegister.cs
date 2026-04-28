@@ -6,6 +6,7 @@ using static DiagramSerializable;
 public class DiagramRegister : MonoBehaviour
 {
     [SerializeField] private DiagramNode _rootPart;
+    [SerializeField] private PartsSoloScriptableObject _partData;
 
     private void Start()
     {
@@ -14,6 +15,11 @@ public class DiagramRegister : MonoBehaviour
             _rootPart = new DiagramNode();
         }
         _rootPart.partPrefab = this.gameObject;
+    }
+
+    public PartsSoloScriptableObject GetPartData()
+    {
+        return _partData;
     }
 
     public void AddConnection(string conName, DiagramRegister node)

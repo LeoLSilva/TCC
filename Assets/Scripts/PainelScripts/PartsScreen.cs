@@ -17,6 +17,7 @@ public class PartsScreen : MonoBehaviour
 
     private PrinterManager _printerManager;
     private MissionManager _missionManager;
+    private AlgoritmCreater _algoritmCreater;
 
     [Header("Missions")]
     [SerializeField] private int _partsCount = 8;
@@ -29,6 +30,7 @@ public class PartsScreen : MonoBehaviour
         _painelUi = FindAnyObjectByType<PainelUI>();
         _printerManager = FindAnyObjectByType<PrinterManager>();
         _missionManager = FindAnyObjectByType<MissionManager>();
+        _algoritmCreater = FindAnyObjectByType<AlgoritmCreater>();
     }
 
     private void Start()
@@ -65,7 +67,7 @@ public class PartsScreen : MonoBehaviour
             if (_diagramImage != null) _diagramImage.gameObject.SetActive(false);
             _printerBtn.gameObject.SetActive(false);
         }
-        else if (state == MissionState.Mission2)
+        else if (state == MissionState.Mission2 || state == MissionState.Mission3)
         {
             _printerBtn.gameObject.SetActive(true);
             BlockPrinterBtn(false);
@@ -147,7 +149,7 @@ public class PartsScreen : MonoBehaviour
         if (_missionManager.GetMissionState() == MissionState.Mission2 && _missionManager.GetStep() == 0)
         {
             _mission2bool = (_currentSelected.name != "Braco" && _currentSelected.name != "Mao");
-            Debug.Log(_mission2bool);
+
             if (_mission2bool)
             {
                 _alertTxt.text = _currentSelected.name + " não pertence ao Braço";
@@ -155,7 +157,11 @@ public class PartsScreen : MonoBehaviour
             _alertTxt.gameObject.SetActive(_mission2bool);
             BlockPrinterBtn(_mission2bool);
         }
-
+        else
+        {
+            _alertTxt.gameObject.SetActive(false);
+            BlockPrinterBtn(false);
+        }
     }
 
     public void BlockPrinterBtn(bool block)
@@ -176,11 +182,35 @@ public class PartsScreen : MonoBehaviour
     {
         if (_printerManager != null && _currentSelected != null)
         {
-            if(_missionManager.GetMissionState() == MissionState.Mission2 && _missionManager.GetStep() == 0)
+            if (_missionManager.GetMissionState() == MissionState.Mission2 && _missionManager.GetStep() == 0)
             {
                 _painelUi.AddItemMission2(_currentSelected.name);
             }
+
+            if (_missionManager.GetMissionState() == MissionState.Mission3 && _algoritmCreater != null)
+            {
+                PartsSoloScriptableObject currentData = _parts.Find(p => p.prefab == _currentSelected);
+                if (currentData != null)
+                {
+                    _algoritmCreater.RegisterPrint(currentData.select);
+                }
+            }
+
             _printerManager.Printer(_currentSelected);
+        }
+    }
+
+    public void ForceUnlockAllParts()
+    {
+        ClearAllButtons();
+        foreach (var part in _parts)
+        {
+            CreatePartButton(part);
+        }
+
+        if (_parts.Count > 0)
+        {
+            ChangeSelected(_parts[0]);
         }
     }
 }

@@ -7,4 +7,5 @@ public class DiagramScriptableObject : ScriptableObject
     public string signature;
     public DiagramNode rootPart;
     public GameObject _Diagram;
+    public Sprite diagramImage;
 }

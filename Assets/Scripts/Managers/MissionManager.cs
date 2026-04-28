@@ -12,14 +12,18 @@ public class MissionManager : MonoBehaviour
     [Header("Objetos da Missao")]
     [SerializeField] private GameObject _scannerObject;
     [SerializeField] private GameObject _menuButton;
+    [SerializeField] private GameObject _activePCanva;
 
     [Header("Roteiros do Drone")]
     [SerializeField] private List<MissionDialogue> _missionDialogues;
 
     [Header("Gabaritos (Scriptables)")]
-    [SerializeField] private DiagramScriptableObject _bracoDiagram;
+    [SerializeField] private DiagramScriptableObject _armDiagram;
     [SerializeField] private DiagramScriptableObject _headDiagram;
     [SerializeField] private DiagramScriptableObject _furbotDiagram;
+
+    [Header("---- AREA DE TESTE (EXCLUIR DEPOIS) ----")]
+    [SerializeField] private bool _iniciarMissao3Liberada = false;
 
     private bool _isGameplayActive = false;
 
@@ -40,7 +44,17 @@ public class MissionManager : MonoBehaviour
         if (_scannerObject != null) _scannerObject.SetActive(false);
         if (_menuButton != null) _menuButton.SetActive(true);
 
-        SetMission(MissionState.Menu);
+        //SetMission(MissionState.Menu);
+        ForcarMissao3Liberada();
+    }
+
+    private void Update()
+    {
+        if (_iniciarMissao3Liberada)
+        {
+            _iniciarMissao3Liberada = false;
+            ForcarMissao3Liberada();
+        }
     }
 
     public void StartFirstMission()
@@ -153,9 +167,30 @@ public class MissionManager : MonoBehaviour
         _isGameplayActive = false;
     }
 
+    public DiagramScriptableObject GetCurrentExpectedDiagram()
+    {
+        if (_currentMission != MissionState.Mission3) return null;
+
+        if (_currentStep == 0) return _armDiagram;
+        if (_currentStep == 1) return _headDiagram;
+        if (_currentStep == 2) return _furbotDiagram;
+
+        return null;
+    }
+
+    public void ActiveAlgoritm(bool active)
+    {
+        _activePCanva.SetActive(active);
+    }
+
     public void DiagramValidate(GameObject scannedObj)
     {
-        if (_currentMission != MissionState.Mission2) return;
+        ValidateMission2Scan(scannedObj);
+    }
+
+    public void ValidateMission2Scan(GameObject scannedObj)
+    {
+        if (_currentMission != MissionState.Mission2 || !_isGameplayActive) return;
 
         GameObject container = scannedObj;
         if (scannedObj.transform.parent != null)
@@ -163,78 +198,36 @@ public class MissionManager : MonoBehaviour
             container = scannedObj.transform.parent.gameObject;
         }
 
-        if (_currentStep == 1)
+        DiagramScriptableObject expectedDiagram = null;
+        if (_currentStep == 0) expectedDiagram = _armDiagram;
+        else if (_currentStep == 1) expectedDiagram = _headDiagram;
+        else if (_currentStep == 2) expectedDiagram = _furbotDiagram;
+
+        if (expectedDiagram != null && ValidateAssembly(container, expectedDiagram))
         {
-            if (ValidateAssembly(container, _bracoDiagram))
-            {
-                Destroy(scannedObj);
-                ForceDiagramTabAndAdvance();
-                NextStep();
-            }
-            else
-            {
-                WrongAssemblyScanned(container);
-            }
+            Destroy(container);
+            ForceDiagramTabAndAdvance();
         }
-        else if (_currentStep == 2)
+        else
         {
-            if (ValidateAssembly(container, _headDiagram))
-            {
-                Destroy(container);
-                ForceDiagramTabAndAdvance();
-                SetMission(MissionState.Mission3);
-            }
-            else
-            {
-                WrongAssemblyScanned(container);
-            }
-        }
-        else if (_currentStep == 3)
-        {
-            if (ValidateAssembly(container, _furbotDiagram))
-            {
-                Destroy(container);
-                ForceDiagramTabAndAdvance();
-            }
-            else
-            {
-                WrongAssemblyScanned(container);
-            }
+            WrongAssemblyScanned(container);
         }
     }
 
     public bool ValidateAssembly(GameObject scannedObj, DiagramScriptableObject expectedDiagram)
     {
-        if (scannedObj == null)
-        {
-            Debug.LogError("DEBUG MISSION: O objeto escaneado é nulo!");
-            return false;
-        }
-
-        if (expectedDiagram == null)
-        {
-            Debug.LogError("DEBUG MISSION: ERRO GRAVE! O DiagramScriptableObject está vazio. Arraste ele para o Inspector do MissionManager!");
-            return false;
-        }
-
-        Debug.Log("DEBUG MISSION: ----- INICIANDO VALIDAÇÃO -----");
-        Debug.Log("DEBUG MISSION: Assinatura Esperada (Gabarito): '" + expectedDiagram.signature + "'");
+        if (scannedObj == null || expectedDiagram == null) return false;
 
         DiagramRegister[] registers = scannedObj.GetComponentsInChildren<DiagramRegister>();
 
         foreach (var reg in registers)
         {
-            string scannedSignature = reg.GetLocalSignature();
-            Debug.Log("DEBUG MISSION: Assinatura Lida na peça " + reg.gameObject.name + ": '" + scannedSignature + "'");
-
-            if (scannedSignature == expectedDiagram.signature)
+            if (reg.GetLocalSignature() == expectedDiagram.signature)
             {
-                Debug.Log("DEBUG MISSION: SUCESSO! A assinatura bateu!");
                 return true;
             }
         }
 
-        Debug.LogWarning("DEBUG MISSION: FALHOU. Nenhuma assinatura lida bateu com o gabarito.");
         return false;
     }
 
@@ -251,10 +244,13 @@ public class MissionManager : MonoBehaviour
         {
             ds.UnlockAndAdvance();
         }
+
+        NextStep();
     }
 
     private void WrongAssemblyScanned(GameObject wrongObj)
     {
+        Destroy(wrongObj);
         _isGameplayActive = false;
 
         if (_s223Manager != null)
@@ -267,7 +263,9 @@ public class MissionManager : MonoBehaviour
     {
         string[] errorLine = new string[] { "Erro detectado. Montagem incorreta. Objeto destruido." };
         _s223Manager.StartDroneRoutine(this, _currentMission, 99, errorLine);
-        yield return new WaitForSeconds(3f);
+
+        yield return new WaitForSeconds(5f);
+
         string[] linesToSpeak = GetDialoguesForMission(_currentMission, _currentStep);
         _s223Manager.StartDroneRoutine(this, _currentMission, _currentStep, linesToSpeak);
     }
@@ -275,6 +273,18 @@ public class MissionManager : MonoBehaviour
     public int GetStep()
     {
         return _currentStep;
+    }
+    private void ForcarMissao3Liberada()
+    {
+        _currentMission = MissionState.Mission3;
+        _currentStep = 0;
+        _isGameplayActive = true;
+
+        PartsScreen partsScreen = FindAnyObjectByType<PartsScreen>();
+        if (partsScreen != null)
+        {
+            partsScreen.ForceUnlockAllParts();
+        }
     }
 }
 

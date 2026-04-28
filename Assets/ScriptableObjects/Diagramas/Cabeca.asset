@@ -37,3 +37,4 @@ MonoBehaviour:
         partPrefab: {fileID: 827149500101627580, guid: 7bc739a289d736a4493b337ea6983fb2, type: 3}
         connections: []
   _Diagram: {fileID: 1041646081808408232, guid: 864c21c0e3e79da41b97c8f4610044c3, type: 3}
+  diagramImage: {fileID: 21300000, guid: 95c9f80175148224d85786def02e8809, type: 3}

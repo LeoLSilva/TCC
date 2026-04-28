@@ -20,6 +20,7 @@ public class PartsScript : MonoBehaviour
 
     private PartsManager _partsManager;
     private MissionManager _missionManager;
+    private AlgoritmCreater _algoritmCreater;
     private float _timeAnimate = 0.25f;
     private float _mass;
     private Rigidbody _rigid;
@@ -66,6 +67,7 @@ public class PartsScript : MonoBehaviour
         _diagramRegister = this.GetComponent<DiagramRegister>();
         _partsManager = FindAnyObjectByType<PartsManager>();
         _missionManager = FindAnyObjectByType<MissionManager>();
+        _algoritmCreater = FindAnyObjectByType<AlgoritmCreater>();
         _grabble = GetComponent<Grabbable>();
 
         if (_grabble != null)
@@ -322,6 +324,13 @@ public class PartsScript : MonoBehaviour
             if (targetRegister != null && myRegister != null)
             {
                 targetRegister.RemoveConnection(_snapTarget.gameObject.name, myRegister);
+
+                if (_algoritmCreater != null && _missionManager != null && _missionManager.GetMissionState() == MissionState.Mission3)
+                {
+                    Sprite s1 = targetRegister.GetPartData() != null ? targetRegister.GetPartData().select : null;
+                    Sprite s2 = myRegister.GetPartData() != null ? myRegister.GetPartData().select : null;
+                    _algoritmCreater.RegisterDisconnection(s1, s2);
+                }
             }
         }
 
@@ -430,6 +439,24 @@ public class PartsScript : MonoBehaviour
                 _hasRegisteredConnection = true;
 
                 OrganizeHierarchy();
+
+                if (_algoritmCreater != null && _missionManager != null && _missionManager.GetMissionState() == MissionState.Mission3)
+                {
+                    Sprite s1 = targetRegister != null && targetRegister.GetPartData() != null ? targetRegister.GetPartData().select : null;
+                    Sprite s2 = _diagramRegister != null && _diagramRegister.GetPartData() != null ? _diagramRegister.GetPartData().select : null;
+
+                    PartsScript rootPart = FindRootPart();
+                    GameObject container = null;
+
+                    if (rootPart != null)
+                    {
+                        container = rootPart.transform.parent != null && rootPart.transform.parent.name.Contains("DiagramContainer")
+                            ? rootPart.transform.parent.gameObject
+                            : rootPart.gameObject;
+                    }
+
+                    _algoritmCreater.RegisterConnection(s1, s2, container);
+                }
             }
 
             gameObject.layer = _partScriptTarget.gameObject.layer;
