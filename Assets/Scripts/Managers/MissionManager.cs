@@ -45,7 +45,7 @@ public class MissionManager : MonoBehaviour
         if (_menuButton != null) _menuButton.SetActive(true);
 
         //SetMission(MissionState.Menu);
-        ForcarMissao3Liberada();
+        //ForcarMissao3Liberada();
     }
 
     private void Update()

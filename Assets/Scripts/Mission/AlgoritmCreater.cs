@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,11 +20,12 @@ public class AlgoritmCreater : MonoBehaviour
     [SerializeField] private DiagramScriptableObject _headDiagram;
     [SerializeField] private DiagramScriptableObject _furbotDiagram;
 
-    [Header("Manual Scroll System")]
+    [Header("Scroll System")]
     [SerializeField] private GameObject _btnUp;
     [SerializeField] private GameObject _btnDown;
-    [SerializeField] private int _limitToScroll = 9;
-    private int _startIndex = 0;
+    [SerializeField] private int _limitToScroll = 8;
+
+    private int _currentScrollIndex = 0;
 
     [Header("Testes")]
     [SerializeField] private PlayerActionType _testActionType;
@@ -33,7 +35,7 @@ public class AlgoritmCreater : MonoBehaviour
 
     private void Start()
     {
-        UpdateManualScroll();
+        UpdateScrollPosition();
     }
 
     private void Update()
@@ -53,6 +55,39 @@ public class AlgoritmCreater : MonoBehaviour
                     break;
             }
         }
+
+        // Teste de setas do teclado simulando os botões
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            ScrollUp();
+        }
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            ScrollDown();
+        }
+    }
+
+    private float GetDynamicStep()
+    {
+        float step = 100f; // Valor de segurança
+        if (_linePrefab != null)
+        {
+            RectTransform prefabRect = _linePrefab.GetComponent<RectTransform>();
+            if (prefabRect != null)
+            {
+                step = prefabRect.rect.height;
+            }
+        }
+
+        if (_diagramsContainer != null)
+        {
+            VerticalLayoutGroup vlg = _diagramsContainer.GetComponent<VerticalLayoutGroup>();
+            if (vlg != null)
+            {
+                step += vlg.spacing;
+            }
+        }
+        return step;
     }
 
     public void RegisterPrint(Sprite printedItem)
@@ -65,7 +100,7 @@ public class AlgoritmCreater : MonoBehaviour
             lineUI.SetupLine(PlayerActionType.Print, _cont, printedItem);
             _cont++;
         }
-        AutoScrollToBottom();
+        StartCoroutine(AutoScrollToBottomRoutine());
     }
 
     public void RegisterConnection(Sprite item1, Sprite item2, GameObject container)
@@ -95,7 +130,7 @@ public class AlgoritmCreater : MonoBehaviour
             lineUI.SetupLine(PlayerActionType.Connect, _cont, item1, item2, finalResult);
             _cont++;
         }
-        AutoScrollToBottom();
+        StartCoroutine(AutoScrollToBottomRoutine());
     }
 
     public void RegisterDisconnection(Sprite item1, Sprite item2)
@@ -108,60 +143,79 @@ public class AlgoritmCreater : MonoBehaviour
             lineUI.SetupLine(PlayerActionType.Disconnect, _cont, item1, item2);
             _cont++;
         }
-        AutoScrollToBottom();
+        StartCoroutine(AutoScrollToBottomRoutine());
     }
 
-    private void AutoScrollToBottom()
+    private IEnumerator AutoScrollToBottomRoutine()
     {
+        // Espera 2 frames para garantir que a Unity recalculou a física do Layout
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+
+        if (_diagramsContainer != null)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_diagramsContainer.GetComponent<RectTransform>());
+        }
+
         int childCount = _diagramsContainer.childCount;
         if (childCount > _limitToScroll)
         {
-            _startIndex = childCount - _limitToScroll;
+            _currentScrollIndex = childCount - _limitToScroll;
         }
-        UpdateManualScroll();
+        else
+        {
+            _currentScrollIndex = 0;
+        }
+        UpdateScrollPosition();
     }
 
     public void ScrollUp()
     {
-        if (_startIndex > 0)
+        if (_currentScrollIndex > 0)
         {
-            _startIndex--;
-            UpdateManualScroll();
+            _currentScrollIndex--;
+            UpdateScrollPosition();
         }
     }
 
     public void ScrollDown()
     {
         int childCount = _diagramsContainer.childCount;
-        if (_startIndex + _limitToScroll < childCount)
+        int maxIndex = Mathf.Max(0, childCount - _limitToScroll);
+
+        if (_currentScrollIndex < maxIndex)
         {
-            _startIndex++;
-            UpdateManualScroll();
+            _currentScrollIndex++;
+            UpdateScrollPosition();
         }
     }
 
-    private void UpdateManualScroll()
+    private void UpdateScrollPosition()
     {
-        if (_btnUp == null || _btnDown == null) return;
+        if (_diagramsContainer == null) return;
 
         int childCount = _diagramsContainer.childCount;
+        int maxIndex = Mathf.Max(0, childCount - _limitToScroll);
 
-        for (int i = 0; i < childCount; i++)
+        RectTransform rect = _diagramsContainer.GetComponent<RectTransform>();
+        if (rect != null)
         {
-            Transform child = _diagramsContainer.GetChild(i);
-            bool shouldShow = (i >= _startIndex && i < _startIndex + _limitToScroll);
-            child.gameObject.SetActive(shouldShow);
+            float targetY = _currentScrollIndex * GetDynamicStep();
+            rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, targetY);
         }
 
-        if (childCount <= _limitToScroll)
+        if (_btnUp != null && _btnDown != null)
         {
-            _btnUp.SetActive(false);
-            _btnDown.SetActive(false);
-        }
-        else
-        {
-            _btnUp.SetActive(_startIndex > 0);
-            _btnDown.SetActive(_startIndex + _limitToScroll < childCount);
+            if (childCount <= _limitToScroll)
+            {
+                _btnUp.SetActive(false);
+                _btnDown.SetActive(false);
+            }
+            else
+            {
+                _btnUp.SetActive(_currentScrollIndex > 0);
+                _btnDown.SetActive(_currentScrollIndex < maxIndex);
+            }
         }
     }
 }

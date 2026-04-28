@@ -178,6 +178,16 @@ public class PartsScreen : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                PrinterBtn();
+            }
+        }
+    }
     public void PrinterBtn()
     {
         if (_printerManager != null && _currentSelected != null)
