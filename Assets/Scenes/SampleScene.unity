@@ -17637,6 +17637,14 @@ PrefabInstance:
       propertyPath: m_PresetInfoIsWorld
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4027358142876638968, guid: c571c6308f362c74fbd70cb072dea8c3, type: 3}
+      propertyPath: _btnUp
+      value: 
+      objectReference: {fileID: 1648716319}
+    - target: {fileID: 4027358142876638968, guid: c571c6308f362c74fbd70cb072dea8c3, type: 3}
+      propertyPath: _btnDown
+      value: 
+      objectReference: {fileID: 1785207866}
     - target: {fileID: 4084833954131386330, guid: c571c6308f362c74fbd70cb072dea8c3, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
