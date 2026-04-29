@@ -1376,7 +1376,7 @@ MonoBehaviour:
   _s223Manager: {fileID: 4125364851346724425}
   _scannerObject: {fileID: 126549482}
   _menuButton: {fileID: 1827000710}
-  _activePCanva: {fileID: 0}
+  _algCanva: {fileID: 1472993628309827486}
   _missionDialogues:
   - missionState: 1
     missionStep: 0
@@ -1438,9 +1438,16 @@ MonoBehaviour:
     - "Ele \xE9 uma lista de passos que voc\xEA ir\xE1 seguir para completar o objetivo."
     - Observe que listas diferentes podem estar certas, mas cuidado! As vezes trocando
       a ordem de um dos itens pode gerar um erro.
-    - "\xC0 medida que voc\xEA joga e junta as partes do rob\xF4, a tela de PC bem
-      na sua frente vai registrar cada a\xE7\xE3o sua e criar o algoritmo passo a
-      passo."
+    - "Na sua frente tem duas telas, a da direita \xE9 um algoritmo de cria\xE7\xE3o
+      do Furbot."
+    - "O da esquerda ir\xE1 registrar todas suas a\xE7\xF5es para montar um algoritmo
+      em tempo real."
+    - "Sua miss\xE3o: Monte o Furbot com os conhecimentos adiquiridos at\xE9 agora."
+  - missionState: 4
+    missionStep: 0
+    lines:
+    - "Parab\xEAns, voc\xEA conseguiu completar sua miss\xE3o de montar o Furbot
+      e aprendeu sobre o Pensamento Computacional!"
   _armDiagram: {fileID: 11400000, guid: 694a2c3e89e82b949b5dfe78f92db7fe, type: 2}
   _headDiagram: {fileID: 11400000, guid: b9c2693454f90064caf2df3e8fdf7ab0, type: 2}
   _furbotDiagram: {fileID: 11400000, guid: 604f5c8de29017448b89ee814378eb24, type: 2}
@@ -10964,7 +10971,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -0.0579, y: -0.0242}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2061371086
 GameObject:

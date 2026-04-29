@@ -283,7 +283,7 @@ public class PartsScript : MonoBehaviour
     {
         if (_missionManager != null && !_missionManager.IsGameplayActive()) return;
 
-        if (_status == PieceStatus.conected || _status == PieceStatus.root) return;
+        if (_status == PieceStatus.conected) return;
 
         if (_missionManager != null && !_missionManager.CanConnectParts())
         {
@@ -485,6 +485,12 @@ public class PartsScript : MonoBehaviour
             {
                 localRoot.transform.SetParent(targetContainer, true);
             }
+        }
+
+        PartsScript ultimateRoot = _partScriptTarget.FindRootPart();
+        if (ultimateRoot != null && ultimateRoot.GetStatus() == PieceStatus.none)
+        {
+            ultimateRoot.SetStatus(PieceStatus.root);
         }
 
         Transform myContainer = this.transform.parent;

@@ -76,39 +76,58 @@ public class DiagramScreen : MonoBehaviour
 
     private void SetupMission(MissionState state)
     {
-        if (state == MissionState.Mission2)
+        if (state == MissionState.FreeMode)
+        {
+            _isMission2Locked = false;
+            _unlockedDiagramsCount = _diagramDataList.Count;
+            BlockPrinterBtn(false);
+        }
+        else if (state == MissionState.Mission3)
+        {
+            _isMission2Locked = false;
+            _unlockedDiagramsCount = Mathf.Min(3, _diagramDataList.Count);
+            _currentDiagram = _unlockedDiagramsCount - 1;
+            BlockPrinterBtn(false);
+        }
+        else if (state != MissionState.Disabled && state != MissionState.Menu)
         {
             _isMission2Locked = true;
-            _currentDiagram = _unlockedDiagramsCount - 1;
-            SetDiagramBDActive();
-            MoveCamera();
             BlockPrinterBtn(true);
 
-            if (_unlockedDiagramsCount <= 1)
+            if (state == MissionState.Mission1)
             {
-                if (_btnLeft != null) _btnLeft.SetActive(false);
-                if (_btnRight != null) _btnRight.SetActive(false);
+                _unlockedDiagramsCount = 1;
+                _currentDiagram = 0;
             }
+        }
+        else
+        {
+            return;
+        }
 
-            HideAll3DObjects();
+        SetDiagramBDActive();
+        MoveCamera();
 
-            for (int i = 0; i < _unlockedDiagramsCount - 1; i++)
+        if (_btnLeft != null) _btnLeft.SetActive(_unlockedDiagramsCount > 1);
+        if (_btnRight != null) _btnRight.SetActive(_unlockedDiagramsCount > 1);
+
+        HideAll3DObjects();
+
+        int limit = (state == MissionState.FreeMode) ? _unlockedDiagramsCount : (_unlockedDiagramsCount - 1);
+
+        for (int i = 0; i < limit; i++)
+        {
+            if (i < _diagramDataList.Count)
             {
-                if (_diagramDataList[i].GetDiagramObject() != null)
+                if (_diagramDataList[i].GetDiagramObject() == null)
+                {
+                    SpawnSpecificDiagram(i);
+                }
+                else
                 {
                     _diagramDataList[i].GetDiagramObject().SetActive(true);
                 }
             }
-        }
-        else if (state != MissionState.Disabled && state != MissionState.Menu)
-        {
-            _isMission2Locked = false;
-            _unlockedDiagramsCount = _diagramDataList.Count;
-            SpawnAllDiagrams();
-            ShowAll3DObjects();
-            BlockPrinterBtn(false);
-            if (_btnLeft != null) _btnLeft.SetActive(true);
-            if (_btnRight != null) _btnRight.SetActive(true);
         }
     }
 
@@ -253,8 +272,7 @@ public class DiagramScreen : MonoBehaviour
 
     public void ChangeDiagramInt(int value)
     {
-        int limit = _isMission2Locked ? _unlockedDiagramsCount : _diagramDataList.Count;
-        if (limit == 0 || value >= limit) return;
+        if (_unlockedDiagramsCount == 0 || value >= _unlockedDiagramsCount) return;
 
         _currentDiagram = value;
         SetDiagramBDActive();
@@ -263,10 +281,9 @@ public class DiagramScreen : MonoBehaviour
 
     public void ChangeDiagram(bool left)
     {
-        int limit = _isMission2Locked ? _unlockedDiagramsCount : _diagramDataList.Count;
-        if (limit <= 1) return;
+        if (_unlockedDiagramsCount <= 1) return;
 
-        _currentDiagram = (_currentDiagram + (left ? -1 : 1) + limit) % limit;
+        _currentDiagram = (_currentDiagram + (left ? -1 : 1) + _unlockedDiagramsCount) % _unlockedDiagramsCount;
         SetDiagramBDActive();
         MoveCamera();
     }
@@ -319,6 +336,19 @@ public class DiagramScreen : MonoBehaviour
         if (_diagramDataList.Count > 0)
         {
             _printerManager.Printer(GetObjectList());
+
+            MissionManager missionManager = FindAnyObjectByType<MissionManager>();
+            AlgoritmCreater algoritmCreater = FindAnyObjectByType<AlgoritmCreater>();
+
+            if (missionManager != null && algoritmCreater != null && missionManager.GetMissionState() == MissionState.Mission3)
+            {
+                DiagramScriptableObject currentDiagramSO = _diagramDataList[_currentDiagram].GetDiagram();
+
+                if (currentDiagramSO != null)
+                {
+                    algoritmCreater.RegisterPrint(currentDiagramSO.diagramImage);
+                }
+            }
         }
     }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MissionManager : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class MissionManager : MonoBehaviour
     [Header("Objetos da Missao")]
     [SerializeField] private GameObject _scannerObject;
     [SerializeField] private GameObject _menuButton;
-    [SerializeField] private GameObject _activePCanva;
+    [SerializeField] private GameObject _algCanva;
 
     [Header("Roteiros do Drone")]
     [SerializeField] private List<MissionDialogue> _missionDialogues;
@@ -44,8 +45,7 @@ public class MissionManager : MonoBehaviour
         if (_scannerObject != null) _scannerObject.SetActive(false);
         if (_menuButton != null) _menuButton.SetActive(true);
 
-        //SetMission(MissionState.Menu);
-        //ForcarMissao3Liberada();
+        SetMission(MissionState.Menu);
     }
 
     private void Update()
@@ -75,7 +75,14 @@ public class MissionManager : MonoBehaviour
             if (_s223Manager != null && mission != MissionState.Menu)
             {
                 string[] linesToSpeak = GetDialoguesForMission(_currentMission, _currentStep);
-                _s223Manager.StartDroneRoutine(this, _currentMission, _currentStep, linesToSpeak);
+                if (linesToSpeak != null && linesToSpeak.Length > 0)
+                {
+                    _s223Manager.StartDroneRoutine(this, _currentMission, _currentStep, linesToSpeak);
+                }
+                else
+                {
+                    StartGameplay();
+                }
             }
             else
             {
@@ -120,11 +127,25 @@ public class MissionManager : MonoBehaviour
     {
         _isGameplayActive = true;
 
+        if (_currentMission == MissionState.EndGame)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            return;
+        }
+
         if (_currentMission == MissionState.Mission1 && _currentStep == 1)
         {
             if (_scannerObject != null)
             {
                 _scannerObject.SetActive(true);
+            }
+        }
+        else if (_currentMission == MissionState.Mission3 && _currentStep == 0)
+        {
+            PartsScreen partsScreen = FindAnyObjectByType<PartsScreen>();
+            if (partsScreen != null)
+            {
+                partsScreen.ForceUnlockAllParts();
             }
         }
     }
@@ -137,7 +158,14 @@ public class MissionManager : MonoBehaviour
         if (_s223Manager != null)
         {
             string[] linesToSpeak = GetDialoguesForMission(_currentMission, _currentStep);
-            _s223Manager.StartDroneRoutine(this, _currentMission, _currentStep, linesToSpeak);
+            if (linesToSpeak != null && linesToSpeak.Length > 0)
+            {
+                _s223Manager.StartDroneRoutine(this, _currentMission, _currentStep, linesToSpeak);
+            }
+            else
+            {
+                StartGameplay();
+            }
         }
         else
         {
@@ -169,28 +197,34 @@ public class MissionManager : MonoBehaviour
 
     public DiagramScriptableObject GetCurrentExpectedDiagram()
     {
-        if (_currentMission != MissionState.Mission3) return null;
-
-        if (_currentStep == 0) return _armDiagram;
-        if (_currentStep == 1) return _headDiagram;
-        if (_currentStep == 2) return _furbotDiagram;
-
+        if (_currentMission == MissionState.Mission2)
+        {
+            if (_currentStep == 1) return _armDiagram;
+            if (_currentStep == 2) return _headDiagram;
+        }
+        else if (_currentMission == MissionState.Mission3)
+        {
+            return _furbotDiagram;
+        }
         return null;
     }
 
     public void ActiveAlgoritm(bool active)
     {
-        _activePCanva.SetActive(active);
+        if (_algCanva != null)
+        {
+            _algCanva.SetActive(active);
+        }
     }
 
     public void DiagramValidate(GameObject scannedObj)
     {
-        ValidateMission2Scan(scannedObj);
+        ValidateCurrentMissionScan(scannedObj);
     }
 
-    public void ValidateMission2Scan(GameObject scannedObj)
+    public void ValidateCurrentMissionScan(GameObject scannedObj)
     {
-        if (_currentMission != MissionState.Mission2 || !_isGameplayActive) return;
+        if ((_currentMission != MissionState.Mission2 && _currentMission != MissionState.Mission3) || !_isGameplayActive) return;
 
         GameObject container = scannedObj;
         if (scannedObj.transform.parent != null)
@@ -199,14 +233,41 @@ public class MissionManager : MonoBehaviour
         }
 
         DiagramScriptableObject expectedDiagram = null;
-        if (_currentStep == 0) expectedDiagram = _armDiagram;
-        else if (_currentStep == 1) expectedDiagram = _headDiagram;
-        else if (_currentStep == 2) expectedDiagram = _furbotDiagram;
+        if (_currentMission == MissionState.Mission2)
+        {
+            if (_currentStep == 1) expectedDiagram = _armDiagram;
+            else if (_currentStep == 2) expectedDiagram = _headDiagram;
+        }
+        else if (_currentMission == MissionState.Mission3)
+        {
+            expectedDiagram = _furbotDiagram;
+        }
 
         if (expectedDiagram != null && ValidateAssembly(container, expectedDiagram))
         {
             Destroy(container);
-            ForceDiagramTabAndAdvance();
+
+            if (_currentMission == MissionState.Mission2)
+            {
+                if (_currentStep == 1)
+                {
+                    ForceDiagramTabAndAdvance();
+                }
+                else if (_currentStep == 2)
+                {
+                    PainelUI painel = FindAnyObjectByType<PainelUI>();
+                    if (painel != null)
+                    {
+                        painel.SelectTab(1);
+                    }
+
+                    SetMission(MissionState.Mission3);
+                }
+            }
+            else if (_currentMission == MissionState.Mission3)
+            {
+                SetMission(MissionState.EndGame);
+            }
         }
         else
         {
@@ -274,11 +335,20 @@ public class MissionManager : MonoBehaviour
     {
         return _currentStep;
     }
+
     private void ForcarMissao3Liberada()
     {
         _currentMission = MissionState.Mission3;
         _currentStep = 0;
         _isGameplayActive = true;
+
+        OnMissionChanged?.Invoke(_currentMission);
+
+        PainelUI painel = FindAnyObjectByType<PainelUI>();
+        if (painel != null)
+        {
+            painel.SelectTab(1);
+        }
 
         PartsScreen partsScreen = FindAnyObjectByType<PartsScreen>();
         if (partsScreen != null)
@@ -294,6 +364,7 @@ public enum MissionState
     Mission1,
     Mission2,
     Mission3,
+    EndGame,
     FreeMode,
     Disabled
 }
