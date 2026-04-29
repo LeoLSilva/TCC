@@ -96,13 +96,16 @@ public class S223Manager : MonoBehaviour
         {
             yield return StartCoroutine(_dialogueSystem.PlayDialogueRoutine(_currentLines));
         }
-        else if (mission == MissionState.Mission3 && step == 0)
+        else if (mission == MissionState.Mission3)
         {
             if (_currentLines != null && _currentLines.Length > 0 && _dialogueSystem != null)
             {
                 yield return StartCoroutine(_dialogueSystem.PlayDialogueRoutine(_currentLines));
             }
-            _missionManager.ActiveAlgoritm(true);
+            if (step == 0)
+                _missionManager.ActiveAlgoritm(true);
+            else
+                _missionManager.GoMenu();
         }
         else if (mission == MissionState.FreeMode)
         {

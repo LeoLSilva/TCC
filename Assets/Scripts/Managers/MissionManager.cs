@@ -127,12 +127,6 @@ public class MissionManager : MonoBehaviour
     {
         _isGameplayActive = true;
 
-        if (_currentMission == MissionState.EndGame)
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-            return;
-        }
-
         if (_currentMission == MissionState.Mission1 && _currentStep == 1)
         {
             if (_scannerObject != null)
@@ -268,7 +262,7 @@ public class MissionManager : MonoBehaviour
             else if (_currentMission == MissionState.Mission3)
             {
                 Debug.Log("Final");
-                SetMission(MissionState.EndGame);
+                NextStep();
             }
         }
         else
@@ -394,6 +388,11 @@ public class MissionManager : MonoBehaviour
         {
             partsScreen.ForceUnlockAllParts();
         }
+    }
+
+    internal void GoMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 }
 

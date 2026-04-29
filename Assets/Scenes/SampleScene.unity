@@ -1376,7 +1376,7 @@ MonoBehaviour:
   _s223Manager: {fileID: 4125364851346724425}
   _scannerObject: {fileID: 126549482}
   _menuButton: {fileID: 1827000710}
-  _algCanva: {fileID: 1472993628309827486}
+  _activePCanva: {fileID: 0}
   _missionDialogues:
   - missionState: 1
     missionStep: 0
@@ -1442,8 +1442,8 @@ MonoBehaviour:
     - "O da esquerda ir\xE1 registrar todas suas a\xE7\xF5es para montar um algoritmo
       em tempo real."
     - "Sua miss\xE3o: Monte o Furbot com os conhecimentos adiquiridos at\xE9 agora."
-  - missionState: 4
-    missionStep: 0
+  - missionState: 3
+    missionStep: 1
     lines:
     - "Parab\xEAns, voc\xEA conseguiu completar sua miss\xE3o de montar o Furbot
       e aprendeu sobre o Pensamento Computacional!"
