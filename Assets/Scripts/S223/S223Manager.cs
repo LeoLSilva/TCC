@@ -86,12 +86,17 @@ public class S223Manager : MonoBehaviour
                 }
                 yield break;
             }
+            if (_missionManager.GetMissionState() == MissionState.EndGame)
+            {
+                yield return StartCoroutine(_dialogueSystem.PlayDialogueRoutine(_currentLines));
+                _missionManager.EndMission();
+            }
         }
         else if (mission == MissionState.Mission2)
         {
-                yield return StartCoroutine(_dialogueSystem.PlayDialogueRoutine(_currentLines));
+            yield return StartCoroutine(_dialogueSystem.PlayDialogueRoutine(_currentLines));
         }
-        else if(mission == MissionState.Mission3 && step == 0)
+        else if (mission == MissionState.Mission3 && step == 0)
         {
             if (_currentLines != null && _currentLines.Length > 0 && _dialogueSystem != null)
             {

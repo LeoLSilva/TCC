@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67ba3e1980db9a1489056ec04a965e39, type: 3}
   m_Name: Furbot
   m_EditorClassIdentifier: 
-  signature: 
+  signature: 'Corpo[ConBola:Bola[],ConBracoDois:Braco[ConMao:Mao[],],ConBracoUm:Braco[ConMao:Mao[],],ConCabeca:CabecaS[ConAntenaDois:F[],ConAntenaUm:F[],ConBoca:Boca[],ConOlhoDois:Olho[],ConOlhoUm:Olho[],],] '
   rootPart:
     partPrefab: {fileID: 6404463418283132380, guid: b490d2aa5341a8146a8360b9a1d899bb, type: 3}
     connections:

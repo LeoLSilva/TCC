@@ -153,13 +153,13 @@ public class MissionManager : MonoBehaviour
     public void NextStep()
     {
         _currentStep++;
-        _isGameplayActive = false;
 
         if (_s223Manager != null)
         {
             string[] linesToSpeak = GetDialoguesForMission(_currentMission, _currentStep);
             if (linesToSpeak != null && linesToSpeak.Length > 0)
             {
+                _isGameplayActive = false;
                 _s223Manager.StartDroneRoutine(this, _currentMission, _currentStep, linesToSpeak);
             }
             else
@@ -245,6 +245,7 @@ public class MissionManager : MonoBehaviour
 
         if (expectedDiagram != null && ValidateAssembly(container, expectedDiagram))
         {
+            container.SetActive(false);
             Destroy(container);
 
             if (_currentMission == MissionState.Mission2)
@@ -266,26 +267,56 @@ public class MissionManager : MonoBehaviour
             }
             else if (_currentMission == MissionState.Mission3)
             {
+                Debug.Log("Final");
                 SetMission(MissionState.EndGame);
             }
         }
         else
         {
+            Debug.Log("Saiu");
             WrongAssemblyScanned(container);
         }
     }
 
     public bool ValidateAssembly(GameObject scannedObj, DiagramScriptableObject expectedDiagram)
     {
-        if (scannedObj == null || expectedDiagram == null) return false;
+        if (scannedObj == null)
+        {
+            Debug.LogError("[DETETIVE] O objeto escaneado sumiu antes de ser validado!");
+            return false;
+        }
+
+        if (expectedDiagram == null)
+        {
+            Debug.LogError("[DETETIVE] CULPADO ENCONTRADO: O Gabarito esperado está NULO! O slot no Inspector do MissionManager está vazio!");
+            return false;
+        }
 
         DiagramRegister[] registers = scannedObj.GetComponentsInChildren<DiagramRegister>();
 
+        string expectedSig = expectedDiagram.signature.Replace(" ", "").Replace("\n", "").Replace("\r", "").Replace("\t", "").Trim();
+
         foreach (var reg in registers)
         {
-            if (reg.GetLocalSignature() == expectedDiagram.signature)
+            string localSig = reg.GetLocalSignature().Replace(" ", "").Replace("\n", "").Replace("\r", "").Replace("\t", "").Trim();
+
+            if (localSig == expectedSig)
             {
                 return true;
+            }
+            else
+            {
+                Debug.Log($"[DETETIVE] Lendo peça: {reg.gameObject.name}\nTamanho Esperado: {expectedSig.Length} | Tamanho Gerado: {localSig.Length}");
+
+                int minLength = Mathf.Min(expectedSig.Length, localSig.Length);
+                for (int i = 0; i < minLength; i++)
+                {
+                    if (expectedSig[i] != localSig[i])
+                    {
+                        Debug.LogWarning($"[DETETIVE] Diferença exata no caractere {i}! Esperado a letra '{expectedSig[i]}' mas veio a letra '{localSig[i]}'");
+                        break;
+                    }
+                }
             }
         }
 
@@ -311,6 +342,7 @@ public class MissionManager : MonoBehaviour
 
     private void WrongAssemblyScanned(GameObject wrongObj)
     {
+        wrongObj.SetActive(false);
         Destroy(wrongObj);
         _isGameplayActive = false;
 
@@ -328,7 +360,14 @@ public class MissionManager : MonoBehaviour
         yield return new WaitForSeconds(5f);
 
         string[] linesToSpeak = GetDialoguesForMission(_currentMission, _currentStep);
-        _s223Manager.StartDroneRoutine(this, _currentMission, _currentStep, linesToSpeak);
+        if (linesToSpeak != null && linesToSpeak.Length > 0)
+        {
+            _s223Manager.StartDroneRoutine(this, _currentMission, _currentStep, linesToSpeak);
+        }
+        else
+        {
+            StartGameplay();
+        }
     }
 
     public int GetStep()

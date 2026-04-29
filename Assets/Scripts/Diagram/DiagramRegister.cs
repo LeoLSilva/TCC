@@ -10,7 +10,7 @@ public class DiagramRegister : MonoBehaviour
 
     private void Start()
     {
-        if (_rootPart == null)
+        if (_rootPart == null || _rootPart.partPrefab == null)
         {
             _rootPart = new DiagramNode();
         }
@@ -20,6 +20,36 @@ public class DiagramRegister : MonoBehaviour
     public PartsSoloScriptableObject GetPartData()
     {
         return _partData;
+    }
+
+    public void InjectSavedData(DiagramNode savedNode)
+    {
+        if (savedNode != null)
+        {
+            _rootPart = DeepCopyNode(savedNode);
+            _rootPart.partPrefab = this.gameObject;
+        }
+    }
+
+    private DiagramNode DeepCopyNode(DiagramNode original)
+    {
+        if (original == null) return null;
+
+        DiagramNode copy = new DiagramNode();
+        copy.partPrefab = original.partPrefab;
+
+        if (original.connections != null)
+        {
+            copy.connections = new List<DiagramConnection>();
+            foreach (var conn in original.connections)
+            {
+                DiagramConnection newConn = new DiagramConnection();
+                newConn.conName = conn.conName;
+                newConn.connectedPart = DeepCopyNode(conn.connectedPart);
+                copy.connections.Add(newConn);
+            }
+        }
+        return copy;
     }
 
     public void AddConnection(string conName, DiagramRegister node)
@@ -73,7 +103,13 @@ public class DiagramRegister : MonoBehaviour
 
     public string GetLocalSignature()
     {
-        return BuildSignatureRecursive(_rootPart);
+        if (_rootPart != null && _rootPart.partPrefab == null)
+        {
+            _rootPart.partPrefab = this.gameObject;
+        }
+
+        string sigFinal = BuildSignatureRecursive(_rootPart);
+        return sigFinal;
     }
 
     private string BuildSignatureRecursive(DiagramNode node)
@@ -88,13 +124,27 @@ public class DiagramRegister : MonoBehaviour
 
         if (node.connections != null && node.connections.Count > 0)
         {
-            List<DiagramConnection> sortedConnections = new List<DiagramConnection>(node.connections);
-            sortedConnections.Sort((a, b) => string.Compare(a.conName, b.conName));
+            Dictionary<string, DiagramConnection> uniqueConnections = new Dictionary<string, DiagramConnection>();
 
-            foreach (DiagramConnection conn in sortedConnections)
+            foreach (DiagramConnection conn in node.connections)
             {
-                sig.Append(conn.conName).Append(":");
-                sig.Append(BuildSignatureRecursive(conn.connectedPart)).Append(",");
+                if (conn.connectedPart != null && conn.connectedPart.partPrefab != null)
+                {
+                    uniqueConnections[conn.conName] = conn;
+                }
+            }
+
+            List<string> sortedKeys = new List<string>(uniqueConnections.Keys);
+            sortedKeys.Sort();
+
+            foreach (string key in sortedKeys)
+            {
+                string childSig = BuildSignatureRecursive(uniqueConnections[key].connectedPart);
+                if (!string.IsNullOrEmpty(childSig))
+                {
+                    sig.Append(key).Append(":");
+                    sig.Append(childSig).Append(",");
+                }
             }
         }
 

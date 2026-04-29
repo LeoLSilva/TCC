@@ -1,4 +1,5 @@
 using Oculus.Interaction;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -172,6 +173,11 @@ public class DiagramScreen : MonoBehaviour
         {
             PrinterBtn();
         }
+
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            SpawnCurrentDiagramToCamera();
+        }
     }
 
     private void SpawnAllDiagrams()
@@ -193,8 +199,14 @@ public class DiagramScreen : MonoBehaviour
 
                 if (spawnedPart != null)
                 {
-                    spawnedPart.SetHierarchyLayerAndPhysics("Mask", true);
+                    DiagramRegister reg = spawnedPart.GetComponent<DiagramRegister>();
+                    if (reg != null)
+                    {
+                        reg.InjectSavedData(data.GetDiagram().rootPart);
+                    }
+
                     data.SetDiagramObject(spawnedPart.transform.parent.gameObject);
+                    StartCoroutine(DelayPhysicsRoutine(spawnedPart));
                 }
             }
         }
@@ -240,8 +252,14 @@ public class DiagramScreen : MonoBehaviour
 
             if (spawnedPart != null)
             {
-                spawnedPart.SetHierarchyLayerAndPhysics("Mask", true);
+                DiagramRegister reg = spawnedPart.GetComponent<DiagramRegister>();
+                if (reg != null)
+                {
+                    reg.InjectSavedData(data.GetDiagram().rootPart);
+                }
+
                 data.SetDiagramObject(spawnedPart.transform.parent.gameObject);
+                StartCoroutine(DelayPhysicsRoutine(spawnedPart));
                 data.GetDiagramObject().SetActive(true);
             }
         }
@@ -324,8 +342,23 @@ public class DiagramScreen : MonoBehaviour
 
         if (spawnedPart != null)
         {
+            DiagramRegister reg = spawnedPart.GetComponent<DiagramRegister>();
+            if (reg != null)
+            {
+                reg.InjectSavedData(currentData.GetDiagram().rootPart);
+            }
+
             _lastSpawnedDiagram = spawnedPart.transform.parent.gameObject;
-            spawnedPart.SetHierarchyLayerAndPhysics("Mask", true);
+            StartCoroutine(DelayPhysicsRoutine(spawnedPart));
+        }
+    }
+
+    private IEnumerator DelayPhysicsRoutine(PartsScript part)
+    {
+        yield return new WaitForEndOfFrame();
+        if (part != null)
+        {
+            part.SetHierarchyLayerAndPhysics("Mask", true);
         }
     }
 

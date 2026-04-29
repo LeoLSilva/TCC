@@ -74,13 +74,49 @@ public class PartsScript : MonoBehaviour
         {
             _grabble.WhenPointerEventRaised += OnGrabbleEvent;
         }
+
+        if (_status == PieceStatus.conected)
+        {
+            Invoke(nameof(RebuildConnections), 0.2f);
+        }
     }
 
-    private void OnDestroy()
+    public void RebuildConnections()
     {
-        if (_grabble != null)
+        if (_hasRegisteredConnection) return;
+
+        PartsScript[] allPartsInCluster = transform.root.GetComponentsInChildren<PartsScript>(true);
+
+        foreach (SnapIndicator mySnap in _connectsScriptList)
         {
-            _grabble.WhenPointerEventRaised -= OnGrabbleEvent;
+            foreach (PartsScript otherPart in allPartsInCluster)
+            {
+                if (otherPart == this) continue;
+
+                foreach (SnapIndicator otherSnap in otherPart.ConnectsScriptList)
+                {
+                    if (Vector3.Distance(mySnap.transform.position, otherSnap.transform.position) < 0.05f)
+                    {
+                        if (this.transform.IsChildOf(otherPart.transform))
+                        {
+                            _partScriptTarget = otherPart;
+                            _snapTarget = otherSnap;
+                            _myActiveSnap = mySnap;
+
+                            DiagramRegister targetRegister = _partScriptTarget.GetComponent<DiagramRegister>();
+                            if (targetRegister != null)
+                            {
+                                targetRegister.AddConnection(_snapTarget.gameObject.name, _diagramRegister);
+                            }
+
+                            _hasRegisteredConnection = true;
+                            _snapTarget.SetIsConnect(true);
+                            _myActiveSnap.SetIsConnect(true);
+                            return;
+                        }
+                    }
+                }
+            }
         }
     }
 
