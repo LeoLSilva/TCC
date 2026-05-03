@@ -46,6 +46,7 @@ public class PartsScreen : MonoBehaviour
         if (_missionManager != null)
         {
             _missionManager.OnMissionChanged += SetupMission;
+            _missionManager.OnGameplayActiveChanged += HandleGameplayActive;
         }
     }
 
@@ -54,6 +55,7 @@ public class PartsScreen : MonoBehaviour
         if (_missionManager != null)
         {
             _missionManager.OnMissionChanged -= SetupMission;
+            _missionManager.OnGameplayActiveChanged -= HandleGameplayActive;
         }
     }
 
@@ -70,7 +72,36 @@ public class PartsScreen : MonoBehaviour
         else if (state == MissionState.Mission2 || state == MissionState.Mission3)
         {
             _printerBtn.gameObject.SetActive(true);
-            BlockPrinterBtn(false);
+
+            if (_missionManager != null && _missionManager.IsGameplayActive())
+            {
+                BlockPrinterBtn(false);
+            }
+            else
+            {
+                BlockPrinterBtn(true);
+            }
+        }
+    }
+
+    private void HandleGameplayActive(bool isActive)
+    {
+        if (_missionManager.GetMissionState() == MissionState.Mission1) return;
+
+        if (!isActive)
+        {
+            BlockPrinterBtn(true);
+        }
+        else
+        {
+            if (_missionManager.GetMissionState() == MissionState.Mission2 && _missionManager.GetStep() == 0)
+            {
+                BlockPrinterBtn(_mission2bool);
+            }
+            else
+            {
+                BlockPrinterBtn(false);
+            }
         }
     }
 
@@ -155,12 +186,20 @@ public class PartsScreen : MonoBehaviour
                 _alertTxt.text = _currentSelected.name + " não pertence ao Braço";
             }
             _alertTxt.gameObject.SetActive(_mission2bool);
-            BlockPrinterBtn(_mission2bool);
+
+            if (_missionManager.IsGameplayActive())
+            {
+                BlockPrinterBtn(_mission2bool);
+            }
         }
         else
         {
             _alertTxt.gameObject.SetActive(false);
-            BlockPrinterBtn(false);
+
+            if (_missionManager.IsGameplayActive())
+            {
+                BlockPrinterBtn(false);
+            }
         }
     }
 
@@ -190,6 +229,8 @@ public class PartsScreen : MonoBehaviour
     }
     public void PrinterBtn()
     {
+        if (_missionManager != null && !_missionManager.IsGameplayActive()) return;
+
         if (_printerManager != null && _currentSelected != null)
         {
             if (_missionManager.GetMissionState() == MissionState.Mission2 && _missionManager.GetStep() == 0)

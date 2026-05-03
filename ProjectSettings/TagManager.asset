@@ -22,6 +22,8 @@ TagManager:
   - QDSUITextSecondaryInvertedColor
   - obj
   - Container
+  - mesa
+  - objSnap
   layers:
   - Default
   - TransparentFX

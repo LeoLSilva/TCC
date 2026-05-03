@@ -8,4 +8,5 @@ public class DiagramScriptableObject : ScriptableObject
     public DiagramNode rootPart;
     public GameObject _Diagram;
     public Sprite diagramImage;
+    public Sprite ImgForAlgoritm;
 }

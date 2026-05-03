@@ -62,3 +62,4 @@ MonoBehaviour:
         connections: []
   _Diagram: {fileID: 5252067483415747207, guid: 14c15cc9cef929f4f967254c5f071ae6, type: 3}
   diagramImage: {fileID: 21300000, guid: 02dfb2ad0b13b1742b5bf312ffe7a2bf, type: 3}
+  ImgForAlgoritm: {fileID: 21300000, guid: 025f221eda5e9ea448462290f6b2d433, type: 3}

@@ -16,12 +16,15 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
 
     [SerializeField] private float _scanDuration = 3f;
     [SerializeField] private bool _canScan = true;
+    [SerializeField] private float _gracePeriod = 0.3f;
 
     [Header("Raycast Settings")]
     [SerializeField] private Transform _scanOrigin;
     [SerializeField] private float _maxScanDistance = 2f;
+    [SerializeField] private float _forgivenessRadius = 0.05f;
     [SerializeField] private LayerMask _scanLayerMask = ~0;
     [SerializeField] private string _targetTag = "obj";
+    [SerializeField] private string _ignoreTag = "Ground";
 
     public UnityEvent<GameObject> OnScanStarted;
     public UnityEvent<float> OnScanProgress;
@@ -32,20 +35,23 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
     private float _lastUseTime;
     private bool _isScanning = false;
     private float _currentScanTime = 0f;
+    private float _timeLostTarget = 0f;
     private bool _scanFinished = false;
     private GameObject _currentTarget;
 
     [Header("Testes")]
     public GameObject itenScannerText;
 
-    private PartsScreen _partsScreen;
-    private MissionManager _missionManager;
+    [Header("Dependencias (Arraste no Inspector)")]
+    [SerializeField] private PartsScreen _partsScreen;
+    [SerializeField] private MissionManager _missionManager;
     private ScanManager _scanManager;
 
     private void Awake()
     {
-        _partsScreen = FindAnyObjectByType<PartsScreen>();
-        _missionManager = FindAnyObjectByType<MissionManager>();
+        if (_partsScreen == null) _partsScreen = FindAnyObjectByType<PartsScreen>();
+        if (_missionManager == null) _missionManager = FindAnyObjectByType<MissionManager>();
+
         _scanManager = GetComponent<ScanManager>();
     }
 
@@ -97,59 +103,109 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
     {
         if (!_canScan || _scanFinished) return;
 
-        if (_missionManager != null && !_missionManager.IsGameplayActive())
-        {
-            return;
-        }
+        if (_missionManager != null && !_missionManager.IsGameplayActive()) return;
 
         if (progress >= _fireThreshold)
         {
-            if (_scanOrigin != null && Physics.Raycast(_scanOrigin.position, _scanOrigin.forward, out RaycastHit hit, _maxScanDistance, _scanLayerMask))
+            bool targetFoundThisFrame = false;
+            GameObject targetToScan = null;
+
+            if (_scanOrigin != null)
             {
-                if (hit.collider.CompareTag(_targetTag))
+                RaycastHit[] hits = Physics.RaycastAll(_scanOrigin.position, _scanOrigin.forward, _maxScanDistance, _scanLayerMask);
+                System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+                foreach (var hit in hits)
                 {
-                    GameObject hitObj = hit.collider.gameObject;
-                    GameObject targetToScan = hitObj;
+                    if (hit.collider.CompareTag(_ignoreTag)) continue;
 
-                    if (_missionManager != null && (_missionManager.GetMissionState() == MissionState.Mission2 || _missionManager.GetMissionState() == MissionState.Mission3))
+                    if (hit.collider.CompareTag(_targetTag))
                     {
-                        if (hitObj.transform.parent != null)
-                        {
-                            PartsScript[] pecasNoContainer = hitObj.transform.parent.GetComponentsInChildren<PartsScript>();
+                        GameObject hitObj = hit.collider.gameObject;
+                        targetToScan = hitObj;
+                        targetFoundThisFrame = true;
 
-                            if (pecasNoContainer.Length > 1)
+                        if (_missionManager != null && (_missionManager.GetMissionState() == MissionState.Mission2 || _missionManager.GetMissionState() == MissionState.Mission3))
+                        {
+                            if (hitObj.transform.parent != null)
                             {
-                                targetToScan = hitObj.transform.parent.gameObject;
+                                PartsScript[] pecasNoContainer = hitObj.transform.parent.GetComponentsInChildren<PartsScript>();
+
+                                if (pecasNoContainer.Length > 1)
+                                {
+                                    targetToScan = hitObj.transform.parent.gameObject;
+                                }
+                                else
+                                {
+                                    targetFoundThisFrame = false;
+                                }
                             }
                             else
                             {
-                                CancelScan();
-                                return;
+                                targetFoundThisFrame = false;
                             }
                         }
-                        else
+                    }
+                    break;
+                }
+
+                if (!targetFoundThisFrame && _forgivenessRadius > 0f)
+                {
+                    RaycastHit[] sphereHits = Physics.SphereCastAll(_scanOrigin.position, _forgivenessRadius, _scanOrigin.forward, _maxScanDistance, _scanLayerMask);
+                    System.Array.Sort(sphereHits, (a, b) => a.distance.CompareTo(b.distance));
+
+                    foreach (var hit in sphereHits)
+                    {
+                        if (hit.collider.CompareTag(_ignoreTag)) continue;
+
+                        if (hit.collider.CompareTag(_targetTag))
                         {
-                            CancelScan();
-                            return;
+                            GameObject hitObj = hit.collider.gameObject;
+                            targetToScan = hitObj;
+                            targetFoundThisFrame = true;
+
+                            if (_missionManager != null && (_missionManager.GetMissionState() == MissionState.Mission2 || _missionManager.GetMissionState() == MissionState.Mission3))
+                            {
+                                if (hitObj.transform.parent != null)
+                                {
+                                    PartsScript[] pecasNoContainer = hitObj.transform.parent.GetComponentsInChildren<PartsScript>();
+
+                                    if (pecasNoContainer.Length > 1)
+                                    {
+                                        targetToScan = hitObj.transform.parent.gameObject;
+                                    }
+                                    else
+                                    {
+                                        targetFoundThisFrame = false;
+                                    }
+                                }
+                                else
+                                {
+                                    targetFoundThisFrame = false;
+                                }
+                            }
                         }
+                        break;
                     }
+                }
+            }
 
-                    if (!_isScanning)
-                    {
-                        _isScanning = true;
-                        _currentTarget = targetToScan;
-                        _currentScanTime = 0f;
+            if (targetFoundThisFrame)
+            {
+                if (!_isScanning)
+                {
+                    _isScanning = true;
+                    _currentTarget = targetToScan;
+                    _currentScanTime = 0f;
+                    _timeLostTarget = 0f;
 
-                        OnScanStarted?.Invoke(_currentTarget);
+                    OnScanStarted?.Invoke(_currentTarget);
 
-                        if (_scanManager != null) _scanManager.StartScanEffect(_currentTarget);
-                    }
-                    else if (targetToScan != _currentTarget)
-                    {
-                        CancelScan();
-                        return;
-                    }
-
+                    if (_scanManager != null) _scanManager.StartScanEffect(_currentTarget);
+                }
+                else if (targetToScan == _currentTarget)
+                {
+                    _timeLostTarget = 0f;
                     _currentScanTime += Time.deltaTime;
                     float scanPercent = Mathf.Clamp01(_currentScanTime / _scanDuration);
                     OnScanProgress?.Invoke(scanPercent);
@@ -162,31 +218,29 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
                         GameObject finalTarget = _currentTarget;
                         _currentTarget = null;
 
-                        OnScanComplete?.Invoke(finalTarget);
-
-                        if (_scanManager != null) _scanManager.StopScanEffect();
-
-                        if (_missionManager != null)
-                        {
-                            if (_missionManager.GetMissionState() == MissionState.Mission1)
-                            {
-                                if (_partsScreen != null) _partsScreen.ReceiveScannedObject(finalTarget);
-                            }
-                            else if (_missionManager.GetMissionState() == MissionState.Mission2 || _missionManager.GetMissionState() == MissionState.Mission3)
-                            {
-                                _missionManager.DiagramValidate(finalTarget);
-                            }
-                        }
+                        ProcessScanResult(finalTarget);
+                    }
+                }
+                else
+                {
+                    CancelScan();
+                    return;
+                }
+            }
+            else
+            {
+                if (_isScanning)
+                {
+                    _timeLostTarget += Time.deltaTime;
+                    if (_timeLostTarget >= _gracePeriod)
+                    {
+                        CancelScan();
                     }
                 }
                 else
                 {
                     CancelScan();
                 }
-            }
-            else
-            {
-                CancelScan();
             }
         }
         else if (progress <= _releaseThreshold)
@@ -198,6 +252,30 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
         }
     }
 
+    private void ProcessScanResult(GameObject finalTarget)
+    {
+        OnScanComplete?.Invoke(finalTarget);
+
+        if (_scanManager != null) _scanManager.StopScanEffect();
+
+        if (_missionManager != null)
+        {
+            MissionState currentState = _missionManager.GetMissionState();
+
+            switch (currentState)
+            {
+                case MissionState.Mission1:
+                    if (_partsScreen != null) _partsScreen.ReceiveScannedObject(finalTarget);
+                    break;
+
+                case MissionState.Mission2:
+                case MissionState.Mission3:
+                    _missionManager.ValidateCurrentMissionScan(finalTarget);
+                    break;
+            }
+        }
+    }
+
     private void CancelScan()
     {
         if (_isScanning && !_scanFinished)
@@ -205,6 +283,7 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
             _isScanning = false;
             _currentScanTime = 0f;
             _currentTarget = null;
+            _timeLostTarget = 0f;
 
             OnScanProgress?.Invoke(0f);
             OnScanCanceled?.Invoke();
@@ -225,6 +304,7 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
         _currentScanTime = 0f;
         _isScanning = false;
         _currentTarget = null;
+        _timeLostTarget = 0f;
         OnScanProgress?.Invoke(0f);
 
         if (_scanManager != null) _scanManager.StopScanEffect();

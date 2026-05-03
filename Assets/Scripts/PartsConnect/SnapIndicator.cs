@@ -46,7 +46,7 @@ public class SnapIndicator : MonoBehaviour
 
     public void HandleTriggerEnter(Collider other)
     {
-        if (_isConnected || !other.CompareTag("obj")) return;
+        if (_isConnected || (!other.CompareTag("obj") && !other.CompareTag("objSnap"))) return;
         if (_parentPart != null && _parentPart.GetStatus() == PieceStatus.conecting) return;
 
         SnapIndicator otherSnap = ResolveSnapIndicator(other);

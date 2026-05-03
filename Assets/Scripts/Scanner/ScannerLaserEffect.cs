@@ -7,6 +7,9 @@ public class ScannerLaserEffect : MonoBehaviour
     [SerializeField] private float _maxDistance = 2f;
     [SerializeField] private LayerMask _hitMask = ~0;
 
+    [SerializeField] private string _ignoreTag = "Ground";
+    [SerializeField] private string _targetTag = "obj";
+
     [SerializeField] private float _baseWidth = 0.02f;
     [SerializeField] private float _pulseAmount = 0.01f;
     [SerializeField] private float _pulseSpeed = 15f;
@@ -30,9 +33,15 @@ public class ScannerLaserEffect : MonoBehaviour
 
             float currentDistance = _maxDistance;
 
-            if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, _maxDistance, _hitMask))
+            RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.forward, _maxDistance, _hitMask);
+            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+            foreach (var hit in hits)
             {
+                if (hit.collider.CompareTag(_ignoreTag)) continue;
+
                 currentDistance = hit.distance;
+                break;
             }
 
             _lineRenderer.SetPosition(0, Vector3.zero);

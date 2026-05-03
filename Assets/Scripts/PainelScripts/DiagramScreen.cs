@@ -14,6 +14,9 @@ public class DiagramScreen : MonoBehaviour
     [SerializeField] private int _currentDiagram;
     [SerializeField] private TextMeshProUGUI _diagramName;
 
+    [Header("Image Display")]
+    [SerializeField] private Image _diagramImageDisplay;
+
     [Header("Data")]
     [SerializeField] private List<DiagramDataBP> _diagramDataList = new List<DiagramDataBP>();
 
@@ -29,6 +32,7 @@ public class DiagramScreen : MonoBehaviour
     private GameObject _lastSpawnedDiagram;
     private bool _isMission2Locked = false;
     private int _unlockedDiagramsCount = 1;
+    private int _scannedDiagramsCount = 0;
 
     private void Start()
     {
@@ -63,6 +67,8 @@ public class DiagramScreen : MonoBehaviour
         {
             mm.OnMissionChanged -= SetupMission;
             mm.OnMissionChanged += SetupMission;
+            mm.OnGameplayActiveChanged -= HandleGameplayActive;
+            mm.OnGameplayActiveChanged += HandleGameplayActive;
             SetupMission(mm.GetMissionState());
         }
     }
@@ -70,9 +76,11 @@ public class DiagramScreen : MonoBehaviour
     private void OnDisable()
     {
         MissionManager mm = FindAnyObjectByType<MissionManager>();
-        if (mm != null) mm.OnMissionChanged -= SetupMission;
-
-        HideAll3DObjects();
+        if (mm != null)
+        {
+            mm.OnMissionChanged -= SetupMission;
+            mm.OnGameplayActiveChanged -= HandleGameplayActive;
+        }
     }
 
     private void SetupMission(MissionState state)
@@ -81,12 +89,14 @@ public class DiagramScreen : MonoBehaviour
         {
             _isMission2Locked = false;
             _unlockedDiagramsCount = _diagramDataList.Count;
+            _scannedDiagramsCount = _diagramDataList.Count;
             BlockPrinterBtn(false);
         }
         else if (state == MissionState.Mission3)
         {
             _isMission2Locked = false;
             _unlockedDiagramsCount = Mathf.Min(3, _diagramDataList.Count);
+            _scannedDiagramsCount = 2;
             _currentDiagram = _unlockedDiagramsCount - 1;
             BlockPrinterBtn(false);
         }
@@ -98,6 +108,7 @@ public class DiagramScreen : MonoBehaviour
             if (state == MissionState.Mission1)
             {
                 _unlockedDiagramsCount = 1;
+                _scannedDiagramsCount = 0;
                 _currentDiagram = 0;
             }
         }
@@ -111,42 +122,13 @@ public class DiagramScreen : MonoBehaviour
 
         if (_btnLeft != null) _btnLeft.SetActive(_unlockedDiagramsCount > 1);
         if (_btnRight != null) _btnRight.SetActive(_unlockedDiagramsCount > 1);
-
-        HideAll3DObjects();
-
-        int limit = (state == MissionState.FreeMode) ? _unlockedDiagramsCount : (_unlockedDiagramsCount - 1);
-
-        for (int i = 0; i < limit; i++)
-        {
-            if (i < _diagramDataList.Count)
-            {
-                if (_diagramDataList[i].GetDiagramObject() == null)
-                {
-                    SpawnSpecificDiagram(i);
-                }
-                else
-                {
-                    _diagramDataList[i].GetDiagramObject().SetActive(true);
-                }
-            }
-        }
     }
 
-    private void HideAll3DObjects()
+    private void HandleGameplayActive(bool isActive)
     {
-        foreach (var data in _diagramDataList)
+        if (!_isMission2Locked)
         {
-            if (data != null && data.GetDiagramObject() != null)
-                data.GetDiagramObject().SetActive(false);
-        }
-    }
-
-    private void ShowAll3DObjects()
-    {
-        foreach (var data in _diagramDataList)
-        {
-            if (data != null && data.GetDiagramObject() != null)
-                data.GetDiagramObject().SetActive(true);
+            BlockPrinterBtn(!isActive);
         }
     }
 
@@ -180,44 +162,11 @@ public class DiagramScreen : MonoBehaviour
         }
     }
 
-    private void SpawnAllDiagrams()
-    {
-        if (_diagramManager == null) return;
-
-        Vector3 startPos = _spawnStartPoint != null ? _spawnStartPoint.position : Vector3.zero;
-
-        for (int i = 0; i < _diagramDataList.Count; i++)
-        {
-            DiagramDataBP data = _diagramDataList[i];
-
-            if (data != null && data.GetDiagram() != null && data.GetDiagramObject() == null)
-            {
-                Vector3 spawnPos = startPos;
-                spawnPos.x += i * 10f;
-
-                PartsScript spawnedPart = _diagramManager.SetDiagram(data.GetDiagram(), spawnPos);
-
-                if (spawnedPart != null)
-                {
-                    DiagramRegister reg = spawnedPart.GetComponent<DiagramRegister>();
-                    if (reg != null)
-                    {
-                        reg.InjectSavedData(data.GetDiagram().rootPart);
-                    }
-
-                    data.SetDiagramObject(spawnedPart.transform.parent.gameObject);
-                    StartCoroutine(DelayPhysicsRoutine(spawnedPart));
-                }
-            }
-        }
-    }
-
     public void UnlockAndAdvance()
     {
-        int completedIndex = _unlockedDiagramsCount - 1;
-        if (completedIndex >= 0 && completedIndex < _diagramDataList.Count)
+        if (_scannedDiagramsCount < _diagramDataList.Count)
         {
-            SpawnSpecificDiagram(completedIndex);
+            _scannedDiagramsCount++;
         }
 
         if (_unlockedDiagramsCount < _diagramDataList.Count)
@@ -234,38 +183,10 @@ public class DiagramScreen : MonoBehaviour
             if (_btnLeft != null) _btnLeft.SetActive(true);
             if (_btnRight != null) _btnRight.SetActive(true);
         }
-    }
 
-    private void SpawnSpecificDiagram(int index)
-    {
-        if (index < 0 || index >= _diagramDataList.Count) return;
-
-        DiagramDataBP data = _diagramDataList[index];
-
-        if (data != null && data.GetDiagram() != null && data.GetDiagramObject() == null)
+        if (_painelUi != null)
         {
-            Vector3 startPos = _spawnStartPoint != null ? _spawnStartPoint.position : Vector3.zero;
-            Vector3 spawnPos = startPos;
-            spawnPos.x += index * 10f;
-
-            PartsScript spawnedPart = _diagramManager.SetDiagram(data.GetDiagram(), spawnPos);
-
-            if (spawnedPart != null)
-            {
-                DiagramRegister reg = spawnedPart.GetComponent<DiagramRegister>();
-                if (reg != null)
-                {
-                    reg.InjectSavedData(data.GetDiagram().rootPart);
-                }
-
-                data.SetDiagramObject(spawnedPart.transform.parent.gameObject);
-                StartCoroutine(DelayPhysicsRoutine(spawnedPart));
-                data.GetDiagramObject().SetActive(true);
-            }
-        }
-        else if (data != null && data.GetDiagramObject() != null)
-        {
-            data.GetDiagramObject().SetActive(true);
+            _painelUi.SelectTab(1);
         }
     }
 
@@ -281,9 +202,24 @@ public class DiagramScreen : MonoBehaviour
             if (_currentDiagramBD != null)
                 _currentDiagramBD.SetActive(true);
 
-            if (_diagramName != null && _diagramDataList[_currentDiagram].GetDiagram() != null)
+            DiagramScriptableObject currentSO = _diagramDataList[_currentDiagram].GetDiagram();
+            if (currentSO != null)
             {
-                _diagramName.text = _diagramDataList[_currentDiagram].GetDiagram().name;
+                if (_diagramName != null)
+                {
+                    _diagramName.text = currentSO.name;
+                }
+
+                if (_diagramImageDisplay != null)
+                {
+                    bool isScanned = _currentDiagram < _scannedDiagramsCount;
+                    _diagramImageDisplay.gameObject.SetActive(isScanned);
+
+                    if (isScanned)
+                    {
+                        _diagramImageDisplay.sprite = currentSO.ImgForAlgoritm != null ? currentSO.ImgForAlgoritm : currentSO.diagramImage;
+                    }
+                }
             }
         }
     }
@@ -364,30 +300,27 @@ public class DiagramScreen : MonoBehaviour
 
     public void PrinterBtn()
     {
+        MissionManager missionManager = FindAnyObjectByType<MissionManager>();
+        if (missionManager != null && !missionManager.IsGameplayActive()) return;
+
         if (_isMission2Locked) return;
 
         if (_diagramDataList.Count > 0)
         {
-            _printerManager.Printer(GetObjectList());
+            DiagramScriptableObject currentDiagramSO = _diagramDataList[_currentDiagram].GetDiagram();
 
-            MissionManager missionManager = FindAnyObjectByType<MissionManager>();
-            AlgoritmCreater algoritmCreater = FindAnyObjectByType<AlgoritmCreater>();
-
-            if (missionManager != null && algoritmCreater != null && missionManager.GetMissionState() == MissionState.Mission3)
+            if (currentDiagramSO != null)
             {
-                DiagramScriptableObject currentDiagramSO = _diagramDataList[_currentDiagram].GetDiagram();
+                _printerManager.PrinterDiagram(currentDiagramSO);
 
-                if (currentDiagramSO != null)
+                AlgoritmCreater algoritmCreater = FindAnyObjectByType<AlgoritmCreater>();
+
+                if (missionManager != null && algoritmCreater != null && missionManager.GetMissionState() == MissionState.Mission3)
                 {
-                    algoritmCreater.RegisterPrint(currentDiagramSO.diagramImage);
+                    algoritmCreater.RegisterPrint(currentDiagramSO.ImgForAlgoritm);
                 }
             }
         }
-    }
-
-    private GameObject GetObjectList()
-    {
-        return _diagramDataList[_currentDiagram].GetDiagramObject();
     }
 
     public void BlockPrinterBtn(bool block)

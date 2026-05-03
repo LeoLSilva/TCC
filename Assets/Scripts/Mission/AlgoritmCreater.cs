@@ -56,7 +56,6 @@ public class AlgoritmCreater : MonoBehaviour
             }
         }
 
-        // Teste de setas do teclado simulando os botões
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             ScrollUp();
@@ -69,7 +68,7 @@ public class AlgoritmCreater : MonoBehaviour
 
     private float GetDynamicStep()
     {
-        float step = 100f; // Valor de segurança
+        float step = 100f;
         if (_linePrefab != null)
         {
             RectTransform prefabRect = _linePrefab.GetComponent<RectTransform>();
@@ -119,9 +118,9 @@ public class AlgoritmCreater : MonoBehaviour
                 {
                     string sig = reg.GetLocalSignature();
 
-                    if (_armDiagram != null && sig == _armDiagram.signature) finalResult = _armDiagram.diagramImage;
-                    else if (_headDiagram != null && sig == _headDiagram.signature) finalResult = _headDiagram.diagramImage;
-                    else if (_furbotDiagram != null && sig == _furbotDiagram.signature) finalResult = _furbotDiagram.diagramImage;
+                    if (_armDiagram != null && sig == _armDiagram.signature) finalResult = _armDiagram.ImgForAlgoritm;
+                    else if (_headDiagram != null && sig == _headDiagram.signature) finalResult = _headDiagram.ImgForAlgoritm;
+                    else if (_furbotDiagram != null && sig == _furbotDiagram.signature) finalResult = _furbotDiagram.ImgForAlgoritm;
 
                     if (finalResult != null) break;
                 }
@@ -146,9 +145,22 @@ public class AlgoritmCreater : MonoBehaviour
         StartCoroutine(AutoScrollToBottomRoutine());
     }
 
+    public void ClearAlgorithm()
+    {
+        if (_diagramsContainer != null)
+        {
+            foreach (Transform child in _diagramsContainer)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+        _cont = 0;
+        _currentScrollIndex = 0;
+        UpdateScrollPosition();
+    }
+
     private IEnumerator AutoScrollToBottomRoutine()
     {
-        // Espera 2 frames para garantir que a Unity recalculou a física do Layout
         yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();
 

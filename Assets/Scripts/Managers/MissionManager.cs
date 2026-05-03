@@ -15,6 +15,9 @@ public class MissionManager : MonoBehaviour
     [SerializeField] private GameObject _menuButton;
     [SerializeField] private GameObject _algCanva;
 
+    [Header("Telas (Arraste no Inspector)")]
+    [SerializeField] private DiagramScreen _diagramScreen;
+
     [Header("Roteiros do Drone")]
     [SerializeField] private List<MissionDialogue> _missionDialogues;
 
@@ -29,6 +32,8 @@ public class MissionManager : MonoBehaviour
     private bool _isGameplayActive = false;
 
     public event Action<MissionState> OnMissionChanged;
+    public event Action<MissionState, int> OnStepChanged;
+    public event Action<bool> OnGameplayActiveChanged;
 
     private void OnEnable()
     {
@@ -67,10 +72,17 @@ public class MissionManager : MonoBehaviour
     {
         if (_currentMission != mission)
         {
+            if (mission != MissionState.Mission1 && mission != MissionState.Menu && mission != MissionState.Disabled)
+            {
+                ClearAllPartsAndContainers();
+            }
+
             _currentMission = mission;
             _currentStep = 0;
-            _isGameplayActive = false;
+
+            SetGameplayActive(false);
             OnMissionChanged?.Invoke(_currentMission);
+            OnStepChanged?.Invoke(_currentMission, _currentStep);
 
             if (_s223Manager != null && mission != MissionState.Menu)
             {
@@ -89,6 +101,89 @@ public class MissionManager : MonoBehaviour
                 StartGameplay();
             }
         }
+    }
+
+    private void ClearAllPartsAndContainers()
+    {
+        PartsScript[] allParts = FindObjectsByType<PartsScript>(FindObjectsSortMode.None);
+        List<GameObject> objectsToDestroy = new List<GameObject>();
+
+        foreach (var p in allParts)
+        {
+            if (p != null && p.gameObject != null)
+            {
+                GameObject rootObj = p.gameObject;
+
+                if (p.transform.parent != null && p.transform.parent.name.Contains("DiagramContainer"))
+                {
+                    rootObj = p.transform.parent.gameObject;
+                }
+
+                if (!objectsToDestroy.Contains(rootObj))
+                {
+                    objectsToDestroy.Add(rootObj);
+                }
+            }
+        }
+
+        foreach (var obj in objectsToDestroy)
+        {
+            if (obj != null)
+            {
+                Destroy(obj);
+            }
+        }
+    }
+
+    public void NextStep()
+    {
+        _currentStep++;
+        SetGameplayActive(false);
+        OnStepChanged?.Invoke(_currentMission, _currentStep);
+
+        if (_s223Manager != null)
+        {
+            string[] linesToSpeak = GetDialoguesForMission(_currentMission, _currentStep);
+            if (linesToSpeak != null && linesToSpeak.Length > 0)
+            {
+                _s223Manager.StartDroneRoutine(this, _currentMission, _currentStep, linesToSpeak);
+            }
+            else
+            {
+                StartGameplay();
+            }
+        }
+        else
+        {
+            StartGameplay();
+        }
+    }
+
+    public void StartGameplay()
+    {
+        SetGameplayActive(true);
+
+        if (_currentMission == MissionState.EndGame)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            return;
+        }
+
+        if (_currentMission == MissionState.Mission1 && _currentStep == 1)
+        {
+            if (_scannerObject != null) _scannerObject.SetActive(true);
+        }
+    }
+
+    public void EndMission()
+    {
+        SetGameplayActive(false);
+    }
+
+    private void SetGameplayActive(bool isActive)
+    {
+        _isGameplayActive = isActive;
+        OnGameplayActiveChanged?.Invoke(_isGameplayActive);
     }
 
     private void CheckDisassemblyCompletion()
@@ -123,99 +218,6 @@ public class MissionManager : MonoBehaviour
         return new string[0];
     }
 
-    public void StartGameplay()
-    {
-        _isGameplayActive = true;
-
-        if (_currentMission == MissionState.Mission1 && _currentStep == 1)
-        {
-            if (_scannerObject != null)
-            {
-                _scannerObject.SetActive(true);
-            }
-        }
-        else if (_currentMission == MissionState.Mission3 && _currentStep == 0)
-        {
-            PartsScreen partsScreen = FindAnyObjectByType<PartsScreen>();
-            if (partsScreen != null)
-            {
-                partsScreen.ForceUnlockAllParts();
-            }
-        }
-    }
-
-    public void NextStep()
-    {
-        _currentStep++;
-
-        if (_s223Manager != null)
-        {
-            string[] linesToSpeak = GetDialoguesForMission(_currentMission, _currentStep);
-            if (linesToSpeak != null && linesToSpeak.Length > 0)
-            {
-                _isGameplayActive = false;
-                _s223Manager.StartDroneRoutine(this, _currentMission, _currentStep, linesToSpeak);
-            }
-            else
-            {
-                StartGameplay();
-            }
-        }
-        else
-        {
-            StartGameplay();
-        }
-    }
-
-    public bool CanConnectParts()
-    {
-        if (_currentMission == MissionState.Mission1) return false;
-
-        return true;
-    }
-
-    public MissionState GetMissionState()
-    {
-        return _currentMission;
-    }
-
-    public bool IsGameplayActive()
-    {
-        return _isGameplayActive;
-    }
-
-    public void EndMission()
-    {
-        _isGameplayActive = false;
-    }
-
-    public DiagramScriptableObject GetCurrentExpectedDiagram()
-    {
-        if (_currentMission == MissionState.Mission2)
-        {
-            if (_currentStep == 1) return _armDiagram;
-            if (_currentStep == 2) return _headDiagram;
-        }
-        else if (_currentMission == MissionState.Mission3)
-        {
-            return _furbotDiagram;
-        }
-        return null;
-    }
-
-    public void ActiveAlgoritm(bool active)
-    {
-        if (_algCanva != null)
-        {
-            _algCanva.SetActive(active);
-        }
-    }
-
-    public void DiagramValidate(GameObject scannedObj)
-    {
-        ValidateCurrentMissionScan(scannedObj);
-    }
-
     public void ValidateCurrentMissionScan(GameObject scannedObj)
     {
         if ((_currentMission != MissionState.Mission2 && _currentMission != MissionState.Mission3) || !_isGameplayActive) return;
@@ -226,19 +228,15 @@ public class MissionManager : MonoBehaviour
             container = scannedObj.transform.parent.gameObject;
         }
 
-        DiagramScriptableObject expectedDiagram = null;
-        if (_currentMission == MissionState.Mission2)
-        {
-            if (_currentStep == 1) expectedDiagram = _armDiagram;
-            else if (_currentStep == 2) expectedDiagram = _headDiagram;
-        }
-        else if (_currentMission == MissionState.Mission3)
-        {
-            expectedDiagram = _furbotDiagram;
-        }
+        DiagramScriptableObject expectedDiagram = GetCurrentExpectedDiagram();
 
         if (expectedDiagram != null && ValidateAssembly(container, expectedDiagram))
         {
+            if (_diagramScreen != null)
+            {
+                _diagramScreen.UnlockAndAdvance();
+            }
+
             container.SetActive(false);
             Destroy(container);
 
@@ -246,109 +244,53 @@ public class MissionManager : MonoBehaviour
             {
                 if (_currentStep == 1)
                 {
-                    ForceDiagramTabAndAdvance();
+                    NextStep();
                 }
                 else if (_currentStep == 2)
                 {
-                    PainelUI painel = FindAnyObjectByType<PainelUI>();
-                    if (painel != null)
-                    {
-                        painel.SelectTab(1);
-                    }
-
                     SetMission(MissionState.Mission3);
                 }
             }
             else if (_currentMission == MissionState.Mission3)
             {
-                Debug.Log("Final");
-                NextStep();
+                SetMission(MissionState.EndGame);
             }
         }
         else
         {
-            Debug.Log("Saiu");
-            WrongAssemblyScanned(container);
+            WrongAssemblyScanned(container, expectedDiagram);
         }
     }
 
     public bool ValidateAssembly(GameObject scannedObj, DiagramScriptableObject expectedDiagram)
     {
-        if (scannedObj == null)
-        {
-            Debug.LogError("[DETETIVE] O objeto escaneado sumiu antes de ser validado!");
-            return false;
-        }
-
-        if (expectedDiagram == null)
-        {
-            Debug.LogError("[DETETIVE] CULPADO ENCONTRADO: O Gabarito esperado está NULO! O slot no Inspector do MissionManager está vazio!");
-            return false;
-        }
+        if (scannedObj == null || expectedDiagram == null) return false;
 
         DiagramRegister[] registers = scannedObj.GetComponentsInChildren<DiagramRegister>();
-
         string expectedSig = expectedDiagram.signature.Replace(" ", "").Replace("\n", "").Replace("\r", "").Replace("\t", "").Trim();
 
         foreach (var reg in registers)
         {
             string localSig = reg.GetLocalSignature().Replace(" ", "").Replace("\n", "").Replace("\r", "").Replace("\t", "").Trim();
-
-            if (localSig == expectedSig)
-            {
-                return true;
-            }
-            else
-            {
-                Debug.Log($"[DETETIVE] Lendo peça: {reg.gameObject.name}\nTamanho Esperado: {expectedSig.Length} | Tamanho Gerado: {localSig.Length}");
-
-                int minLength = Mathf.Min(expectedSig.Length, localSig.Length);
-                for (int i = 0; i < minLength; i++)
-                {
-                    if (expectedSig[i] != localSig[i])
-                    {
-                        Debug.LogWarning($"[DETETIVE] Diferença exata no caractere {i}! Esperado a letra '{expectedSig[i]}' mas veio a letra '{localSig[i]}'");
-                        break;
-                    }
-                }
-            }
+            if (localSig == expectedSig) return true;
         }
-
         return false;
     }
 
-    private void ForceDiagramTabAndAdvance()
+    private void WrongAssemblyScanned(GameObject wrongObj, DiagramScriptableObject expectedDiagram)
     {
-        PainelUI painel = FindAnyObjectByType<PainelUI>();
-        if (painel != null)
-        {
-            painel.SelectTab(1);
-        }
-
-        DiagramScreen ds = FindAnyObjectByType<DiagramScreen>();
-        if (ds != null)
-        {
-            ds.UnlockAndAdvance();
-        }
-
-        NextStep();
-    }
-
-    private void WrongAssemblyScanned(GameObject wrongObj)
-    {
-        wrongObj.SetActive(false);
-        Destroy(wrongObj);
-        _isGameplayActive = false;
+        SetGameplayActive(false);
 
         if (_s223Manager != null)
         {
-            StartCoroutine(ShowErrorAndRestoreRoutine());
+            StartCoroutine(ShowErrorAndRestoreRoutine(expectedDiagram));
         }
     }
 
-    private IEnumerator ShowErrorAndRestoreRoutine()
+    private IEnumerator ShowErrorAndRestoreRoutine(DiagramScriptableObject expectedDiagram)
     {
-        string[] errorLine = new string[] { "Erro detectado. Montagem incorreta. Objeto destruido." };
+        string expectedName = expectedDiagram != null ? expectedDiagram.name : "peça";
+        string[] errorLine = new string[] { $"Ops, não parece ser o {expectedName}." };
         _s223Manager.StartDroneRoutine(this, _currentMission, 99, errorLine);
 
         yield return new WaitForSeconds(5f);
@@ -364,35 +306,39 @@ public class MissionManager : MonoBehaviour
         }
     }
 
-    public int GetStep()
-    {
-        return _currentStep;
-    }
-
     private void ForcarMissao3Liberada()
     {
-        _currentMission = MissionState.Mission3;
-        _currentStep = 0;
-        _isGameplayActive = true;
+        SetMission(MissionState.Mission3);
+        StartGameplay();
+    }
 
-        OnMissionChanged?.Invoke(_currentMission);
-
-        PainelUI painel = FindAnyObjectByType<PainelUI>();
-        if (painel != null)
-        {
-            painel.SelectTab(1);
-        }
-
-        PartsScreen partsScreen = FindAnyObjectByType<PartsScreen>();
-        if (partsScreen != null)
-        {
-            partsScreen.ForceUnlockAllParts();
-        }
+    public void ActiveAlgoritm(bool active)
+    {
+        if (_algCanva != null) _algCanva.SetActive(active);
     }
 
     internal void GoMenu()
     {
         SceneManager.LoadScene(0);
+    }
+
+    public bool CanConnectParts() => _currentMission != MissionState.Mission1;
+    public MissionState GetMissionState() => _currentMission;
+    public bool IsGameplayActive() => _isGameplayActive;
+    public int GetStep() => _currentStep;
+
+    public DiagramScriptableObject GetCurrentExpectedDiagram()
+    {
+        if (_currentMission == MissionState.Mission2)
+        {
+            if (_currentStep == 1) return _armDiagram;
+            if (_currentStep == 2) return _headDiagram;
+        }
+        else if (_currentMission == MissionState.Mission3)
+        {
+            return _furbotDiagram;
+        }
+        return null;
     }
 }
 

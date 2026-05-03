@@ -28,6 +28,7 @@ public class PartsScript : MonoBehaviour
     private PieceStatus _lastStatus;
     private DiagramRegister _diagramRegister;
     private bool _hasRegisteredConnection = false;
+    private int _grabCount = 0;
 
     public bool _isGrabbed = false;
     public UnityEvent<bool> onChangeGrabbleStatus;
@@ -196,16 +197,27 @@ public class PartsScript : MonoBehaviour
 
         if (obj.Type == PointerEventType.Select)
         {
+            _grabCount++;
             _isGrabbed = true;
-            OnPartGrabbed?.Invoke(this);
-            ApplyClusterStabilization(true);
+
+            if (_grabCount == 1)
+            {
+                OnPartGrabbed?.Invoke(this);
+                ApplyClusterStabilization(true);
+            }
         }
         else if (obj.Type == PointerEventType.Unselect)
         {
-            _isGrabbed = false;
-            OnPartGrabbed?.Invoke(this);
-            ValidateAndStartConnection();
-            ApplyClusterStabilization(false);
+            _grabCount--;
+
+            if (_grabCount <= 0)
+            {
+                _grabCount = 0;
+                _isGrabbed = false;
+                OnPartGrabbed?.Invoke(this);
+                ValidateAndStartConnection();
+                ApplyClusterStabilization(false);
+            }
         }
     }
 
@@ -663,26 +675,6 @@ public class PartsScript : MonoBehaviour
                         }
                     }
                 }
-            }
-        }
-    }
-
-    private void OnTriggerEnter(Collider col)
-    {
-        if (col.gameObject.CompareTag("floor"))
-        {
-            if (_rigid != null)
-            {
-                _rigid.isKinematic = true;
-                transform.position = _backPos.position;
-                transform.rotation = _backPos.rotation;
-                _rigid.linearVelocity = Vector3.zero;
-                _rigid.angularVelocity = Vector3.zero;
-                _rigid.isKinematic = false;
-            }
-            else
-            {
-                transform.position = _backPos.position;
             }
         }
     }

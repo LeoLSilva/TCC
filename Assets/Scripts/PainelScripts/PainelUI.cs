@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Oculus.Interaction;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,10 @@ public class PainelUI : MonoBehaviour
 {
     [SerializeField] private TabData _currentScreen;
     [SerializeField] private MissionManager _missionManager;
+
+    [Header("Objetos")]
+    [SerializeField] private GameObject _menuPanel;
+    [SerializeField] private GameObject _tabGameObject;
 
     [Header("Configuração dos Itens")]
     [SerializeField] private List<TabData> _tabs = new List<TabData>();
@@ -31,7 +36,7 @@ public class PainelUI : MonoBehaviour
     void Start()
     {
         DisableAll();
-        if (_tabs.Count > 0) SelectTab(0);
+        if (_tabs.Count > 0) SelectTab(-1);
     }
 
     private void OnEnable()
@@ -118,23 +123,45 @@ public class PainelUI : MonoBehaviour
 
     public void SelectTab(int index)
     {
-        if (index < 0 || index >= _tabs.Count) return;
-
-        if (_currentScreen.panel != null)
+        if (index < 0)
         {
-            _currentScreen.panel.SetActive(false);
+            SetMenu();
+        }
+        else
+        {
+            if (_currentScreen.panel != null)
+            {
+                _currentScreen.panel.SetActive(false);
+                if (_currentScreen.buttonImage != null)
+                {
+                    _currentScreen.buttonImage.color = _naturalColor;
+                }
+            }
+
+            _currentScreen = _tabs[index];
+            _currentScreen.panel.SetActive(true);
             if (_currentScreen.buttonImage != null)
             {
-                _currentScreen.buttonImage.color = _naturalColor;
+                _currentScreen.buttonImage.color = _clickedColor;
             }
         }
+    }
 
-        _currentScreen = _tabs[index];
-        _currentScreen.panel.SetActive(true);
-        if (_currentScreen.buttonImage != null)
+    private void SetMenu()
+    {
+        _menuPanel.SetActive(true);
+        foreach (var v in _tabs)
         {
-            _currentScreen.buttonImage.color = _clickedColor;
+            v.panel.SetActive(false);
         }
+    }
+
+    public void DisableMenu()
+    {
+        _menuPanel.SetActive(false);
+        _tabGameObject.SetActive(true);
+        _tabs[0].panel.SetActive(true);
+        _missionManager.SetMission(MissionState.Mission1);
     }
 
     public void BlockButtonColor(Image buttonImage, bool block)

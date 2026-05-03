@@ -20,11 +20,16 @@ public class PrinterManager : MonoBehaviour
 
     public event Action<bool> OnPrinterStateChanged;
 
+    private DiagramManager _diagramManager;
+    private bool _isPrintingDiagram = false;
+    private DiagramScriptableObject _currentDiagramSO;
+
     private void Start()
     {
         _wallPrinter.SetActive(false);
         _animator = GetComponent<Animator>();
         _diagramScreen = FindAnyObjectByType<DiagramScreen>();
+        _diagramManager = FindAnyObjectByType<DiagramManager>();
     }
 
     public void Printer(GameObject obj)
@@ -40,6 +45,17 @@ public class PrinterManager : MonoBehaviour
                 _currentPartObject = obj;
             }
 
+            _isPrintingDiagram = false;
+            StartCoroutine(SpawnPointAnim());
+        }
+    }
+
+    public void PrinterDiagram(DiagramScriptableObject diagramSO)
+    {
+        if (_isEmpty && diagramSO != null)
+        {
+            _currentDiagramSO = diagramSO;
+            _isPrintingDiagram = true;
             StartCoroutine(SpawnPointAnim());
         }
     }
@@ -51,17 +67,47 @@ public class PrinterManager : MonoBehaviour
         _animator.SetInteger("anim", 1);
         yield return new WaitForSeconds(1f);
 
-        _currentPartObject = Instantiate(_currentPartObject);
-        _currentPartObject.transform.position = _spawnPoint.transform.position;
-        _currentPartObject.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
-
-        PartsScript[] allSpawnedParts = _currentPartObject.GetComponentsInChildren<PartsScript>();
-        int maskLayer = LayerMask.NameToLayer("Mask");
-
-        foreach (var part in allSpawnedParts)
+        if (_isPrintingDiagram && _currentDiagramSO != null && _diagramManager != null)
         {
-            part.gameObject.layer = maskLayer;
-            part.ChangeRigid(false);
+            PartsScript spawnedPart = _diagramManager.SetDiagram(_currentDiagramSO, _spawnPoint.position);
+
+            if (spawnedPart != null)
+            {
+                DiagramRegister reg = spawnedPart.GetComponent<DiagramRegister>();
+                if (reg != null)
+                {
+                    reg.InjectSavedData(_currentDiagramSO.rootPart);
+                }
+
+                if (spawnedPart.transform.parent != null)
+                {
+                    _currentPartObject = spawnedPart.transform.parent.gameObject;
+                }
+                else
+                {
+                    _currentPartObject = spawnedPart.gameObject;
+                }
+
+                _currentPartObject.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+            }
+        }
+        else if (_currentPartObject != null)
+        {
+            _currentPartObject = Instantiate(_currentPartObject);
+            _currentPartObject.transform.position = _spawnPoint.transform.position;
+            _currentPartObject.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+        }
+
+        if (_currentPartObject != null)
+        {
+            PartsScript[] allSpawnedParts = _currentPartObject.GetComponentsInChildren<PartsScript>();
+            int maskLayer = LayerMask.NameToLayer("Mask");
+
+            foreach (var part in allSpawnedParts)
+            {
+                part.gameObject.layer = maskLayer;
+                part.ChangeRigid(false);
+            }
         }
 
         yield return new WaitForSeconds(.5f);
@@ -69,12 +115,21 @@ public class PrinterManager : MonoBehaviour
         yield return new WaitForSeconds(2.15f);
         _animator.SetInteger("anim", 0);
 
-        foreach (var part in allSpawnedParts)
+        if (_currentPartObject != null)
         {
-            part.gameObject.AddComponent<TempObjPrinter>();
+            PartsScript[] allSpawnedParts = _currentPartObject.GetComponentsInChildren<PartsScript>();
+            foreach (var part in allSpawnedParts)
+            {
+                if (part.gameObject.GetComponent<TempObjPrinter>() == null)
+                {
+                    part.gameObject.AddComponent<TempObjPrinter>();
+                }
+            }
         }
 
         _wallPrinter.SetActive(false);
+        _isPrintingDiagram = false;
+        _currentDiagramSO = null;
     }
 
     public void SetObjectsInPrinter(bool currentState)

@@ -9,10 +9,13 @@ public class S223Manager : MonoBehaviour
     [SerializeField] private GameObject _fakeScanner;
     [SerializeField] private GameObject _realScanner;
 
+    [SerializeField] private float _lookThreshold = 0.85f;
+
     private MissionManager _missionManager;
     private MissionState _currentMission;
     private string[] _currentLines;
     private bool _isAnimationFinished = false;
+    private Transform _playerCamera;
 
     private void Awake()
     {
@@ -24,7 +27,13 @@ public class S223Manager : MonoBehaviour
 
     private void Start()
     {
-        _dialogueSystem.HideDialogue();
+        if (Camera.main != null)
+        {
+            _playerCamera = Camera.main.transform;
+        }
+
+        if (_dialogueSystem != null) _dialogueSystem.HideDialogue();
+
         if (_fakeScanner != null) _fakeScanner.SetActive(false);
         if (_realScanner != null) _realScanner.SetActive(false);
     }
@@ -43,86 +52,99 @@ public class S223Manager : MonoBehaviour
 
     private IEnumerator ExecuteRoutine(MissionState mission, int step)
     {
-        if (mission == MissionState.Mission1)
+        if (mission == MissionState.Mission1 && step == 0)
         {
-            if (step == 0)
-            {
-                if (_animator != null)
-                {
-                    _isAnimationFinished = false;
-                    _animator.SetTrigger("MoveMission1");
-                    yield return new WaitUntil(() => _isAnimationFinished);
-                }
-
-                if (_currentLines != null && _currentLines.Length > 0 && _dialogueSystem != null)
-                {
-                    yield return StartCoroutine(_dialogueSystem.PlayDialogueRoutine(_currentLines));
-                }
-            }
-            else if (step == 1)
-            {
-                if (_currentLines != null && _currentLines.Length > 0 && _dialogueSystem != null)
-                {
-                    yield return StartCoroutine(_dialogueSystem.PlayDialogueRoutine(_currentLines));
-                }
-
-                if (_animator != null)
-                {
-                    if (_fakeScanner != null) _fakeScanner.SetActive(true);
-                    if (_realScanner != null) _realScanner.SetActive(false);
-
-                    _isAnimationFinished = false;
-                    _animator.SetTrigger("MoveMission1step2");
-
-                    yield return new WaitUntil(() => _isAnimationFinished);
-                }
-            }
-            else if (step == 2)
-            {
-                if (_currentLines != null && _currentLines.Length > 0 && _dialogueSystem != null)
-                {
-                    yield return StartCoroutine(_dialogueSystem.PlayDialogueRoutine(_currentLines));
-                    _missionManager.SetMission(MissionState.Mission2);
-                }
-                yield break;
-            }
-            if (_missionManager.GetMissionState() == MissionState.EndGame)
-            {
-                yield return StartCoroutine(_dialogueSystem.PlayDialogueRoutine(_currentLines));
-                _missionManager.EndMission();
-            }
-        }
-        else if (mission == MissionState.Mission2)
-        {
-            yield return StartCoroutine(_dialogueSystem.PlayDialogueRoutine(_currentLines));
-        }
-        else if (mission == MissionState.Mission3)
-        {
-            if (_currentLines != null && _currentLines.Length > 0 && _dialogueSystem != null)
-            {
-                yield return StartCoroutine(_dialogueSystem.PlayDialogueRoutine(_currentLines));
-            }
-            if (step == 0)
-                _missionManager.ActiveAlgoritm(true);
-            else
-                _missionManager.GoMenu();
+            yield return PlayAnimationAndWait("MoveMission1");
         }
         else if (mission == MissionState.FreeMode)
         {
-            if (_animator != null)
-            {
-                _animator.SetTrigger("MoveFreeMode");
-            }
+            if (_animator != null) _animator.SetTrigger("MoveFreeMode");
+        }
 
-            if (_currentLines != null && _currentLines.Length > 0 && _dialogueSystem != null)
+        yield return StartCoroutine(PlayDialogueWithDelay(3f));
+
+        if (mission == MissionState.Mission1)
+        {
+            if (step == 1)
             {
-                yield return StartCoroutine(_dialogueSystem.PlayDialogueRoutine(_currentLines));
+                if (_fakeScanner != null) _fakeScanner.SetActive(true);
+                if (_realScanner != null) _realScanner.SetActive(false);
+
+                yield return PlayAnimationAndWait("MoveMission1step2");
             }
+            else if (step == 2)
+            {
+                _missionManager.SetMission(MissionState.Mission2);
+                yield break;
+            }
+        }
+        else if (mission == MissionState.Mission3)
+        {
+            if (step == 0)
+            {
+                _missionManager.ActiveAlgoritm(true);
+            }
+            else
+            {
+                _missionManager.GoMenu();
+                yield break;
+            }
+        }
+        else if (mission == MissionState.EndGame)
+        {
+            _missionManager.EndMission();
+            yield break;
         }
 
         if (_missionManager != null)
         {
             _missionManager.StartGameplay();
+        }
+    }
+
+    private IEnumerator PlayDialogueWithDelay(float maxDelaySeconds)
+    {
+        float timer = 0f;
+        float lookTimer = 0f;
+
+        while (timer < maxDelaySeconds)
+        {
+            if (_playerCamera != null)
+            {
+                Vector3 dirToDrone = (transform.position - _playerCamera.position).normalized;
+                float dotProduct = Vector3.Dot(_playerCamera.forward, dirToDrone);
+
+                if (dotProduct >= _lookThreshold)
+                {
+                    lookTimer += Time.deltaTime;
+                    if (lookTimer >= 1f)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    lookTimer = 0f;
+                }
+            }
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        if (_currentLines != null && _currentLines.Length > 0 && _dialogueSystem != null)
+        {
+            yield return StartCoroutine(_dialogueSystem.PlayDialogueRoutine(_currentLines));
+        }
+    }
+
+    private IEnumerator PlayAnimationAndWait(string triggerName)
+    {
+        if (_animator != null)
+        {
+            _isAnimationFinished = false;
+            _animator.SetTrigger(triggerName);
+            yield return new WaitUntil(() => _isAnimationFinished);
         }
     }
 
