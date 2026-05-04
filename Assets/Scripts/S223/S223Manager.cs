@@ -61,7 +61,7 @@ public class S223Manager : MonoBehaviour
             if (_animator != null) _animator.SetTrigger("MoveFreeMode");
         }
 
-        yield return StartCoroutine(PlayDialogueWithDelay(3f));
+        yield return StartCoroutine(PlayDialogueWithDelay(5f));
 
         if (mission == MissionState.Mission1)
         {
@@ -86,7 +86,7 @@ public class S223Manager : MonoBehaviour
             }
             else
             {
-                _missionManager.GoMenu();
+                _missionManager.SetMission(MissionState.EndGame);
                 yield break;
             }
         }

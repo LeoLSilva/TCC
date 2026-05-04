@@ -113,7 +113,7 @@ public class MissionManager : MonoBehaviour
             if (p != null && p.gameObject != null)
             {
                 GameObject rootObj = p.gameObject;
-
+                
                 if (p.transform.parent != null && p.transform.parent.name.Contains("DiagramContainer"))
                 {
                     rootObj = p.transform.parent.gameObject;
@@ -178,6 +178,7 @@ public class MissionManager : MonoBehaviour
     public void EndMission()
     {
         SetGameplayActive(false);
+        SceneManager.LoadScene(0);
     }
 
     private void SetGameplayActive(bool isActive)
@@ -315,11 +316,6 @@ public class MissionManager : MonoBehaviour
     public void ActiveAlgoritm(bool active)
     {
         if (_algCanva != null) _algCanva.SetActive(active);
-    }
-
-    internal void GoMenu()
-    {
-        SceneManager.LoadScene(0);
     }
 
     public bool CanConnectParts() => _currentMission != MissionState.Mission1;

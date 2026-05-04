@@ -90,7 +90,6 @@ public class DiagramScreen : MonoBehaviour
             _isMission2Locked = false;
             _unlockedDiagramsCount = _diagramDataList.Count;
             _scannedDiagramsCount = _diagramDataList.Count;
-            BlockPrinterBtn(false);
         }
         else if (state == MissionState.Mission3)
         {
@@ -98,7 +97,6 @@ public class DiagramScreen : MonoBehaviour
             _unlockedDiagramsCount = Mathf.Min(3, _diagramDataList.Count);
             _scannedDiagramsCount = 2;
             _currentDiagram = _unlockedDiagramsCount - 1;
-            BlockPrinterBtn(false);
         }
         else if (state != MissionState.Disabled && state != MissionState.Menu)
         {
@@ -128,7 +126,8 @@ public class DiagramScreen : MonoBehaviour
     {
         if (!_isMission2Locked)
         {
-            BlockPrinterBtn(!isActive);
+            bool isScanned = _currentDiagram < _scannedDiagramsCount;
+            BlockPrinterBtn(!isActive || !isScanned);
         }
     }
 
@@ -210,15 +209,23 @@ public class DiagramScreen : MonoBehaviour
                     _diagramName.text = currentSO.name;
                 }
 
+                bool isScanned = _currentDiagram < _scannedDiagramsCount;
+
                 if (_diagramImageDisplay != null)
                 {
-                    bool isScanned = _currentDiagram < _scannedDiagramsCount;
                     _diagramImageDisplay.gameObject.SetActive(isScanned);
 
                     if (isScanned)
                     {
                         _diagramImageDisplay.sprite = currentSO.ImgForAlgoritm != null ? currentSO.ImgForAlgoritm : currentSO.diagramImage;
                     }
+                }
+
+                if (!_isMission2Locked)
+                {
+                    MissionManager mm = FindAnyObjectByType<MissionManager>();
+                    bool isActive = mm != null && mm.IsGameplayActive();
+                    BlockPrinterBtn(!isActive || !isScanned);
                 }
             }
         }
@@ -304,6 +311,8 @@ public class DiagramScreen : MonoBehaviour
         if (missionManager != null && !missionManager.IsGameplayActive()) return;
 
         if (_isMission2Locked) return;
+
+        if (_currentDiagram >= _scannedDiagramsCount) return;
 
         if (_diagramDataList.Count > 0)
         {
