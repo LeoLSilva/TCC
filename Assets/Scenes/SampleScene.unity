@@ -1436,71 +1436,94 @@ MonoBehaviour:
     missionStep: 0
     lines:
     - "Ol\xE1, eu sou a S223!"
-    - "Este rob\xF4 na sua frente \xE9 o \"Furbot\", mas ele est\xE1 quebrado e incompleto."
-    - "Nossa miss\xE3o \xE9 consert\xE1-lo usando os poderes do Pensamento Computacional!"
-    - "Para come\xE7ar, vamos desmontar o Furbot. Segure as pe\xE7as e puxe para
-      separar todas elas."
+    - "Ol\xE1! Este \xE9 o Furbot. Ele est\xE1 quebrado e incompleto."
+    - "Nossa miss\xE3o at\xE9 o final do jogo \xE9 conseguir consertar e montar o
+      Furbot por completo."
+    - Para resolver esse desafio, vamos usar o Pensamento Computacional.
+    - "Mas vamos come\xE7ar desmontando o Furbot."
+    - "Sua miss\xE3o:  Vamos desmontar o Furbot! Para isso, segure uma pe\xE7a em
+      cada  m\xE3o e puxe para separ\xE1-las."
   - missionState: 1
     missionStep: 1
     lines:
-    - "Muito bem! Agora vamos guardar as pe\xE7as no computador."
-    - "Pegue o Scanner, aperte o gatilho e aponte para as pe\xE7as at\xE9  escanear
-      tudo!"
+    - "Muito bem! Agora temos que armazenar essas pe\xE7as em nosso computador, Vamos
+      usar nosso scanner para isso."
+    - "Sua miss\xE3o: Escanear todas as pe\xE7as! Feche a m\xE3o para segurar o Scanner,
+      aponte para a pe\xE7a e aperte o gatilho."
   - missionState: 1
     missionStep: 2
     lines:
-    - "Uhul! Tudo guardado! Agora j\xE1 podemos usar a impressora para criar as pe\xE7as."
+    - "Isso! Agora podemos imprimir todas as pe\xE7as pelo nosso computador."
     - "O Pensamento Computacional nos ajuda a resolver problemas dif\xEDceis usando
       4 pilares. Vamos conhecer um por um!"
   - missionState: 2
     missionStep: 0
     lines:
     - "O primeiro pilar \xE9 a Decomposi\xE7\xE3o!"
-    - "Em vez de montar o Furbot todo de uma vez, vamos dividir o problema em partes
-      menores e mais f\xE1ceis. Vamos come\xE7ar fazendo s\xF3 o bra\xE7o!"
-    - "No computador, abrimos a tela \"Diagramas\" com uma dica das pe\xE7as que
-      voc\xEA vai precisar."
-    - "Sua miss\xE3o: v\xE1 na tela de pe\xE7as, escolha as pe\xE7as do \"Bra\xE7o\",
-      aperte em imprimir e coloque todas na mesa."
+    - "A Decomposi\xE7\xE3o \xE9 o m\xE9todo de dividir um problema complexo em partes
+      menores para facilitar a solu\xE7\xE3o."
+    - "Aplicando isso na nossa montagem, faremos o trabalho por etapas: primeiro
+      montaremos o Bra\xE7o, depois a Cabe\xE7a e, por \xFAltimo, o Furbot completo."
+    - "Sua miss\xE3o: No computador, v\xE1 para a aba 'Pe\xE7as', procure as que
+      pertencem ao Bra\xE7o e imprima. Depois, coloque todas na mesa."
   - missionState: 2
     missionStep: 1
     lines:
     - "Isso a\xED! Olhando para a mesa agora fica muito mais f\xE1cil montar o bra\xE7o,
       n\xE9?"
-    - "Aqui usamos o pilar da Abstra\xE7\xE3o: focar s\xF3 no que importa agora e
-      esquecer o que n\xE3o precisamos. Vamos testar! Monte o bra\xE7o e depois escaneie."
+    - "Aqui usamos o pilar da Abstra\xE7\xE3o: separar as informa\xE7\xF5es que importam
+      somente para o problema atual e deixar as outras de lado."
+    - "Sua miss\xE3o: Pegue a m\xE3o do Furbot e encaixe no bra\xE7o. Depois, escaneie
+      para salvar o diagrama e reutilizar no futuro."
   - missionState: 2
     missionStep: 2
     lines:
-    - "Viu s\xF3? A Abstra\xE7\xE3o ajuda a gente a focar apenas no necess\xE1rio!"
-    - "Agora, pela tela de \"Diagramas\", j\xE1 podemos imprimir o bra\xE7o inteiro
-      de uma vez."
-    - "Vamos ver se voc\xEA consegue montar a cabe\xE7a?"
-    - "Use a Abstra\xE7\xE3o: escolha apenas as pe\xE7as necess\xE1rias da cabe\xE7a,
-      monte tudo e escaneie!"
+    - "Isso! Agora, pela tela de \"Diagramas\", j\xE1 podemos imprimir o bra\xE7o
+      inteiro de uma vez."
+    - "Vamos fazer o mesmo processo para montar a cabe\xE7a."
+    - "Mas antes, est\xE1 vendo essa tela menor na sua frente? Ela representa o pilar
+      do \"Algoritmo\" que nada mais \xE9 que uma lista de passo a passo que voc\xEA
+      dever\xE1 seguir para resolver o problema."
+    - "Sua miss\xE3o: Monte a cabe\xE7a imprimindo as pe\xE7as na aba \"Pe\xE7as\"
+      e seguindo o algoritmo."
   - missionState: 2
     missionStep: 3
     lines:
-    - "Perfeito! Agora temos a cabe\xE7a pronta para imprimir!"
-    - "Voc\xEA usou muito bem os nossos pilares!"
+    - "Voc\xEA percebeu que sabia onde cada pe\xE7a se encaixava?"
+    - "Esse \xE9 o pilar do \"Reconhecimento de Padr\xF5es\", ele nos ensina a olhar
+      para o que j\xE1 aprendemos antes e aplicar em problemas semelhantes."
   - missionState: 3
     missionStep: 0
     lines:
     - "Perfeito! Agora temos a cabe\xE7a pronta para imprimir!"
-    - "Iremos para o \xFAltimo Pilar o \"Algoritmo\". "
-    - "Ele \xE9 uma lista de passos que voc\xEA ir\xE1 seguir para completar o objetivo."
-    - Observe que listas diferentes podem estar certas, mas cuidado! As vezes trocando
-      a ordem de um dos itens pode gerar um erro.
-    - "Na sua frente tem duas telas, a da direita \xE9 um algoritmo de cria\xE7\xE3o
-      do Furbot."
-    - "O da esquerda ir\xE1 registrar todas suas a\xE7\xF5es para montar um algoritmo
-      em tempo real."
-    - "Sua miss\xE3o: Monte o Furbot com os conhecimentos adiquiridos at\xE9 agora."
+    - "Olhando para o Algoritmo, fica mais f\xE1cil completar a tarefa sem se perder
+      no caminho."
+    - "Observe que listas diferentes podem estar certas. Mas, cuidado! \xC0s vezes,
+      trocar a ordem de um dos itens pode gerar um erro."
+    - "Agora vamos para a nossa \xFAltima etapa! Utilizaremos tudo o que aprendemos
+      para montar o Furbot!"
+    - "Observe que cada passo que voc\xEA fizer ser\xE1 registrado na tela de algoritmo,
+      assim teremos a nossa pr\xF3pria lista de passos!"
+    - "Sua miss\xE3o: Monte o Furbot. Utilize as telas de 'Pe\xE7as' e 'Diagramas'
+      para imprimir os itens e, ao terminar, use o Scanner."
   - missionState: 4
     missionStep: 0
     lines:
     - "Parab\xEAns, voc\xEA conseguiu completar sua miss\xE3o de montar o Furbot
       e aprendeu sobre o Pensamento Computacional!"
+    - "Para completar essa miss\xE3o, voc\xEA usou os quatro pilares do Pensamento
+      Computacional."
+    - "Com a Decomposi\xE7\xE3o, voc\xEA dividiu o rob\xF4 em partes menores para
+      facilitar a montagem."
+    - "Com a Abstra\xE7\xE3o, voc\xEA focou apenas nas pe\xE7as necess\xE1rias de
+      cada etapa e ignorou o resto."
+    - "Com o Reconhecimento de Padr\xF5es, voc\xEA usou suas pr\xF3prias experi\xEAncias
+      e entendeu o funcionamento do jogo para descobrir onde as pe\xE7as se encaixam
+      e como fazer as a\xE7\xF5es do jogo."
+    - "E com os Algoritmos, voc\xEA seguiu uma lista de passos para completar a miss\xE3o
+      sem se perder ou distanciar do objetivo."
+    - "Miss\xE3o conclu\xEDda! Agora voc\xEA j\xE1 sabe organizar ideias e resolver
+      problemas como um cientista da computa\xE7\xE3o."
   _armDiagram: {fileID: 11400000, guid: 694a2c3e89e82b949b5dfe78f92db7fe, type: 2}
   _headDiagram: {fileID: 11400000, guid: b9c2693454f90064caf2df3e8fdf7ab0, type: 2}
   _furbotDiagram: {fileID: 11400000, guid: 604f5c8de29017448b89ee814378eb24, type: 2}
@@ -10878,8 +10901,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Aqui usamos o pilar da Abstra\xE7\xE3o: focar s\xF3 no que importa agora
-    e esquecer o que n\xE3o precisamos. Vamos testar! Monte o bra\xE7o e depois escaneie."
+  m_text: "Sua miss\xE3o: Escanear todas as pe\xE7as! Feche a m\xE3o para segurar
+    o Scanner, aponte para a pecinha e aperte o gatilho."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -10912,7 +10935,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 0
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
