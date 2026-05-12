@@ -10,6 +10,8 @@ public class MissionManager : MonoBehaviour
     [SerializeField] private int _currentStep = 0;
     [SerializeField] private S223Manager _s223Manager;
 
+    [SerializeField] private AudioSource _s223Audio;
+
     [Header("Objetos da Missao")]
     [SerializeField] private GameObject _scannerObject;
     [SerializeField] private GameObject _menuButton;
@@ -25,6 +27,7 @@ public class MissionManager : MonoBehaviour
     [SerializeField] private DiagramScriptableObject _armDiagram;
     [SerializeField] private DiagramScriptableObject _headDiagram;
     [SerializeField] private DiagramScriptableObject _furbotDiagram;
+
 
     [Header("---- AREA DE TESTE (EXCLUIR DEPOIS) ----")]
     [SerializeField] private bool _iniciarMissao3Liberada = false;
@@ -86,6 +89,7 @@ public class MissionManager : MonoBehaviour
 
             if (_s223Manager != null && mission != MissionState.Menu)
             {
+                _s223Audio.Play();
                 string[] linesToSpeak = GetDialoguesForMission(_currentMission, _currentStep);
                 if (linesToSpeak != null && linesToSpeak.Length > 0)
                 {
@@ -290,8 +294,8 @@ public class MissionManager : MonoBehaviour
 
     private IEnumerator ShowErrorAndRestoreRoutine(DiagramScriptableObject expectedDiagram)
     {
-        string expectedName = expectedDiagram != null ? expectedDiagram.name : "peça";
-        string[] errorLine = new string[] { $"Ops, não parece ser o {expectedName}." };
+        string expectedName = expectedDiagram != null ? expectedDiagram.name : "peï¿½a";
+        string[] errorLine = new string[] { $"Ops, nï¿½o parece ser o {expectedName}." };
         _s223Manager.StartDroneRoutine(this, _currentMission, 99, errorLine);
 
         yield return new WaitForSeconds(5f);

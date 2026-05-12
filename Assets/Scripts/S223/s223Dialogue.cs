@@ -27,25 +27,12 @@ public class s223Dialogue : MonoBehaviour
         if (_prevButton != null) _prevButton.onClick.AddListener(PreviousDialogue);
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Backspace) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            NextDialogue();
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            PreviousDialogue();
-        }
-    }
-
     public void HideDialogue()
     {
         if (_dialoguePanel != null) _dialoguePanel.SetActive(false);
         if (_dialogueText != null) _dialogueText.text = "";
     }
-
+    
     public IEnumerator PlayDialogueRoutine(string[] messages)
     {
         _currentMessages = messages;
