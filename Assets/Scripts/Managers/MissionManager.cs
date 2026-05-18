@@ -89,7 +89,6 @@ public class MissionManager : MonoBehaviour
 
             if (_s223Manager != null && mission != MissionState.Menu)
             {
-                _s223Audio.Play();
                 string[] linesToSpeak = GetDialoguesForMission(_currentMission, _currentStep);
                 if (linesToSpeak != null && linesToSpeak.Length > 0)
                 {
@@ -141,6 +140,8 @@ public class MissionManager : MonoBehaviour
 
     public void NextStep()
     {
+
+        //_audioSource.Play();
         _currentStep++;
         SetGameplayActive(false);
         OnStepChanged?.Invoke(_currentMission, _currentStep);

@@ -14,6 +14,7 @@ public class s223Dialogue : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private float _typingSpeed = 0.05f;
     [SerializeField] private float _timeToRead = 2f;
+    [SerializeField] private AudioSource _audioSource;
 
     private string[] _currentMessages;
     private int _currentIndex = 0;
@@ -42,6 +43,9 @@ public class s223Dialogue : MonoBehaviour
 
         if (_dialoguePanel != null) _dialoguePanel.SetActive(true);
         UpdateButtons();
+        
+        
+        _audioSource.Play();
 
         while (_currentIndex < _currentMessages.Length)
         {

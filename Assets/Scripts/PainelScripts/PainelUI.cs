@@ -119,6 +119,10 @@ public class PainelUI : MonoBehaviour
         {
             SelectTab(2);
         }
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            DisableMenu();
+        }
     }
 
     public void SelectTab(int index)
