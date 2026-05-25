@@ -15,6 +15,9 @@ public class DistanceGrabController : MonoBehaviour
     private PartsScript _partsScript;
     private bool _wasDistanceGrabbed;
 
+    // Acessador público para o Root consultar o estado local
+    public bool IsOnGround => _isOnGround;
+
     private void Start()
     {
         _interactables = GetComponentsInChildren<IInteractableView>(true);
@@ -60,7 +63,9 @@ public class DistanceGrabController : MonoBehaviour
                 canBeFar = (status == PieceStatus.none || status == PieceStatus.root);
             }
 
-            bool shouldBeFar = _isOnGround && canBeFar;
+            // Apenas o Root deve decidir ativar o farGrabObject para o grupo todo
+            bool isAnyPartOnGround = CheckIfAnyPartOnGround();
+            bool shouldBeFar = isAnyPartOnGround && canBeFar;
 
             if (shouldBeFar != _isCurrentlyFar)
             {
@@ -69,6 +74,28 @@ public class DistanceGrabController : MonoBehaviour
                 _nearGrabObject.SetActive(!_isCurrentlyFar);
             }
         }
+    }
+
+    // Verifica todo o grupo para ver se alguém está tocando o chão
+    private bool CheckIfAnyPartOnGround()
+    {
+        if (_partsScript == null) return _isOnGround;
+        
+        PartsScript rootPart = _partsScript.FindRootPart();
+        if (rootPart == null) return _isOnGround;
+
+        Transform container = (rootPart.transform.parent != null && rootPart.transform.parent.name.Contains("DiagramContainer"))
+                              ? rootPart.transform.parent
+                              : rootPart.transform;
+
+        DistanceGrabController[] allControllers = container.GetComponentsInChildren<DistanceGrabController>(true);
+        
+        foreach (var controller in allControllers)
+        {
+            if (controller.IsOnGround) return true;
+        }
+        
+        return false;
     }
 
     private void ToggleClusterWeight(bool makeLight)
