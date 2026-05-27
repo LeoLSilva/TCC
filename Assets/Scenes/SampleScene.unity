@@ -1439,9 +1439,9 @@ MonoBehaviour:
   _currentStep: 0
   _s223Manager: {fileID: 4125364851346724425}
   _s223Audio: {fileID: 7275554455499617217}
-  _scannerObject: {fileID: 126549482}
+  _scannerObject: {fileID: 421623871}
   _menuButton: {fileID: 1210527280}
-  _algCanva: {fileID: 1472993628309827486}
+  _algCanva: {fileID: 2419552757167324011}
   _diagramScreen: {fileID: 261823098}
   _missionDialogues:
   - missionState: 1
@@ -1451,89 +1451,102 @@ MonoBehaviour:
     - "Ol\xE1! Este \xE9 o Furbot. Ele est\xE1 quebrado e incompleto."
     - "Nossa miss\xE3o at\xE9 o final do jogo \xE9 conseguir consertar e montar o
       Furbot por completo."
-    - Para resolver esse desafio, vamos usar o Pensamento Computacional.
+    - Para resolver esse desafio, vamos usar o <color=Green>Pensamento Computacional</color=Green>.
+    - "<color=Green>Pensamento Computacional</color=Green> \xE9 o jeito de resolver
+      problemas dividindo-os em passos simples e organizados."
     - "Mas vamos come\xE7ar desmontando o Furbot."
-    - "Sua miss\xE3o:  Vamos desmontar o Furbot! Para isso, segure uma pe\xE7a em
-      cada  m\xE3o e puxe para separ\xE1-las."
+    - "<color=green>Sua miss\xE3o</color>:  Vamos desmontar o <color=yellow>Furbot</color>!
+      Para isso, <color=yellow>segure uma pe\xE7a em cada m\xE3o e puxe para separ\xE1-las."
   - missionState: 1
     missionStep: 1
     lines:
     - "Muito bem! Agora temos que armazenar essas pe\xE7as em nosso computador, Vamos
       usar nosso scanner para isso."
-    - "Sua miss\xE3o: Escanear todas as pe\xE7as! Feche a m\xE3o para segurar o Scanner,
-      aponte para a pe\xE7a e aperte o gatilho."
+    - "<color=green>Sua miss\xE3o</color>: Escanear todas as pe\xE7as! <color=yellow>Feche
+      a m\xE3o para segurar o Scanner, aponte para a pe\xE7a e aperte o gatilho.</color>"
   - missionState: 1
     missionStep: 2
     lines:
     - "Isso! Agora podemos imprimir todas as pe\xE7as pelo nosso computador."
-    - "O Pensamento Computacional nos ajuda a resolver problemas dif\xEDceis usando
-      4 pilares. Vamos conhecer um por um!"
+    - "O <color=Green>Pensamento Computacional</color=Green> nos ajuda a resolver
+      problemas dif\xEDceis usando <color=red>4 pilares</color>. Vamos conhecer um
+      por um!"
   - missionState: 2
     missionStep: 0
     lines:
-    - "O primeiro pilar \xE9 a Decomposi\xE7\xE3o!"
-    - "A Decomposi\xE7\xE3o \xE9 o m\xE9todo de dividir um problema complexo em partes
-      menores para facilitar a solu\xE7\xE3o."
-    - "Aplicando isso na nossa montagem, faremos o trabalho por etapas: primeiro
-      montaremos o Bra\xE7o, depois a Cabe\xE7a e, por \xFAltimo, o Furbot completo."
-    - "Sua miss\xE3o: No computador, v\xE1 para a aba 'Pe\xE7as', procure as que
-      pertencem ao Bra\xE7o e imprima. Depois, coloque todas na mesa."
+    - "O primeiro pilar \xE9 a <color=green>Decomposi\xE7\xE3o</color>!"
+    - "A <color=green>Decomposi\xE7\xE3o</color> significa <color=yellow>dividir
+      um problema complexo em partes menores</color>. "
+    - "Assim \xE9 mais f\xE1cil solucionar parte por parte at\xE9 completar tudo!"
+    - "Aplicando isso na nossa montagem, faremos o trabalho por etapas: <color=yellow>Bra\xE7o, 
+      Cabe\xE7a e, por \xFAltimo, o Furbot completo."
+    - "<color=green>Sua miss\xE3o:</color> No computador, v\xE1 para a aba <color=yellow>'Pe\xE7as'</color>,
+      procure as que pertencem ao <color=yellow>Bra\xE7o, imprima e coloque na mesa</color>. "
   - missionState: 2
     missionStep: 1
     lines:
     - "Isso a\xED! Olhando para a mesa agora fica muito mais f\xE1cil montar o bra\xE7o,
       n\xE9?"
-    - "Aqui usamos o pilar da Abstra\xE7\xE3o: separar as informa\xE7\xF5es que importam
-      somente para o problema atual e deixar as outras de lado."
-    - "Sua miss\xE3o: Pegue a m\xE3o do Furbot e encaixe no bra\xE7o. Depois, escaneie
-      para salvar o diagrama e reutilizar no futuro."
+    - "O pilar da <color=green>Abstra\xE7\xE3o</color>: separar e focar nas informa\xE7\xF5es
+      que envolvem o problema atual."
+    - "Aqui voc\xEA separou as pe\xE7as: <color=red>Bra\xE7o e m\xE3o</color>. <color=yellow>Olhar
+      s\xF3 para o necess\xE1rio facilita na hora de resolver o problema atual."
+    - "<color=green>Sua miss\xE3o</color>: Conecte a <color=yellow>M\xE3o ao Bra\xE7o</color>
+      e depois <color=yellow>Escaneie</color>."
   - missionState: 2
     missionStep: 2
     lines:
-    - "Isso! Agora, pela tela de \"Diagramas\", j\xE1 podemos imprimir o bra\xE7o
-      inteiro de uma vez."
-    - "Vamos fazer o mesmo processo para montar a cabe\xE7a."
-    - "Mas antes, est\xE1 vendo essa tela menor na sua frente? Ela representa o pilar
-      do \"Algoritmo\" que nada mais \xE9 que uma lista de passo a passo que voc\xEA
-      dever\xE1 seguir para resolver o problema."
-    - "Sua miss\xE3o: Monte a cabe\xE7a imprimindo as pe\xE7as na aba \"Pe\xE7as\"
-      e seguindo o algoritmo."
+    - "Isso! Agora, pela tela de <color=green>\"Diagramas\"</color>, j\xE1 podemos
+      imprimir o <color=green>bra\xE7o completo</color> de uma vez."
+    - "Vamos repetir o mesmo processo para montar a cabe\xE7a."
+    - "Mas antes, est\xE1 vendo essa tela menor na sua frente? Ela est\xE1 representando
+      o pilar do <color=green>\"Algoritmo\"</color>."
+    - "o <color=green>Algoritmo</color> nada mais \xE9 do que uma <color=yellow>lista
+      de passo a passo.</color>"
+    - "Como uma receita de bolo: <color=yellow>voc\xEA segue os passos na ordem exata
+      para dar certo."
+    - "<color=green>Sua miss\xE3o</color>: Use a <color=yellow>Abstra\xE7\xE3o</color>
+      para imprimir as pe\xE7as da <color=yellow>Cabe\xE7a</color>. Depois, monte
+      e escaneie."
   - missionState: 2
     missionStep: 3
     lines:
-    - "Voc\xEA percebeu que sabia onde cada pe\xE7a se encaixava?"
+    - "Voc\xEA percebeu que sabia onde cada pe\xE7a se encaixava?\nEsse \xE9 o pilar
+      do <color=green>\"Reconhecimento de Padr\xF5es\"</color>."
     - "Esse \xE9 o pilar do \"Reconhecimento de Padr\xF5es\", ele nos ensina a olhar
       para o que j\xE1 aprendemos antes e aplicar em problemas semelhantes."
+    - "No nosso caso voc\xEA consegue saber as pe\xE7as que pertencem a <color=yellow>cabe\xE7a</color>,
+      pois j\xE1 as viu antes."
   - missionState: 3
     missionStep: 0
     lines:
-    - "Perfeito! Agora temos a cabe\xE7a pronta para imprimir!"
-    - "Olhando para o Algoritmo, fica mais f\xE1cil completar a tarefa sem se perder
-      no caminho."
-    - "Observe que listas diferentes podem estar certas. Mas, cuidado! \xC0s vezes,
-      trocar a ordem de um dos itens pode gerar um erro."
+    - "Agora temos a cabe\xE7a pronta para imprimir!"
+    - "Olhando para o <color=green>Algoritmo</color>, fica mais f\xE1cil completar
+      a tarefa sem se perder no caminho."
+    - "Observe que listas diferentes podem estar certas. Mas, <color=red>cuidado!</color>
+      \xC0s vezes, trocar a ordem de um dos itens pode gerar um erro."
     - "Agora vamos para a nossa \xFAltima etapa! Utilizaremos tudo o que aprendemos
-      para montar o Furbot!"
-    - "Observe que cada passo que voc\xEA fizer ser\xE1 registrado na tela de algoritmo,
+      para montar o <color=yellow>Furbot!</color>"
+    - "Observe que cada passo que voc\xEA fizer ser\xE1 registrado na tela de <color=green>algoritmo</color>,
       assim teremos a nossa pr\xF3pria lista de passos!"
-    - "Sua miss\xE3o: Monte o Furbot. Utilize as telas de 'Pe\xE7as' e 'Diagramas'
+    - "<color=green>Sua miss\xE3o</color>: Monte o <color=yellow>Furbot</color>.
+      Utilize as telas de <color=yellow>'Pe\xE7as'</color> e <color=yellow>'Diagramas'</color>
       para imprimir os itens e, ao terminar, use o Scanner."
   - missionState: 4
     missionStep: 0
     lines:
-    - "Parab\xEAns, voc\xEA conseguiu completar sua miss\xE3o de montar o Furbot
-      e aprendeu sobre o Pensamento Computacional!"
+    - "<color=green>Parab\xEAns</color>, voc\xEA conseguiu completar sua miss\xE3o
+      de montar o Furbot e aprendeu sobre o Pensamento Computacional!"
     - "Para completar essa miss\xE3o, voc\xEA usou os quatro pilares do Pensamento
       Computacional."
-    - "Com a Decomposi\xE7\xE3o, voc\xEA dividiu o rob\xF4 em partes menores para
-      facilitar a montagem."
-    - "Com a Abstra\xE7\xE3o, voc\xEA focou apenas nas pe\xE7as necess\xE1rias de
-      cada etapa e ignorou o resto."
-    - "Com o Reconhecimento de Padr\xF5es, voc\xEA usou suas pr\xF3prias experi\xEAncias
-      e entendeu o funcionamento do jogo para descobrir onde as pe\xE7as se encaixam
-      e como fazer as a\xE7\xF5es do jogo."
-    - "E com os Algoritmos, voc\xEA seguiu uma lista de passos para completar a miss\xE3o
-      sem se perder ou distanciar do objetivo."
+    - "Com a <color=green>Decomposi\xE7\xE3o</color>, voc\xEA dividiu o rob\xF4 em
+      partes menores para facilitar a montagem."
+    - "Com a <color=green>Abstra\xE7\xE3o</color>, voc\xEA focou apenas nas pe\xE7as
+      necess\xE1rias de cada etapa e ignorou o resto."
+    - "Com o <color=green>Padr\xE3o</color>, voc\xEA reutilizou experi\xEAncias aprendidas
+      para concluir etapas do jogo."
+    - "E com os <color=green>Algoritmos</color>, voc\xEA seguiu uma lista de passos
+      para completar a miss\xE3o sem se perder ou distanciar do objetivo."
     - "Miss\xE3o conclu\xEDda! Agora voc\xEA j\xE1 sabe organizar ideias e resolver
       problemas como um cientista da computa\xE7\xE3o."
   _armDiagram: {fileID: 11400000, guid: 694a2c3e89e82b949b5dfe78f92db7fe, type: 2}
@@ -3845,7 +3858,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 399160214}
   m_LocalRotation: {x: 0.029328639, y: 0.21588644, z: 0.011368058, w: 0.9759117}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.006}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3856,8 +3869,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 3, y: 25, z: 2}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0.095, y: -0.033}
-  m_SizeDelta: {x: 0.794, y: 0.326}
+  m_AnchoredPosition: {x: 0.1045, y: -0.0601}
+  m_SizeDelta: {x: 0.8145, y: 0.381}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &399160216
 MonoBehaviour:
@@ -4674,7 +4687,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1721078610122347325, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1721078610122347325, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4694,11 +4707,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1721078610122347325, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.1
+      value: 0.10100004
       objectReference: {fileID: 0}
     - target: {fileID: 1721078610122347325, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.2
+      value: -0.22499996
       objectReference: {fileID: 0}
     - target: {fileID: 1721078610122347325, guid: 8cb491d634a7f9b46ad16881ff9ed6f6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -9183,7 +9196,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.1, y: -0.2}
+  m_AnchoredPosition: {x: -0.099, y: -0.225}
   m_SizeDelta: {x: 14, y: 6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!65 &1549721492
@@ -10217,6 +10230,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1770062286}
   m_CullTransparentMesh: 1
+--- !u!1 &1802791650
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1802791652}
+  - component: {fileID: 1802791651}
+  m_Layer: 0
+  m_Name: EyeRecenter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1802791651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1802791650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9b9f400ff04941708e1ee1834f81778, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetEyeHeight: 1.5
+  cameraRig: {fileID: 890161566}
+--- !u!4 &1802791652
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1802791650}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 6.002, y: 0.076, z: -1.412}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1805280699
 GameObject:
   m_ObjectHideFlags: 0
@@ -10956,8 +11015,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Sua miss\xE3o: Escanear todas as pe\xE7as! Feche a m\xE3o para segurar
-    o Scanner, aponte para a pecinha e aperte o gatilho."
+  m_text: "<color=green>Sua miss\xE3o</color>: Escanear todas as pe\xE7as! <color=yellow>Feche
+    a m\xE3o para segurar o Scanner, aponte para a pe\xE7a e aperte o gatilho.</color>"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -16278,6 +16337,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 499262732}
+  - {fileID: 1802791652}
   - {fileID: 770055568}
   - {fileID: 12566174}
   - {fileID: 747978956}

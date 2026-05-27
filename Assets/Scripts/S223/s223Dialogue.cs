@@ -44,8 +44,7 @@ public class s223Dialogue : MonoBehaviour
         if (_dialoguePanel != null) _dialoguePanel.SetActive(true);
         UpdateButtons();
         
-        
-        _audioSource.Play();
+        if (_audioSource != null) _audioSource.Play();
 
         while (_currentIndex < _currentMessages.Length)
         {
@@ -53,10 +52,33 @@ public class s223Dialogue : MonoBehaviour
             _skipRequested = false;
             if (_dialogueText != null) _dialogueText.text = "";
 
-            foreach (char letter in _currentMessages[_currentIndex].ToCharArray())
+            string currentSentence = _currentMessages[_currentIndex];
+
+            // Trocado o foreach por um for para conseguirmos manipular o índice
+            for (int i = 0; i < currentSentence.Length; i++)
             {
                 if (_skipRequested) break;
-                if (_dialogueText != null) _dialogueText.text += letter;
+
+                // Detecta o início de uma tag Rich Text
+                if (currentSentence[i] == '<')
+                {
+                    int closingTagIndex = currentSentence.IndexOf('>', i);
+                    
+                    // Se encontrou o final da tag fechando corretamente
+                    if (closingTagIndex != -1)
+                    {
+                        // Extrai a tag inteira (ex: <color=red> ou <b>)
+                        string tag = currentSentence.Substring(i, closingTagIndex - i + 1);
+                        if (_dialogueText != null) _dialogueText.text += tag;
+                        
+                        // Avança o loop direto para o final da tag, ignorando o delay
+                        i = closingTagIndex;
+                        continue;
+                    }
+                }
+
+                // Se não for tag, digita a letra normalmente
+                if (_dialogueText != null) _dialogueText.text += currentSentence[i];
                 yield return new WaitForSeconds(_typingSpeed);
             }
 
