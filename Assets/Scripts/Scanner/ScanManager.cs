@@ -12,7 +12,7 @@ public class ScanManager : MonoBehaviour
 
     void Update()
     {
-        if (!effectActive || _currentTarget == null)
+        if (!effectActive || !_currentTarget)
         {
             if (targets.Count > 0) RemoveAll();
             return;

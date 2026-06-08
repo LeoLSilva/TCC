@@ -65,6 +65,9 @@
     "explorer.fileNesting.enabled": true,
     "explorer.fileNesting.patterns": {
         "*.sln": "*.csproj",
+        "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "TCC.sln"
+    "dotnet.defaultSolution": "TCC.slnx",
+    "dotnet.enableWorkspaceBasedDevelopment": false,
+    "dotnet.preferCSharpExtension": true
 }
