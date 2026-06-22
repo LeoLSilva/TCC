@@ -58,10 +58,9 @@ public class MissionManager : MonoBehaviour
 
     private void Update()
     {
-        if (_iniciarMissao3Liberada)
+         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            _iniciarMissao3Liberada = false;
-            ForcarMissao3Liberada();
+            StartFreeMode();
         }
     }
 
@@ -71,6 +70,12 @@ public class MissionManager : MonoBehaviour
         SetMission(MissionState.Mission1);
     }
 
+    public void StartFreeMode()
+    {
+        if (_menuButton != null) _menuButton.SetActive(false);
+        SetMission(MissionState.FreeMode);
+    }
+
     public void SetMission(MissionState mission)
     {
         if (_currentMission != mission)
@@ -78,6 +83,11 @@ public class MissionManager : MonoBehaviour
             if (mission != MissionState.Mission1 && mission != MissionState.Menu && mission != MissionState.Disabled)
             {
                 ClearAllPartsAndContainers();
+            }
+            if(mission == MissionState.FreeMode)
+            {
+                ConfigFreeMode();
+                return;
             }
 
             _currentMission = mission;
@@ -104,6 +114,13 @@ public class MissionManager : MonoBehaviour
                 StartGameplay();
             }
         }
+    }
+
+    private void ConfigFreeMode()
+    {
+        ClearAllPartsAndContainers();
+        SetGameplayActive(true);
+        
     }
 
     private void ClearAllPartsAndContainers()
