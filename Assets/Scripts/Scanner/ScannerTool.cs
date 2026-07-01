@@ -26,6 +26,7 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
     [SerializeField] private string _targetTag = "obj";
     [SerializeField] private string _ignoreTag = "Ground";
 
+
     public UnityEvent<GameObject> OnScanStarted;
     public UnityEvent<float> OnScanProgress;
     public UnityEvent<GameObject> OnScanComplete;
