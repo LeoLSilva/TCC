@@ -17,8 +17,9 @@ public class MissionManager : MonoBehaviour
     [SerializeField] private GameObject _menuButton;
     [SerializeField] private GameObject _algCanva;
 
-    [Header("Telas (Arraste no Inspector)")]
+    [Header("Screen")]
     [SerializeField] private DiagramScreen _diagramScreen;
+    [SerializeField] private PartsScreen _partsScreen;
 
     [Header("Roteiros do Drone")]
     [SerializeField] private List<MissionDialogue> _missionDialogues;
@@ -29,8 +30,6 @@ public class MissionManager : MonoBehaviour
     [SerializeField] private DiagramScriptableObject _furbotDiagram;
 
 
-    [Header("---- AREA DE TESTE (EXCLUIR DEPOIS) ----")]
-    [SerializeField] private bool _iniciarMissao3Liberada = false;
 
     private bool _isGameplayActive = false;
 
@@ -87,7 +86,6 @@ public class MissionManager : MonoBehaviour
             if(mission == MissionState.FreeMode)
             {
                 ConfigFreeMode();
-                return;
             }
 
             _currentMission = mission;
@@ -120,7 +118,9 @@ public class MissionManager : MonoBehaviour
     {
         ClearAllPartsAndContainers();
         SetGameplayActive(true);
-        
+        _partsScreen.ForceUnlockAllParts();
+        _diagramScreen.SetFreeMode();
+        _scannerObject.SetActive(true);
     }
 
     private void ClearAllPartsAndContainers()

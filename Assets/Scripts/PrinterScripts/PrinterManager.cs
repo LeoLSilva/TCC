@@ -82,10 +82,7 @@ public class PrinterManager : MonoBehaviour
             if (spawnedPart != null)
             {
                 DiagramRegister reg = spawnedPart.GetComponent<DiagramRegister>();
-                if (reg != null)
-                {
-                    reg.InjectSavedData(_currentDiagramSO.rootPart);
-                }
+
 
                 if (spawnedPart.transform.parent != null)
                 {

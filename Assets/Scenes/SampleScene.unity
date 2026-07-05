@@ -1412,7 +1412,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1af79b555a7dc4cfb8914ce89f82e533, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _scannerTool: {fileID: 47193540}
+  _scannerTool: {fileID: 421623869}
   _scanMaterial: {fileID: 2100000, guid: 920e26faaea753d499abf5eb429d3758, type: 2}
   _missionManager: {fileID: 129098816}
   OnFirstTimeDiscovered:
@@ -1444,6 +1444,7 @@ MonoBehaviour:
   _menuButton: {fileID: 1210527280}
   _algCanva: {fileID: 2419552757167324011}
   _diagramScreen: {fileID: 261823098}
+  _partsScreen: {fileID: 2061371088}
   _missionDialogues:
   - missionState: 1
     missionStep: 0
@@ -1553,7 +1554,6 @@ MonoBehaviour:
   _armDiagram: {fileID: 11400000, guid: 694a2c3e89e82b949b5dfe78f92db7fe, type: 2}
   _headDiagram: {fileID: 11400000, guid: b9c2693454f90064caf2df3e8fdf7ab0, type: 2}
   _furbotDiagram: {fileID: 11400000, guid: 604f5c8de29017448b89ee814378eb24, type: 2}
-  _iniciarMissao3Liberada: 0
 --- !u!114 &129098817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4085,6 +4085,10 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1962212046243130522, guid: 618ed3cbb3ee48341937606d656b1742, type: 3}
+      propertyPath: _ResetScannerPosObj
+      value: 
+      objectReference: {fileID: 1618748357}
+    - target: {fileID: 1962212046243130522, guid: 618ed3cbb3ee48341937606d656b1742, type: 3}
       propertyPath: OnScanStarted.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -4461,8 +4465,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scanMaterial: {fileID: 2100000, guid: 920e26faaea753d499abf5eb429d3758, type: 2}
   effectActive: 0
-  _ResetScannerPosObj: {fileID: 1618748357}
-  movementTime: 0.5
 --- !u!4 &421623881 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5399216129837508731, guid: 618ed3cbb3ee48341937606d656b1742, type: 3}
@@ -11630,7 +11632,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2109580776
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11710,9 +11712,9 @@ MonoBehaviour:
   _whenSelect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 129098816}
-        m_TargetAssemblyTypeName: MissionManager, Assembly-CSharp
-        m_MethodName: StartFreeMode
+      - m_Target: {fileID: 1914523852}
+        m_TargetAssemblyTypeName: PainelUI, Assembly-CSharp
+        m_MethodName: FreeMode
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

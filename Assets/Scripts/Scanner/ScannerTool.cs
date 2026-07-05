@@ -1,4 +1,6 @@
+using Oculus.Interaction;
 using Oculus.Interaction.HandGrab;
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
@@ -48,12 +50,25 @@ public class ScannerTool : MonoBehaviour, IHandGrabUseDelegate
     [SerializeField] private MissionManager _missionManager;
     private ScanManager _scanManager;
 
+
+    [Header("Scanner Point")]
+    [SerializeField] private Transform _ResetScannerPosObj;
+    private Coroutine _returnScannerCoroutine;
+    public float movementTime = .1f;
+    private Grabbable _grab;
+
     private void Awake()
     {
         if (_partsScreen == null) _partsScreen = FindAnyObjectByType<PartsScreen>();
         if (_missionManager == null) _missionManager = FindAnyObjectByType<MissionManager>();
 
         _scanManager = GetComponent<ScanManager>();
+    }
+
+    void Start()
+    {
+        _grab = GetComponent<Grabbable>();
+        _grab.WhenPointerEventRaised += OnPointerEventRaised;
     }
 
     public void BeginUse()
@@ -292,4 +307,44 @@ private void ProcessScanning(float progress)
 
         if (_scanManager != null) _scanManager.StopScanEffect();
     }
+
+    private void OnPointerEventRaised(PointerEvent obj)
+    {
+        if (obj.Type == PointerEventType.Select)
+        {
+            if (_returnScannerCoroutine != null)
+            {
+                StopCoroutine(_returnScannerCoroutine);
+                _returnScannerCoroutine = null;
+            }
+        }
+        else if (obj.Type == PointerEventType.Unselect)
+        {
+            _returnScannerCoroutine = StartCoroutine(ReturnScannerToBaseCoroutine());
+        }
+    }
+
+    private IEnumerator ReturnScannerToBaseCoroutine()
+    {
+        yield return new WaitForSeconds(5f);
+        Vector3 startPosition = transform.position;
+        Quaternion startRotation = transform.rotation;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < movementTime)
+        {
+            float t = elapsedTime / movementTime;
+            t = t * t * (3f - 2f * t);
+
+            transform.position = Vector3.Lerp(startPosition, _ResetScannerPosObj.position, t);
+            transform.rotation = Quaternion.Slerp(startRotation, _ResetScannerPosObj.rotation, t);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = _ResetScannerPosObj.position;
+        transform.rotation = _ResetScannerPosObj.rotation;
+    }
+
 }

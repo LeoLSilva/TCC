@@ -9,21 +9,12 @@ public class ScanManager : MonoBehaviour
     public Material scanMaterial;
     public bool effectActive = false;
 
-    private Grabbable _grab;
     private GameObject _currentTarget;
     private List<MeshRenderer> targets = new List<MeshRenderer>();
     private float minY, maxY;
 
-        [Header("Scanner Point")]
-    [SerializeField]private Transform _ResetScannerPosObj;
-    private Coroutine _returnScannerCoroutine;
-    public float movementTime = 2.0f;
 
-    void Start()
-    {
-        _grab = GetComponent<Grabbable>();
-        _grab.WhenPointerEventRaised += OnPointerEventRaised;
-    }
+
 
     void Update()
     {
@@ -114,43 +105,4 @@ public class ScanManager : MonoBehaviour
         }
         targets.Clear();
     }
-
-    private void OnPointerEventRaised(PointerEvent obj)
-    {
-         if (obj.Type == PointerEventType.Select)
-        {
-            if(_returnScannerCoroutine != null)
-            {
-                StopCoroutine(_returnScannerCoroutine);
-                _returnScannerCoroutine = null;
-            }
-        } else if (obj.Type == PointerEventType.Unselect)
-        {
-            _returnScannerCoroutine = StartCoroutine(ReturnScannerToBaseCoroutine());
-        }
-    }
-
-    private IEnumerator ReturnScannerToBaseCoroutine()
-    {
-        yield return new WaitForSeconds(5f);
-        Vector3 startPosition = transform.position;
-        Quaternion startRotation = transform.rotation;
-        float elapsedTime = 0f;
-
-        while (elapsedTime < movementTime)
-        {
-            float t = elapsedTime / movementTime;
-            t = t * t * (3f - 2f * t);
-
-            transform.position = Vector3.Lerp(startPosition, _ResetScannerPosObj.position, t);
-            transform.rotation = Quaternion.Slerp(startRotation, _ResetScannerPosObj.rotation, t);
-
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        transform.position = _ResetScannerPosObj.position;
-        transform.rotation = _ResetScannerPosObj.rotation;
-    }
-    
 }

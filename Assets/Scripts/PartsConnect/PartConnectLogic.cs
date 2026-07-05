@@ -153,7 +153,7 @@ public class PartConnectLogic : MonoBehaviour
             foreach (Collider targetCol in targetColliders)
             {
                 if (targetCol == null || targetCol.isTrigger || myCol == targetCol) continue;
-                Physics.IgnoreCollision(myCol, targetCol, ignore);
+                //Physics.IgnoreCollision(myCol, targetCol, ignore);
             }
         }
     }

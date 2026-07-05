@@ -83,6 +83,11 @@ public class DiagramScreen : MonoBehaviour
         }
     }
 
+    public void SetFreeMode()
+    {
+        SetupMission(MissionState.FreeMode);
+    }
+
     private void SetupMission(MissionState state)
     {
         if (state == MissionState.FreeMode)

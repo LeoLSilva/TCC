@@ -3,6 +3,7 @@ using Oculus.Interaction;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PainelUI : MonoBehaviour
@@ -119,10 +120,27 @@ public class PainelUI : MonoBehaviour
         {
             SelectTab(2);
         }
-        if (Input.GetKeyDown(KeyCode.V))
+        if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             DisableMenu();
         }
+        if (Input.GetKeyDown(KeyCode.Alpha6))
+        {
+            FreeMode();
+        }
+    }
+
+    public void FreeMode()
+    {
+        _tabGameObject.SetActive(true);
+        SelectTab(0);
+        _missionManager.SetMission(MissionState.FreeMode);
+        _menuPanel.SetActive(false);
+    }
+
+    public void ResetGameScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void SelectTab(int index)
@@ -154,9 +172,14 @@ public class PainelUI : MonoBehaviour
     private void SetMenu()
     {
         _menuPanel.SetActive(true);
+        ActiveTabs(false);
+    }
+
+    private void ActiveTabs(bool active)
+    {
         foreach (var v in _tabs)
         {
-            v.panel.SetActive(false);
+            v.panel.SetActive(active);
         }
     }
 

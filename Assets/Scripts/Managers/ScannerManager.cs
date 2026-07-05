@@ -63,7 +63,7 @@ public class ScannerManager : MonoBehaviour
                 ExecuteSaveDiagram(target, true, StorageManager.PathPecasSolos);
                 break;
             case MissionState.FreeMode:
-                ExecuteSaveDiagram(target, false, StorageManager.PathDiagramas);
+                ExecuteSaveDiagram(target, false, StorageManager.PathCriacoes);
                 break;
         }
     }

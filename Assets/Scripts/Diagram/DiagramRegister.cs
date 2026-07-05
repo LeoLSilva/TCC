@@ -10,7 +10,9 @@ public class DiagramRegister : MonoBehaviour
 
     private void Start()
     {
-        if (_rootPart == null || _rootPart.partPrefab == null)
+        // CORREÇÃO: Nunca mais joga a árvore fora só porque o prefab estava nulo!
+        // Se a raiz não existe, aí sim criamos uma nova.
+        if (_rootPart == null)
         {
             _rootPart = new DiagramNode();
         }
@@ -61,6 +63,15 @@ public class DiagramRegister : MonoBehaviour
             _rootPart.connections = new List<DiagramConnection>();
         }
 
+        // CORREÇÃO: Evita duplicatas se a física e a impressora tentarem registrar a mesma peça ao mesmo tempo
+        for (int i = 0; i < _rootPart.connections.Count; i++)
+        {
+            if (_rootPart.connections[i].conName == conName && _rootPart.connections[i].connectedPart == node.GetDiagramNode())
+            {
+                return; // Já está registrado, não faz nada!
+            }
+        }
+
         DiagramConnection c = new DiagramConnection();
         c.conName = conName;
         c.connectedPart = node.GetDiagramNode();
@@ -73,14 +84,26 @@ public class DiagramRegister : MonoBehaviour
     {
         if (_rootPart == null || _rootPart.connections == null || node == null) return;
 
+        bool removed = false;
+
         for (int i = 0; i < _rootPart.connections.Count; i++)
         {
-            if (_rootPart.connections[i].conName == conName && _rootPart.connections[i].connectedPart == node.GetDiagramNode())
+            DiagramNode connectedNode = _rootPart.connections[i].connectedPart;
+
+            // CORREÇÃO: Compara o objeto físico real que está na cena (node.gameObject)
+            if (connectedNode != null && connectedNode.partPrefab == node.gameObject && _rootPart.connections[i].conName == conName)
             {
                 _rootPart.connections.RemoveAt(i);
                 ReportToContainer(false, conName, node);
-                break;
+                removed = true;
+                break; // Encontrou e removeu, sai do loop
             }
+        }
+
+        // Isso vai nos ajudar a rastrear se o problema está aqui ou em outro script
+        if (!removed)
+        {
+            Debug.LogWarning($"[DiagramRegister] O corpo tentou remover {node.gameObject.name} de {conName}, mas não achou ele na lista!");
         }
     }
 

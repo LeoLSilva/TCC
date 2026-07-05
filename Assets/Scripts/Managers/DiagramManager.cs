@@ -43,6 +43,10 @@ public class DiagramManager : MonoBehaviour
 
         GameObject newPart = Instantiate(node.partPrefab, pos, rot);
         newPart.transform.SetParent(container, true);
+
+        DiagramRegister reg = newPart.GetComponent<DiagramRegister>();
+        if (reg != null) reg.GetDiagramNode().partPrefab = newPart;
+
         PartsScript newPartScript = newPart.GetComponent<PartsScript>();
 
         if (parentScript != null && !string.IsNullOrEmpty(conName))
@@ -59,6 +63,14 @@ public class DiagramManager : MonoBehaviour
                 newPart.transform.rotation = targetSnap.transform.rotation;
 
                 newPartScript.AutoConnect(targetSnap, mySnap);
+            }
+
+            // --- CORREÇÃO 1: Injeta o registro imediatamente ---
+            DiagramRegister parentReg = parentScript.GetComponent<DiagramRegister>();
+            DiagramRegister childReg = newPartScript.GetComponent<DiagramRegister>();
+            if (parentReg != null && childReg != null)
+            {
+                parentReg.AddConnection(conName, childReg);
             }
         }
         else if (parentScript == null)
@@ -159,6 +171,9 @@ public class DiagramManager : MonoBehaviour
         GameObject newPart = Instantiate(prefab, pos, rot);
         newPart.transform.SetParent(container, true);
 
+        DiagramRegister reg = newPart.GetComponent<DiagramRegister>();
+        if (reg != null) reg.GetDiagramNode().partPrefab = newPart;
+
         PartsScript newPartScript = newPart.GetComponent<PartsScript>();
 
         if (parentScript != null && !string.IsNullOrEmpty(conName))
@@ -174,6 +189,14 @@ public class DiagramManager : MonoBehaviour
                 newPart.transform.position = targetSnap.transform.position;
                 newPart.transform.rotation = targetSnap.transform.rotation;
                 newPartScript.AutoConnect(targetSnap, mySnap);
+            }
+
+            // --- CORREÇÃO 1: Injeta o registro imediatamente ---
+            DiagramRegister parentReg = parentScript.GetComponent<DiagramRegister>();
+            DiagramRegister childReg = newPartScript.GetComponent<DiagramRegister>();
+            if (parentReg != null && childReg != null)
+            {
+                parentReg.AddConnection(conName, childReg);
             }
         }
         else if (parentScript == null)

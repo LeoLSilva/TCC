@@ -24,7 +24,7 @@ public class DiagramCreaterManager : MonoBehaviour
     {
         _loadedDiagrams.Clear();
 
-        string path = Application.persistentDataPath;
+        string path = StorageManager.PathCriacoes;
 
         if (Directory.Exists(path))
         {
