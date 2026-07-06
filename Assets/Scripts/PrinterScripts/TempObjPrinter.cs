@@ -10,7 +10,7 @@ public class TempObjPrinter : MonoBehaviour
     {
         _grabbable = GetComponent<Grabbable>();
         _partScripts = GetComponent<PartsScript>();
-        //_partScripts.SetHierarchyLayerAndPhysics("Default", true);
+        _partScripts.SetHierarchyLayerAndPhysics("Default", true);
 
         if (_grabbable != null)
         {

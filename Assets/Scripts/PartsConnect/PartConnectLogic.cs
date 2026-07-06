@@ -1,16 +1,20 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PartConnectLogic : MonoBehaviour
 {
     [SerializeField] private float _detachForce = 10f;
+    private float _safeDistanceToRestore = 1.3f;
+
+    [Header("Story Mode Settings")]
+    [SerializeField] private bool _bypassCollisionRules = false;
 
     private PartsScript _partsScript;
     private PartsScript _targetPartScript;
     private ConfigurableJoint _currentJoint;
     private float _originalDrag;
     private float _originalAngularDrag;
-
     private void Awake()
     {
         _partsScript = GetComponent<PartsScript>();
@@ -21,9 +25,14 @@ public class PartConnectLogic : MonoBehaviour
         _originalDrag = rigid.linearDamping;
         _originalAngularDrag = rigid.angularDamping;
 
-        rigid.solverIterations = 20;
-        rigid.solverVelocityIterations = 20;
-        rigid.maxAngularVelocity = 20f;
+        //rigid.solverIterations = 20;
+        //rigid.solverVelocityIterations = 20;
+        //rigid.maxAngularVelocity = 20f;
+        rigid.solverIterations = 10;
+        rigid.solverVelocityIterations = 10;
+        rigid.maxAngularVelocity = 15f;
+
+        rigid.maxDepenetrationVelocity = 3f;
     }
 
     public void UpdateBreakForce(bool canBreak)
@@ -32,6 +41,11 @@ public class PartConnectLogic : MonoBehaviour
         {
             _currentJoint.breakForce = canBreak ? _detachForce : Mathf.Infinity;
         }
+    }
+
+    public void SetBypassCollisionRules(bool bypass)
+    {
+        _bypassCollisionRules = bypass;
     }
 
     public void StartAnimation(Transform targetTransform, PartsScript targetScript, float timeAnimate)
@@ -76,7 +90,8 @@ public class PartConnectLogic : MonoBehaviour
                     manager.SetConection(_partsScript, _targetPartScript);
                 }
 
-                Collider[] allTargetColliders = _targetPartScript.GetComponentsInChildren<Collider>();
+                Transform rootCluster = _targetPartScript.transform.root;
+                Collider[] allTargetColliders = rootCluster.GetComponentsInChildren<Collider>();
                 UpdateCollisionMatrix(allTargetColliders, true);
 
                 _currentJoint = gameObject.AddComponent<ConfigurableJoint>();
@@ -85,7 +100,7 @@ public class PartConnectLogic : MonoBehaviour
                 _currentJoint.breakForce = Mathf.Infinity;
                 _currentJoint.breakTorque = Mathf.Infinity;
 
-                _currentJoint.enablePreprocessing = true;
+                _currentJoint.enablePreprocessing = false;
                 _currentJoint.enableCollision = false;
 
                 _currentJoint.massScale = 1f;
@@ -128,8 +143,10 @@ public class PartConnectLogic : MonoBehaviour
 
         if (_targetPartScript != null)
         {
-            Collider[] oldTargetColliders = _targetPartScript.GetComponentsInChildren<Collider>();
-            UpdateCollisionMatrix(oldTargetColliders, false);
+            Transform rootCluster = _targetPartScript.transform.root;
+            Transform oldTargetTransform = _targetPartScript.transform;
+
+            StartCoroutine(SafeRestoreCollisions(rootCluster, oldTargetTransform));
         }
 
         Rigidbody rigid = _partsScript.GetRigid();
@@ -143,6 +160,57 @@ public class PartConnectLogic : MonoBehaviour
         _partsScript.HandleConnectionBroken();
     }
 
+    private IEnumerator SafeRestoreCollisions(Transform rootCluster, Transform oldTarget)
+    {
+        if (_bypassCollisionRules) yield break;
+        if (rootCluster == null) yield break;
+
+        Collider[] myCurrentColliders = GetComponentsInChildren<Collider>(true);
+        Collider[] clusterColliders = rootCluster.GetComponentsInChildren<Collider>(true);
+        System.Collections.Generic.HashSet<Collider> myCollidersSet = new System.Collections.Generic.HashSet<Collider>(myCurrentColliders);
+
+        foreach (Collider myCol in myCurrentColliders)
+        {
+            if (myCol == null) continue;
+            foreach (Collider targetCol in clusterColliders)
+            {
+                if (targetCol == null || myCollidersSet.Contains(targetCol)) continue;
+
+                if (myCol.isTrigger || targetCol.isTrigger)
+                {
+                    Physics.IgnoreCollision(myCol, targetCol, false);
+                }
+            }
+        }
+        if (!_bypassCollisionRules)
+        {
+            while (oldTarget != null)
+            {
+                float currentDistance = Vector3.Distance(transform.position, oldTarget.position);
+
+                if (currentDistance >= _safeDistanceToRestore)
+                {
+                    break;
+                }
+
+                yield return null;
+            }
+        }
+        foreach (Collider myCol in myCurrentColliders)
+        {
+            if (myCol == null) continue;
+            foreach (Collider targetCol in clusterColliders)
+            {
+                if (targetCol == null || myCollidersSet.Contains(targetCol)) continue;
+
+                if (!myCol.isTrigger && !targetCol.isTrigger)
+                {
+                    Physics.IgnoreCollision(myCol, targetCol, false);
+                }
+            }
+        }
+    }
+
     private void UpdateCollisionMatrix(Collider[] targetColliders, bool ignore)
     {
         Collider[] myCurrentColliders = GetComponentsInChildren<Collider>();
@@ -150,10 +218,12 @@ public class PartConnectLogic : MonoBehaviour
         foreach (Collider myCol in myCurrentColliders)
         {
             if (myCol == null || myCol.isTrigger) continue;
+
             foreach (Collider targetCol in targetColliders)
             {
                 if (targetCol == null || targetCol.isTrigger || myCol == targetCol) continue;
-                //Physics.IgnoreCollision(myCol, targetCol, ignore);
+
+                Physics.IgnoreCollision(myCol, targetCol, ignore);
             }
         }
     }

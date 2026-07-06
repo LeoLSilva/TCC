@@ -86,6 +86,9 @@ public class MissionManager : MonoBehaviour
             if(mission == MissionState.FreeMode)
             {
                 ConfigFreeMode();
+            } else if(mission == MissionState.Mission1)
+            {
+                firstFurbotCollider();
             }
 
             _currentMission = mission;
@@ -194,6 +197,36 @@ public class MissionManager : MonoBehaviour
         if (_currentMission == MissionState.Mission1 && _currentStep == 1)
         {
             if (_scannerObject != null) _scannerObject.SetActive(true);
+
+        }
+    }
+
+    private void firstFurbotCollider()
+    {
+        GetComponent<StartSpawner>().SpawnAllDiagrams();
+        GameObject storyContainer = GameObject.Find("DiagramContainer_FirstMissionFurbot");
+
+        if (storyContainer != null)
+        {
+            PartConnectLogic[] allParts = storyContainer.GetComponentsInChildren<PartConnectLogic>(true);
+
+            foreach (PartConnectLogic partLogic in allParts)
+            {
+                partLogic.SetBypassCollisionRules(true);
+            }
+
+            Collider[] allColliders = storyContainer.GetComponentsInChildren<Collider>(true);
+
+            for (int i = 0; i < allColliders.Length; i++)
+            {
+                if (allColliders[i] == null || allColliders[i].isTrigger) continue;
+
+                for (int j = i + 1; j < allColliders.Length; j++)
+                {
+                    if (allColliders[j] == null || allColliders[j].isTrigger) continue;
+                    Physics.IgnoreCollision(allColliders[i], allColliders[j], false);
+                }
+            }
         }
     }
 
@@ -329,12 +362,6 @@ public class MissionManager : MonoBehaviour
         }
     }
 
-    private void ForcarMissao3Liberada()
-    {
-        SetMission(MissionState.Mission3);
-        StartGameplay();
-    }
-
     public void ActiveAlgoritm(bool active)
     {
         if (_algCanva != null) _algCanva.SetActive(active);
@@ -359,6 +386,7 @@ public class MissionManager : MonoBehaviour
         return null;
     }
 }
+
 
 public enum MissionState
 {

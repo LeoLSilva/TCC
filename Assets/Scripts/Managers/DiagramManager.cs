@@ -28,6 +28,8 @@ public class DiagramManager : MonoBehaviour
         {
             rootPartScript.SetStatus(PieceStatus.root);
             _lastPainelObject = rootPartScript.gameObject;
+
+            IgnoreAllCollisionsInCluster(diagramContainer);
         }
         else
         {
@@ -152,6 +154,8 @@ public class DiagramManager : MonoBehaviour
         {
             rootPartScript.SetStatus(PieceStatus.root);
             _lastPainelObject = rootPartScript.gameObject;
+
+            IgnoreAllCollisionsInCluster(diagramContainer);
         }
         else
         {
@@ -213,5 +217,24 @@ public class DiagramManager : MonoBehaviour
             }
         }
         return newPartScript;
+    }
+
+    private void IgnoreAllCollisionsInCluster(Transform rootCluster)
+    {
+        if (rootCluster == null) return;
+
+        Collider[] allColliders = rootCluster.GetComponentsInChildren<Collider>(true);
+
+        for (int i = 0; i < allColliders.Length; i++)
+        {
+            if (allColliders[i] == null || allColliders[i].isTrigger) continue;
+
+            for (int j = i + 1; j < allColliders.Length; j++)
+            {
+                if (allColliders[j] == null || allColliders[j].isTrigger) continue;
+
+                Physics.IgnoreCollision(allColliders[i], allColliders[j], true);
+            }
+        }
     }
 }

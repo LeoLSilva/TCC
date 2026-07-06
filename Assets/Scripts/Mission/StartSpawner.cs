@@ -12,11 +12,9 @@ public class StartSpawner : MonoBehaviour
         {
             _diagramManager = FindAnyObjectByType<DiagramManager>();
         }
-
-        SpawnAllDiagrams();
     }
 
-    private void SpawnAllDiagrams()
+    public void SpawnAllDiagrams()
     {
         if (_diagramManager == null || _roboInicial == null) return;
 

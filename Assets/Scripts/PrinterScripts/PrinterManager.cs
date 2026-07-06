@@ -83,7 +83,6 @@ public class PrinterManager : MonoBehaviour
             {
                 DiagramRegister reg = spawnedPart.GetComponent<DiagramRegister>();
 
-
                 if (spawnedPart.transform.parent != null)
                 {
                     _currentPartObject = spawnedPart.transform.parent.gameObject;
@@ -112,12 +111,20 @@ public class PrinterManager : MonoBehaviour
             {
                 part.gameObject.layer = maskLayer;
                 part.ChangeRigid(false);
+
+                Rigidbody rb = part.GetRigid();
+                if (rb != null)
+                {
+                    rb.constraints = RigidbodyConstraints.FreezePositionX |
+                                     RigidbodyConstraints.FreezePositionZ |
+                                     RigidbodyConstraints.FreezeRotation;
+                }
             }
         }
 
         yield return new WaitForSeconds(.5f);
         _animator.SetInteger("anim", 2);
-        yield return new WaitForSeconds(2.15f);
+        yield return new WaitForSeconds(3.15f);
         _animator.SetInteger("anim", 0);
 
         if (_currentPartObject != null)
@@ -125,6 +132,12 @@ public class PrinterManager : MonoBehaviour
             PartsScript[] allSpawnedParts = _currentPartObject.GetComponentsInChildren<PartsScript>();
             foreach (var part in allSpawnedParts)
             {
+                Rigidbody rb = part.GetRigid();
+                if (rb != null)
+                {
+                    rb.constraints = RigidbodyConstraints.None;
+                }
+
                 if (part.gameObject.GetComponent<TempObjPrinter>() == null)
                 {
                     part.gameObject.AddComponent<TempObjPrinter>();
