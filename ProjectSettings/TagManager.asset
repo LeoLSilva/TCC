@@ -24,6 +24,8 @@ TagManager:
   - Container
   - mesa
   - objSnap
+  - LeftHand
+  - RightHand
   layers:
   - Default
   - TransparentFX

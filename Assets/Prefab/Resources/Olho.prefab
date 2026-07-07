@@ -411,15 +411,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 668ebc398231b744ca201c3f22e394fc, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 5.118773
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 668ebc398231b744ca201c3f22e394fc, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.85704905
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 668ebc398231b744ca201c3f22e394fc, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -1.3265526
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 668ebc398231b744ca201c3f22e394fc, type: 3}
       propertyPath: m_LocalRotation.w
@@ -498,6 +498,9 @@ PrefabInstance:
       addedObject: {fileID: 6491592110123718942}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 668ebc398231b744ca201c3f22e394fc, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 7347517131262828652}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 668ebc398231b744ca201c3f22e394fc, type: 3}
+      insertIndex: -1
       addedObject: {fileID: -4174649466525163937}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 668ebc398231b744ca201c3f22e394fc, type: 3}
       insertIndex: -1
@@ -553,6 +556,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _detachForce: 10
+  _bypassCollisionRules: 0
 --- !u!114 &5260825471987693098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -625,10 +629,10 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2904052108172264521}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Mass: 0.15
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -645,6 +649,23 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 2
+--- !u!114 &7347517131262828652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2904052108172264521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a49153536e76645559a285e4bbbb315f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DynamicGrabResizer
+  detectionRadius: 0.15
+  normalSizeMultiplier: 1
+  expandedSizeMultiplier: 7
+  expandDirection: {x: 0, y: 0, z: -1}
+  smoothSpeed: 15
 --- !u!114 &-4174649466525163937
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -657,7 +678,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f57e6847dbf0e5f4a8604f1192405798, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _minDistanceToEnable: 1
   _nearGrabObject: {fileID: 8048489696624402877}
   _farGrabObject: {fileID: 3343048601011912891}
 --- !u!114 &-7708121989918673784
@@ -693,8 +713,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.0058690547, y: 0.003914458, z: 0.0007092174}
-  m_Center: {x: -0.0000776262, y: 0.00014747534, z: -0.000052191535}
+  m_Size: {x: 0.0058690547, y: 0.003914458, z: 0.000836622}
+  m_Center: {x: -0.00007762127, y: 0.00014747531, z: -0.00011588415}
 --- !u!114 &-2887195301575672624
 MonoBehaviour:
   m_ObjectHideFlags: 0
