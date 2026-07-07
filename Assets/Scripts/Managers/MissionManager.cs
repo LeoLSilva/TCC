@@ -55,13 +55,6 @@ public class MissionManager : MonoBehaviour
         SetMission(MissionState.Menu);
     }
 
-    private void Update()
-    {
-         if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            StartFreeMode();
-        }
-    }
 
     public void StartFirstMission()
     {

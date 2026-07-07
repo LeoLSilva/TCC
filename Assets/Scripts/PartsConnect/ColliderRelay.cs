@@ -5,7 +5,6 @@ public class ColliderRelay : MonoBehaviour
 {
     [SerializeField] private SnapIndicator _snap;
 
-    // Eventos para repassar a entrada e saída do Trigger
     public event Action<Collider> OnCollision;
     public event Action<Collider> OnCollisionExit;
 

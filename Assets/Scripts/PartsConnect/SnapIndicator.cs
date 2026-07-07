@@ -11,7 +11,7 @@ public class SnapIndicator : MonoBehaviour
     public bool _isConnected = false;
     public SnapIndicator _currentHover;
 
-    private void Start()
+    private void Awake()
     {
         _indicator = GetComponent<MeshRenderer>();
         if (_indicator != null) _indicator.enabled = false;
@@ -47,24 +47,18 @@ public class SnapIndicator : MonoBehaviour
 
     public void HandleTriggerEnter(Collider other)
     {
-        Debug.LogWarning("Detectou algo");
         if (_isConnected || (!other.CompareTag("obj") && !other.CompareTag("objSnap"))) return;
-        Debug.LogWarning("Passou primeiro IF");
         if (_parentPart != null && _parentPart.GetStatus() == PieceStatus.conecting) return;
-        Debug.LogWarning("Passou segundo IF");
         SnapIndicator otherSnap = ResolveSnapIndicator(other);
         if (otherSnap == null || otherSnap._isConnected || otherSnap.GetConnectType() == _type) return;
-        Debug.LogWarning("Passou quarto IF");
         _currentHover = otherSnap;
 
         if (_type == ConnectType.male && _parentPart != null && _parentPart._isGrabbed)
         {
-            Debug.LogWarning("if macho: "+ _type+", "+"Parent part = "+ _parentPart+", grab? "+ _parentPart._isGrabbed);
             _parentPart.SetupConnectionData(otherSnap, this);
         }
         else if (_type == ConnectType.famale && otherSnap._parentPart != null && otherSnap._parentPart._isGrabbed)
         {
-            Debug.LogWarning("if femea: " + _type + ", " + "Parent part = " + otherSnap._parentPart + ", grab? " + otherSnap._parentPart._isGrabbed);
             ChangeMesh(other.gameObject, true);
         }
     }
@@ -78,7 +72,7 @@ public class SnapIndicator : MonoBehaviour
     {
         if (_currentHover == null) return;
         if (_parentPart != null && _parentPart.GetStatus() == PieceStatus.conecting) return;
-
+        if (!other.CompareTag("obj") && !other.CompareTag("objSnap")) return;
         SnapIndicator otherSnap = ResolveSnapIndicator(other);
 
         if (otherSnap == _currentHover)

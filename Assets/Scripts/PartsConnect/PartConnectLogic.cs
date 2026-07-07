@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PartConnectLogic : MonoBehaviour
 {
-    [SerializeField] private float _detachForce = 10f;
+    [SerializeField] private float _detachForce = 3f;
     private float _safeDistanceToRestore = 1.3f;
 
     [Header("Story Mode Settings")]
@@ -15,9 +15,29 @@ public class PartConnectLogic : MonoBehaviour
     private ConfigurableJoint _currentJoint;
     private float _originalDrag;
     private float _originalAngularDrag;
+
+    private static PartsManager _partsManager;
+
     private void Awake()
     {
         _partsScript = GetComponent<PartsScript>();
+    }
+
+    private void FixedUpdate()
+    {
+        if (_currentJoint != null && _partsScript != null && _targetPartScript != null)
+        {
+            if (_partsScript._isGrabbed || _targetPartScript._isGrabbed)
+            {
+                if (_currentJoint.currentForce.sqrMagnitude > 22500f)
+                {
+                    Debug.LogWarning("Segurança Ativada: Tensão excessiva! Soltando as peças da mão.");
+
+                    if (_partsScript._isGrabbed) _partsScript.ForceDrop();
+                    if (_targetPartScript._isGrabbed) _targetPartScript.ForceDrop();
+                }
+            }
+        }
     }
 
     public void InitializePhysics(Rigidbody rigid)
@@ -25,14 +45,12 @@ public class PartConnectLogic : MonoBehaviour
         _originalDrag = rigid.linearDamping;
         _originalAngularDrag = rigid.angularDamping;
 
-        //rigid.solverIterations = 20;
-        //rigid.solverVelocityIterations = 20;
-        //rigid.maxAngularVelocity = 20f;
         rigid.solverIterations = 10;
         rigid.solverVelocityIterations = 10;
         rigid.maxAngularVelocity = 15f;
 
-        rigid.maxDepenetrationVelocity = 3f;
+        // MUDANÇA: Proíbe coices muito fortes da física (de 3f para 0.5f)
+        rigid.maxDepenetrationVelocity = 0.5f;
     }
 
     public void UpdateBreakForce(bool canBreak)
@@ -84,10 +102,14 @@ public class PartConnectLogic : MonoBehaviour
             Rigidbody targetRb = _targetPartScript.GetRigid();
             if (targetRb != null)
             {
-                PartsManager manager = FindAnyObjectByType<PartsManager>();
-                if (manager != null)
+                if (_partsManager == null)
                 {
-                    manager.SetConection(_partsScript, _targetPartScript);
+                    _partsManager = FindAnyObjectByType<PartsManager>();
+                }
+
+                if (_partsManager != null)
+                {
+                    _partsManager.SetConection(_partsScript, _targetPartScript);
                 }
 
                 Transform rootCluster = _targetPartScript.transform.root;
@@ -106,7 +128,7 @@ public class PartConnectLogic : MonoBehaviour
                 _currentJoint.massScale = 1f;
                 _currentJoint.connectedMassScale = 1f;
 
-                _currentJoint.projectionMode = JointProjectionMode.PositionAndRotation;
+                _currentJoint.projectionMode = JointProjectionMode.None;
                 _currentJoint.projectionDistance = 0.001f;
                 _currentJoint.projectionAngle = 0.1f;
 
@@ -182,20 +204,24 @@ public class PartConnectLogic : MonoBehaviour
                 }
             }
         }
+
         if (!_bypassCollisionRules)
         {
-            while (oldTarget != null)
-            {
-                float currentDistance = Vector3.Distance(transform.position, oldTarget.position);
+            float sqrSafeDistance = _safeDistanceToRestore * _safeDistanceToRestore;
+            float timeoutTimer = 0f;
 
-                if (currentDistance >= _safeDistanceToRestore)
+            while (oldTarget != null && timeoutTimer < 5f)
+            {
+                if ((transform.position - oldTarget.position).sqrMagnitude >= sqrSafeDistance)
                 {
                     break;
                 }
 
+                timeoutTimer += Time.deltaTime;
                 yield return null;
             }
         }
+
         foreach (Collider myCol in myCurrentColliders)
         {
             if (myCol == null) continue;

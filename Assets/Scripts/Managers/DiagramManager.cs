@@ -67,7 +67,6 @@ public class DiagramManager : MonoBehaviour
                 newPartScript.AutoConnect(targetSnap, mySnap);
             }
 
-            // --- CORREÇÃO 1: Injeta o registro imediatamente ---
             DiagramRegister parentReg = parentScript.GetComponent<DiagramRegister>();
             DiagramRegister childReg = newPartScript.GetComponent<DiagramRegister>();
             if (parentReg != null && childReg != null)

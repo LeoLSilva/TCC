@@ -18,9 +18,10 @@ public class PartsScript : MonoBehaviour
     [SerializeField] private PartsScript _partScriptTarget;
     [SerializeField] private Grabbable _grabble;
 
-    private PartsManager _partsManager;
-    private MissionManager _missionManager;
-    private AlgoritmCreater _algoritmCreater;
+    private static PartsManager _partsManager;
+    private static MissionManager _missionManager;
+    private static AlgoritmCreater _algoritmCreater;
+
     private float _timeAnimate = 0.25f;
     private float _mass;
     private Rigidbody _rigid;
@@ -42,6 +43,16 @@ public class PartsScript : MonoBehaviour
     {
         if (_status == _lastStatus) return;
         SetStatus(_status);
+    }
+
+    private void OnEnable()
+    {
+        OnPartGrabbed += HandleAnyPartGrabbed;
+    }
+
+    private void OnDisable()
+    {
+        OnPartGrabbed -= HandleAnyPartGrabbed;
     }
 
     private void Awake()
@@ -66,10 +77,11 @@ public class PartsScript : MonoBehaviour
     private void Start()
     {
         _diagramRegister = this.GetComponent<DiagramRegister>();
-        _partsManager = FindAnyObjectByType<PartsManager>();
-        _missionManager = FindAnyObjectByType<MissionManager>();
-        _algoritmCreater = FindAnyObjectByType<AlgoritmCreater>();
         _grabble = GetComponent<Grabbable>();
+
+        if (_partsManager == null) _partsManager = FindAnyObjectByType<PartsManager>();
+        if (_missionManager == null) _missionManager = FindAnyObjectByType<MissionManager>();
+        if (_algoritmCreater == null) _algoritmCreater = FindAnyObjectByType<AlgoritmCreater>();
 
         if (_grabble != null)
         {
@@ -79,6 +91,30 @@ public class PartsScript : MonoBehaviour
         if (_status == PieceStatus.conected)
         {
             Invoke(nameof(RebuildConnections), 0.2f);
+        }
+    }
+
+    public void ForceDrop()
+    {
+        if (_grabble != null && _isGrabbed)
+        {
+            _grabble.enabled = false;
+
+            if (_rigid != null)
+            {
+                _rigid.linearVelocity = Vector3.zero;
+                _rigid.angularVelocity = Vector3.zero;
+            }
+
+            Invoke(nameof(EnableGrabble), 0.1f);
+        }
+    }
+
+    private void EnableGrabble()
+    {
+        if (_grabble != null)
+        {
+            _grabble.enabled = true;
         }
     }
 
@@ -121,28 +157,17 @@ public class PartsScript : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void HandleAnyPartGrabbed(PartsScript grabbedPart)
     {
-        if (Input.GetKeyDown(KeyCode.D) && test)
-        {
-            _connectLogic.BreakConnection();
-        }
+        if (_status == PieceStatus.conecting || _partScriptTarget == null) return;
 
-        if (Input.GetKeyDown(KeyCode.S) && test)
-        {
-            StartConnectionProcess();
-        }
+        PartsScript myRoot = FindRootPart();
+        PartsScript grabbedRoot = grabbedPart.FindRootPart();
 
-        if (Input.GetKeyDown(KeyCode.P) && test && _status == PieceStatus.root)
+        if (myRoot == grabbedRoot)
         {
-            DiagramJsonSaver.SaveDiagram(_diagramRegister, this.gameObject.name, StorageManager.PathDiagramas);
+            UpdateBreakForceLogic();
         }
-
-        if (Input.GetKeyDown(KeyCode.R) && test)
-        {
-            FindAnyObjectByType<DiagramCreaterManager>().RefreshDiagramList();
-        }
-        UpdateBreakForceLogic();
     }
 
     private void UpdateBreakForceLogic()
@@ -191,6 +216,7 @@ public class PartsScript : MonoBehaviour
 
     private void OnGrabbleEvent(PointerEvent obj)
     {
+        Debug.Log("Objeto sendo segurado: " + this.gameObject.name);
         if (_missionManager != null && !_missionManager.IsGameplayActive()) return;
 
         if (_status == PieceStatus.conecting) return;
@@ -633,49 +659,17 @@ public class PartsScript : MonoBehaviour
     {
         int newLayer = LayerMask.NameToLayer(layerName);
 
-        ApplyLayerAndPhysicsRecursive(this, newLayer, makeKinematic, new HashSet<PartsScript>());
-    }
+        PartsScript rootPart = FindRootPart();
+        Transform container = (rootPart.transform.parent != null && rootPart.transform.parent.name.Contains("DiagramContainer"))
+                              ? rootPart.transform.parent
+                              : rootPart.transform;
 
-    private void ApplyLayerAndPhysicsRecursive(PartsScript currentPart, int layer, bool kinematic, HashSet<PartsScript> visited)
-    {
-        if (currentPart == null || visited.Contains(currentPart)) return;
+        container.GetComponentsInChildren<PartsScript>(true, _tempPartsList);
 
-        visited.Add(currentPart);
-
-        currentPart.gameObject.layer = layer;
-        currentPart.ChangeRigid(kinematic);
-
-        PartsScript parentPart = currentPart.GetTargetPart();
-        if (parentPart != null)
+        foreach (PartsScript part in _tempPartsList)
         {
-            ApplyLayerAndPhysicsRecursive(parentPart, layer, kinematic, visited);
-        }
-
-        DiagramRegister currentRegister = currentPart.GetComponent<DiagramRegister>();
-        if (currentRegister != null)
-        {
-            DiagramSerializable.DiagramNode node = currentRegister.GetDiagramNode();
-            if (node != null && node.connections != null)
-            {
-                foreach (var connection in node.connections)
-                {
-                    if (connection.connectedPart != null && connection.connectedPart.partPrefab != null)
-                    {
-                        DiagramRegister[] allRegisters = FindObjectsByType<DiagramRegister>(FindObjectsSortMode.None);
-                        foreach (var reg in allRegisters)
-                        {
-                            if (reg.GetDiagramNode() == connection.connectedPart)
-                            {
-                                PartsScript childScript = reg.GetComponent<PartsScript>();
-                                if (childScript != null)
-                                {
-                                    ApplyLayerAndPhysicsRecursive(childScript, layer, kinematic, visited);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            part.gameObject.layer = newLayer;
+            part.ChangeRigid(makeKinematic);
         }
     }
 
@@ -683,6 +677,9 @@ public class PartsScript : MonoBehaviour
     public Rigidbody GetRigid() { return _rigid; }
     public float GetMass() { return _mass; }
     public PartsScript GetTargetPart() { return _partScriptTarget; }
+
+
+
 }
 
 public enum ConnectType

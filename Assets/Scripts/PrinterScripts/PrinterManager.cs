@@ -32,14 +32,6 @@ public class PrinterManager : MonoBehaviour
         _diagramManager = FindAnyObjectByType<DiagramManager>();
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            Printer(_currentPartObject);
-        }
-    }
-
     public void Printer(GameObject obj)
     {
         if (_isEmpty)

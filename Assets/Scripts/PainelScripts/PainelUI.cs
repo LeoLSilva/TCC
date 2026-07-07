@@ -106,30 +106,6 @@ public class PainelUI : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            SelectTab(0);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            SelectTab(1);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            SelectTab(2);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            DisableMenu();
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha6))
-        {
-            FreeMode();
-        }
-    }
-
     public void FreeMode()
     {
         _tabGameObject.SetActive(true);
